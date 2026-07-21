@@ -722,7 +722,8 @@ export function ResultApp({ id }: { id: string }) {
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="聞きたいことを書く…"
                 disabled={chatBusy}
-                className="min-h-[48px] flex-1 rounded-[16px] border px-3.5 py-3 text-[15px] outline-none disabled:opacity-60"
+                size={1}
+                className="min-h-[48px] w-full min-w-0 flex-1 rounded-[16px] border px-3.5 py-3 text-[15px] outline-none disabled:opacity-60"
                 style={{
                   background: "var(--card)",
                   borderColor: "var(--border)",
