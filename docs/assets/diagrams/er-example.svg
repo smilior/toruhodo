@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" font-family="'Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="af" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#00755c"/>
+    </marker>
+    <marker id="ax" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="420" fill="#ffffff"/>
+  <text x="480" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#333333">ER図（example）</text>
+  <rect x="90" y="118" width="280" height="118" rx="8" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <path d="M90,134 v-8 a8,8 0 0 1 8,-8 h264 a8,8 0 0 1 8,8 v8 Z" fill="#e9f7f2"/>
+  <rect x="90" y="134" width="280" height="18" fill="#e9f7f2"/>
+  <line x1="90" y1="152" x2="370" y2="152" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="230" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">m_example_categories</text>
+  <text x="104" y="170" font-size="12" fill="#333333">id</text>
+  <text x="356" y="170" text-anchor="end" font-size="11" font-weight="700" fill="#00a984">PK</text>
+  <text x="104" y="198" font-size="12" fill="#333333">name</text>
+  <text x="104" y="226" font-size="12" fill="#333333">sort_order</text>
+  <rect x="590" y="96" width="300" height="174" rx="8" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <path d="M590,112 v-8 a8,8 0 0 1 8,-8 h284 a8,8 0 0 1 8,8 v8 Z" fill="#e9f7f2"/>
+  <rect x="590" y="112" width="300" height="18" fill="#e9f7f2"/>
+  <line x1="590" y1="130" x2="890" y2="130" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="740" y="118" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">t_example_items</text>
+  <text x="604" y="148" font-size="12" fill="#333333">id</text>
+  <text x="876" y="148" text-anchor="end" font-size="11" font-weight="700" fill="#00a984">PK</text>
+  <text x="604" y="176" font-size="12" fill="#333333">category_id</text>
+  <text x="876" y="176" text-anchor="end" font-size="11" font-weight="700" fill="#00a984">FK</text>
+  <text x="604" y="204" font-size="12" fill="#333333">name</text>
+  <text x="604" y="232" font-size="12" fill="#333333">description</text>
+  <text x="604" y="260" font-size="12" fill="#333333">is_active</text>
+  <line x1="370" y1="177" x2="590" y2="183" stroke="#00755c" stroke-width="1.6"/>
+  <rect x="412.3" y="159.5" width="135.4" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="480" y="171.8" text-anchor="middle" font-size="11" fill="#333333">1 対 N（category_id）</text>
+  <text x="392" y="171" text-anchor="start" font-size="13" font-weight="700" fill="#00755c">1</text>
+  <text x="578" y="177" text-anchor="end" font-size="13" font-weight="700" fill="#00755c">N</text>
+  <rect x="90" y="322" width="800" height="48" rx="6" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="90" y="322" width="4" height="48" rx="2" fill="#00a984"/>
+  <text x="106" y="342" font-size="11" fill="#6b7280">m_ = マスタ系 / t_ = トランザクション系。PK = 主キー、FK = 外部キー。</text>
+  <text x="106" y="359" font-size="11" fill="#6b7280">全テーブルは TimestampMixin を継承（created_at 等の監査カラムを共通で保持）。</text>
+</svg>

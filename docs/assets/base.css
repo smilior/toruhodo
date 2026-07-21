@@ -1,0 +1,366 @@
+/* design-doc base styles — extracted from base.html
+   accent green · Noto Sans JP · sidebar + prose */
+
+:root{
+  --bg:#ffffff; --panel:#fafafa; --ink:#333333; --ink-soft:#6b7280; --ink-faint:#9ca3af;
+  --line:#e5e7eb; --line-soft:#f0f1f3; --sel:#f3f4f6;
+  --accent:#00a984; --accent-ink:#00755c; --accent-soft:#e9f7f2; --accent-line:#cdeae0;
+  /* API reference–style left nav (OpenAI developers.openai.com uses 16.5rem) */
+  --sidebar-width:16.5rem;
+  /* 本文・ヒーロー共通の読み幅（表が多い設計書向けにやや広め） */
+  --content-width:64rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--bg); color:var(--ink);
+  border-top:3px solid var(--accent);
+  font-family:'Noto Sans JP',sans-serif; font-weight:400; font-size:15px; line-height:1.85;
+  -webkit-font-smoothing:antialiased;}
+a{color:var(--accent-ink); text-decoration:none}
+a:hover{text-decoration:underline}
+
+.wrap{display:grid; grid-template-columns:var(--sidebar-width) minmax(0,1fr); max-width:100%; margin:0 auto;
+  transition:grid-template-columns .2s ease}
+aside{position:sticky; top:0; align-self:start; height:100vh; overflow:auto;
+  width:var(--sidebar-width); padding:16px 14px 32px; border-right:1px solid var(--line); background:var(--bg);
+  transition:width .2s ease, padding .2s ease}
+.side-header{
+  display:flex; align-items:flex-start; gap:10px;
+  margin:0 0 8px;
+}
+.side-header-text{min-width:0; flex:1}
+.side-header .side-toggle{flex:none; margin-top:2px}
+/* 本文はサイドバー右カラム内で中央寄せ。hero / prose / foot は同幅 */
+main{
+  min-width:0;
+  justify-self:center;
+  width:min(100%,var(--content-width));
+  max-width:var(--content-width);
+  padding:48px clamp(20px,3.5vw,40px) 100px;
+  box-sizing:border-box;
+}
+main > .hero,
+main > .prose,
+main > .foot,
+main > .callout,
+main > .phase-block,
+main > .doc,
+main > .page-nav{
+  width:100%;
+  max-width:100%;
+}
+
+/* --- hamburger inside sidebar --- */
+.side-toggle{
+  position:relative; top:auto; left:auto; z-index:2;
+  width:28px; height:28px; padding:0; margin:0;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:6px; cursor:pointer;
+  border:1px solid var(--line); background:#fff; color:var(--ink);
+  box-shadow:none;
+}
+.side-toggle:hover{border-color:var(--accent); background:var(--accent-soft)}
+.side-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.hamburger{
+  position:relative; display:block; width:14px; height:10px;
+}
+.hamburger span{
+  position:absolute; left:0; right:0; height:1.5px; border-radius:1px;
+  background:var(--ink);
+}
+.hamburger span:nth-child(1){top:0}
+.hamburger span:nth-child(2){top:4.25px}
+.hamburger span:nth-child(3){top:8.5px}
+/* open/closed とも同じハンバーガー（変形しない） */
+/* collapsed: narrow rail with only the toggle (still inside aside) */
+body.sidebar-collapsed{
+  --sidebar-rail:3rem;
+}
+body.sidebar-collapsed .wrap{grid-template-columns:var(--sidebar-rail) minmax(0,1fr)}
+body.sidebar-collapsed aside{
+  width:var(--sidebar-rail); min-width:var(--sidebar-rail);
+  padding:12px 0; overflow:hidden;
+}
+body.sidebar-collapsed .side-header{
+  flex-direction:column; align-items:center; margin:0;
+}
+body.sidebar-collapsed .side-header-text,
+body.sidebar-collapsed .side-nav,
+body.sidebar-collapsed .side-meta{
+  display:none;
+}
+body.sidebar-collapsed .side-toggle{margin:0}
+
+/* --- page prev/next --- */
+.page-nav{
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  margin:48px 0 0; padding-top:28px; border-top:1px solid var(--line);
+}
+.page-nav-item{
+  display:flex; flex-direction:column; gap:4px;
+  padding:14px 16px; border:1px solid var(--line); border-radius:8px;
+  background:var(--panel); color:var(--ink); text-decoration:none;
+  min-width:0;
+}
+a.page-nav-item:hover{border-color:var(--accent); background:var(--accent-soft); text-decoration:none}
+.page-nav-next{text-align:right; align-items:flex-end}
+.page-nav-dir{font-size:11.5px; font-weight:500; letter-spacing:.04em; color:var(--accent-ink)}
+.page-nav-title{font-size:14px; font-weight:700; line-height:1.4; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%}
+.page-nav-phase{font-size:11px; color:var(--ink-faint)}
+.page-nav-item.is-disabled{opacity:.45; cursor:default; background:transparent}
+
+.brand{font-size:12px; font-weight:700; letter-spacing:.04em; color:var(--ink); padding:0 8px}
+.brand a{color:inherit; text-decoration:none}
+.brand a:hover{color:var(--accent-ink)}
+.brand small{display:block; font-weight:400; font-size:10.5px; color:var(--ink-faint); margin-top:4px; line-height:1.35}
+.side-title{margin:18px 0 4px; font-size:15px; font-weight:700; line-height:1.35; color:var(--ink); padding:0 8px}
+.side-title a{color:inherit; text-decoration:none}
+.side-title a:hover{color:var(--accent-ink)}
+.side-meta{font-size:11px; color:var(--ink-faint); border-top:1px solid var(--line); padding:12px 8px 0; margin-top:14px; line-height:1.45}
+
+/* phase-grouped nav */
+nav.side-nav{margin:14px 0 0}
+nav.side-nav .phase{margin:0 0 12px}
+nav.side-nav .phase-label{
+  display:block; font-size:11.5px; font-weight:700; letter-spacing:.06em;
+  color:var(--ink); margin:0 0 4px; padding:0 8px;
+}
+nav.side-nav .phase-label a{color:inherit}
+nav.side-nav .phase.is-current .phase-label{color:var(--accent-ink)}
+nav.side-nav ol{list-style:none; margin:0 0 0 11px; padding:0 0 0 6px; border-left:1px solid var(--line)}
+nav.side-nav li{margin:1px 0}
+nav.side-nav a{display:flex; gap:8px; align-items:baseline; padding:6px 8px; border-radius:6px;
+  color:var(--ink-soft); font-size:12px; line-height:1.35}
+nav.side-nav a .n{font-size:10.5px; color:var(--ink-faint); min-width:16px; font-variant-numeric:tabular-nums; flex:none}
+nav.side-nav a:hover{background:var(--sel); color:var(--ink); text-decoration:none}
+nav.side-nav a.active{background:var(--sel); color:var(--ink); font-weight:500}
+nav.side-nav a.active .n{color:var(--accent-ink)}
+
+/* flat nav (legacy single-page) */
+nav ol.flat{list-style:none; margin:18px 0 0; padding:0}
+nav ol.flat li{margin:1px 0}
+nav ol.flat a{display:flex; gap:8px; align-items:baseline; padding:7px 8px; border-radius:6px;
+  color:var(--ink-soft); font-size:12.5px; line-height:1.35}
+nav ol.flat a .n{font-size:10.5px; color:var(--ink-faint); min-width:16px; font-variant-numeric:tabular-nums}
+nav ol.flat a:hover{background:var(--sel); color:var(--ink); text-decoration:none}
+nav ol.flat a.active{background:var(--sel); color:var(--ink); font-weight:500}
+nav ol.flat a.active .n{color:var(--accent-ink)}
+
+.hero{margin-bottom:48px; padding-bottom:36px; border-bottom:1px solid var(--line); width:100%}
+.kicker{font-size:12px; letter-spacing:.08em; color:var(--accent-ink); font-weight:500}
+.hero h1{font-weight:700; font-size:clamp(24px,3.4vw,32px); line-height:1.4; margin:12px 0 10px; color:var(--ink)}
+.hero .lede{font-size:15px; color:var(--ink-soft); max-width:none; width:100%; margin:0 0 22px}
+.chips{display:flex; flex-wrap:wrap; gap:8px; width:100%}
+.chip{font-size:12px; padding:5px 11px; border-radius:5px; background:var(--panel);
+  border:1px solid var(--line); color:var(--ink-soft)}
+.chip b{color:var(--ink); font-weight:500}
+
+.doc{padding-top:36px; margin-top:36px; border-top:1px solid var(--line); scroll-margin-top:20px}
+.doc:first-of-type{border-top:none; padding-top:0; margin-top:0}
+.doc-head{margin-bottom:22px}
+.doc-no{font-size:11.5px; letter-spacing:.06em; color:var(--ink-faint)}
+.doc-head h2{font-weight:700; font-size:clamp(21px,2.6vw,26px); margin:6px 0 3px; line-height:1.4; color:var(--ink)}
+.doc-sub{color:var(--ink-soft); margin:0; font-size:13.5px}
+
+.prose{max-width:none; width:100%}
+.prose h1{display:none}
+.prose h2{font-weight:700; font-size:19px; margin:44px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line); color:var(--ink);
+  display:flex; align-items:center; gap:.55rem}
+.prose h2::before{content:""; flex:none; width:.5em; height:.5em; background:var(--accent); border-radius:2px}
+.prose h3{font-weight:700; font-size:16px; margin:30px 0 8px; color:var(--ink)}
+.prose h4{font-size:14px; font-weight:500; margin:20px 0 6px; color:var(--ink-soft)}
+.prose p{margin:11px 0}
+.prose ul,.prose ol{margin:11px 0; padding-left:1.4em}
+.prose li{margin:4px 0}
+.prose strong{font-weight:700; color:var(--ink)}
+.prose hr{border:none; border-top:1px solid var(--line-soft); margin:34px 0}
+.prose code{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace; font-size:.85em;
+  background:var(--sel); color:#374151; padding:1px 5px; border-radius:4px}
+.prose pre{margin:18px 0; padding:14px 16px; background:var(--panel); border:1px solid var(--line);
+  border-radius:8px; overflow-x:auto; font-size:13px; line-height:1.55}
+.prose pre code{background:none; padding:0; font-size:inherit}
+
+.prose blockquote{margin:18px 0; padding:14px 18px; background:var(--accent-soft);
+  border:1px solid var(--accent-line); border-left:3px solid var(--accent); border-radius:0 6px 6px 0}
+.prose blockquote p{margin:5px 0; font-size:13.5px; color:var(--ink-soft)}
+.prose blockquote strong{color:var(--ink)}
+
+.prose .tblwrap{overflow-x:auto; margin:18px 0; border:1px solid var(--line); border-radius:8px}
+.prose table{width:100%; border-collapse:collapse; font-size:13px; background:var(--bg)}
+.prose th{background:var(--panel); color:var(--ink); font-weight:500; text-align:left;
+  padding:10px 13px; font-size:12.5px; white-space:nowrap; border-bottom:2px solid var(--accent-line)}
+.prose td{padding:9px 13px; border-top:1px solid var(--line-soft); vertical-align:top; color:var(--ink-soft)}
+.prose tbody tr:nth-child(even){background:#fcfcfd}
+.prose td code{white-space:nowrap}
+.prose td strong{color:var(--ink)}
+
+.diagram{margin:6px 0 26px; padding:18px; background:var(--bg); border:1px solid var(--line); border-radius:8px; cursor:zoom-in;
+  transition:border-color .15s ease, box-shadow .15s ease}
+.diagram:hover{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.diagram:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.diagram figcaption{font-size:12px; letter-spacing:.04em; color:var(--ink-faint); margin:0 0 10px}
+.diagram svg,
+.diagram img{width:100%; height:auto; display:block; border:0; border-radius:4px; background:var(--bg)}
+.mermaid{margin:20px 0; padding:18px; background:var(--panel); border:1px solid var(--line);
+  border-radius:8px; overflow-x:auto; text-align:center; cursor:zoom-in}
+.mermaid:hover{border-color:var(--accent)}
+.zoom-hint{display:inline-flex; align-items:center; gap:5px; margin:10px 0 0;
+  font-size:11.5px; color:var(--ink-faint)}
+.zoom-hint::before{content:"⤢"; font-size:13px; color:var(--accent-ink)}
+
+.zoom-dlg{border:none; padding:0; width:96vw; height:94vh; max-width:96vw; max-height:94vh;
+  background:#fff; border-radius:10px; overflow:hidden; position:relative}
+.zoom-dlg::backdrop{background:rgba(32,44,57,.72)}
+.zoom-bar{position:absolute; top:0; left:0; right:0; height:52px; display:flex; align-items:center;
+  gap:8px; padding:0 14px; border-bottom:1px solid var(--line); background:var(--panel); z-index:2}
+.zoom-bar .title{font-size:13px; color:var(--ink-soft); margin-right:auto;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.zoom-bar button{font-family:inherit; font-size:13px; line-height:1; padding:7px 11px;
+  border:1px solid var(--line); background:#fff; border-radius:6px; color:var(--ink-soft); cursor:pointer}
+.zoom-bar button:hover{border-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft)}
+.zoom-stage{position:absolute; inset:52px 0 0 0; overflow:hidden; background:var(--bg); cursor:grab}
+.zoom-stage.dragging{cursor:grabbing}
+.zoom-stage svg,
+.zoom-stage img{position:absolute; top:0; left:0; transform-origin:0 0; max-width:none}
+
+.foot{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:12px}
+.foot a{color:var(--ink-faint)}
+.foot a:hover{color:var(--accent-ink)}
+
+/* index page cards */
+.phase-block{margin:0 0 40px}
+.phase-block h2{font-weight:700; font-size:19px; margin:0 0 6px; padding-bottom:8px;
+  border-bottom:1px solid var(--line); color:var(--ink);
+  display:flex; align-items:center; gap:.55rem}
+.phase-block h2::before{content:""; flex:none; width:.5em; height:.5em; background:var(--accent); border-radius:2px}
+.phase-block .phase-note{font-size:13.5px; color:var(--ink-soft); margin:0 0 14px}
+.phase-block .tblwrap{overflow-x:auto; margin:0; border:1px solid var(--line); border-radius:8px}
+.phase-block table{width:100%; border-collapse:collapse; font-size:13.5px}
+.phase-block th{background:var(--panel); color:var(--ink); font-weight:500; text-align:left;
+  padding:10px 13px; font-size:12.5px; border-bottom:2px solid var(--accent-line)}
+.phase-block td{padding:9px 13px; border-top:1px solid var(--line-soft); color:var(--ink-soft); vertical-align:top}
+.phase-block td.col-id{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--ink-faint); width:12em}
+.phase-block tbody tr:hover{background:var(--sel)}
+.phase-block tbody tr:nth-child(even){background:#fcfcfd}
+.phase-block tbody tr:nth-child(even):hover{background:var(--sel)}
+
+.callout{margin:18px 0 28px; padding:14px 18px; background:var(--accent-soft);
+  border:1px solid var(--accent-line); border-left:3px solid var(--accent); border-radius:0 6px 6px 0}
+.callout .callout-title{font-size:12px; font-weight:700; letter-spacing:.06em; color:var(--accent-ink); margin:0 0 6px}
+.callout p{margin:4px 0; font-size:13.5px; color:var(--ink-soft)}
+.callout code{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace; font-size:.9em;
+  background:rgba(255,255,255,.6); padding:1px 5px; border-radius:4px}
+
+.toc-h{scroll-margin-top:20px}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:var(--sidebar-rail, 3rem) minmax(0,1fr)}
+  body:not(.sidebar-collapsed) .wrap{grid-template-columns:1fr}
+  aside{position:fixed; top:0; left:0; bottom:0; z-index:30;
+    height:100vh; border-right:1px solid var(--line); border-bottom:none;
+    box-shadow:4px 0 24px rgba(0,0,0,.08)}
+  body:not(.sidebar-collapsed) aside{
+    width:min(86vw,var(--sidebar-width)); padding:16px 14px 32px;
+    transform:none; opacity:1; pointer-events:auto;
+  }
+  /* collapsed rail still visible so the in-sidebar button can reopen */
+  body.sidebar-collapsed aside{
+    width:var(--sidebar-rail); min-width:var(--sidebar-rail);
+    padding:12px 0; transform:none; opacity:1; pointer-events:auto;
+    box-shadow:none;
+  }
+  body:not(.sidebar-collapsed) main{padding:36px 20px 72px}
+  body.sidebar-collapsed main{padding:36px 20px 72px}
+  main{width:100%; max-width:none; justify-self:stretch}
+  .page-nav{grid-template-columns:1fr}
+  .page-nav-next{text-align:left; align-items:flex-start}
+}
+@media print{
+  aside{display:none} .wrap{display:block} main{padding:0}
+  .doc{page-break-inside:avoid}
+}
+
+/* diagrams embedded in design docs */
+.markdown-body img,
+.prose img,
+main img,
+.content img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* ========================================================================
+   閲覧強化（enhance.js 用の追加スタイル）— 既存トークンに準拠。
+   ここから下は追記のみ。上のルールは変更しない。
+   ======================================================================== */
+
+/* 未記入プレースホルダのハイライト（アンバー系） */
+.ph{
+  background:#fef3c7; color:#92400e;
+  padding:0 3px; border-radius:3px; font-weight:500;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+}
+/* code 内でも読めるよう、グレー背景を上書き */
+code .ph,
+.prose code .ph{ background:#fde68a; color:#92400e; padding:0 3px; border-radius:3px }
+
+/* 未記入チップ（hero の .chips 内。既存 .chip を継承しつつ配色のみ上書き） */
+.chip-todo{ background:#fef3c7; border-color:#fcd9a5; color:#92400e }
+.chip-todo b{ color:#92400e }
+
+/* ページ内目次 */
+.page-toc{
+  margin:0 0 40px; padding:14px 18px;
+  border:1px solid var(--line); border-radius:8px; background:var(--panel);
+}
+.page-toc .page-toc-h{
+  font-size:11.5px; font-weight:700; letter-spacing:.06em;
+  color:var(--ink-soft); margin:0 0 8px;
+}
+.page-toc ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px }
+.page-toc li{ margin:0 }
+.page-toc a{ display:block; padding:3px 8px; border-radius:5px;
+  font-size:12.5px; line-height:1.5; color:var(--ink-soft) }
+.page-toc a:hover{ background:var(--sel); color:var(--ink); text-decoration:none }
+
+/* （例）行の淡色化 */
+.ex-row td{ color:var(--ink-faint) }
+
+/* 記入ガイドの折りたたみ（既存 .callout-title の見た目を踏襲） */
+.callout-details summary{
+  font-size:12px; font-weight:700; letter-spacing:.06em; color:var(--accent-ink);
+  cursor:pointer; list-style:none; display:flex; align-items:center; gap:6px;
+}
+.callout-details summary::-webkit-details-marker{ display:none }
+.callout-details summary::before{
+  content:"\25B8"; font-size:10px; color:var(--accent-ink);
+  transition:transform .15s ease;
+}
+.callout-details[open] summary::before{ transform:rotate(90deg) }
+.callout-details > *:not(summary){ margin-top:6px }
+
+/* サイドバー検索ボックス */
+.side-search{ padding:0 8px; margin:0 0 6px }
+.side-search input{
+  width:100%; box-sizing:border-box;
+  padding:6px 10px; font:inherit; font-size:12px; color:var(--ink);
+  border:1px solid var(--line); border-radius:6px; background:var(--bg);
+}
+.side-search input::placeholder{ color:var(--ink-faint) }
+.side-search input:focus{
+  outline:none; border-color:var(--accent); background:#fff;
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+body.sidebar-collapsed .side-search{ display:none }
+
+/* 印刷時：図表の分断を避け、画面専用の補助 UI は隠す */
+@media print{
+  figure.diagram,
+  .prose .tblwrap{ page-break-inside:avoid }
+  .page-toc,
+  .side-search{ display:none }
+}

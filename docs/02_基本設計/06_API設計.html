@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API設計 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの API。Better Auth、Server Actions、Claude server-only、Blob アップロード。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a class="active" href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">02 基本設計 · 06/07</div>
+      <h1>API設計書</h1>
+      <p class="lede">撮るほどのアプリケーション API。認証は Better Auth の HTTP ルート、ドメイン操作は Server Actions。Claude と Blob は server-only。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>公開 REST リソース API は MVP では設けない。クライアントは Server Actions / 必要に応じた Route Handlers 経由。Claude API キーと Blob トークンはサーバーのみ。</p>
+      </div>
+
+      <h2>共通規約</h2>
+      <ul>
+        <li><strong>認証</strong> — Server Actions は <code>requireUserId()</code> 等でセッション必須。未認証は <code>UNAUTHORIZED</code> → 「ログインが必要です」。</li>
+        <li><strong>所有</strong> — records の読取・更新・削除は <code>user_id = session.user.id</code> 必須。未所有は「記録が見つかりません」。</li>
+        <li><strong>結果型</strong> — <code>ActionResult&lt;T&gt; = { ok: true; data: T } | { ok: false; error: string }</code></li>
+        <li><strong>再検証</strong> — ミューテーション後に該当パスを <code>revalidatePath</code></li>
+        <li><strong>写真</strong> — アップロード後に Blob URL を受け取り、records.photo_url に保存</li>
+      </ul>
+
+      <h2>Better Auth エンドポイント</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">パス</th>
+              <th scope="col">概要</th>
+              <th scope="col">備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/api/auth/*</code></td><td>Better Auth ハンドラ全体</td><td>sign-in / sign-out / session / OAuth callback 等</td></tr>
+            <tr><td><code>/api/auth/callback/google</code></td><td>Google OAuth コールバック</td><td>GCP に登録するリダイレクト URI</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>プロバイダ: Google（<code>GOOGLE_CLIENT_ID</code> / <code>GOOGLE_CLIENT_SECRET</code>）。セッション Cookie 名: <code>better-auth.session_token</code>（Secure 環境では <code>__Secure-</code> 接頭）。</p>
+
+      <h2>Server Actions 一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">関数</th>
+              <th scope="col">概要</th>
+              <th scope="col">認証</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>createScanFromPhoto</code></td><td>写真 upload → Blob、Claude で OCR＋解説、結果返却（未保存可）</td><td>要</td></tr>
+            <tr><td><code>saveRecord</code></td><td>解説結果を records に永続化</td><td>要</td></tr>
+            <tr><td><code>updateMemo</code></td><td>記録のメモ更新</td><td>要</td></tr>
+            <tr><td><code>deleteRecord</code></td><td>記録削除（Blob も削除試行）</td><td>要</td></tr>
+            <tr><td><code>updateSettings</code></td><td>user_settings 更新</td><td>要</td></tr>
+            <tr><td><code>deleteAllUserData</code></td><td>当該ユーザーの records・設定等を全削除</td><td>要</td></tr>
+            <tr><td><code>listRecords</code>（任意）</td><td>履歴・ホーム用一覧</td><td>要</td></tr>
+            <tr><td><code>getRecord</code>（任意）</td><td>単一 record 取得</td><td>要</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>関数名は実装で微調整可。上記は契約上の責務を示す。</p>
+
+      <h2>個別仕様</h2>
+
+      <h3>createScanFromPhoto</h3>
+      <p>写真を Blob にアップロードし、Claude Vision で解説 JSON を生成する。永続化は saveRecord に分離してもよい（実装選択）。</p>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">名前</th><th scope="col">型</th><th scope="col">必須</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>image</td><td>File / base64 / FormData</td><td>必須</td><td>撮影画像</td></tr>
+            <tr><td>lat</td><td>number | null</td><td>任意</td><td>緯度</td></tr>
+            <tr><td>lng</td><td>number | null</td><td>任意</td><td>経度</td></tr>
+            <tr><td>placeName</td><td>string | null</td><td>任意</td><td>場所名</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>成功レスポンス例:</p>
+      <pre><code>{
+  "ok": true,
+  "data": {
+    "photoUrl": "https://*.public.blob.vercel-storage.com/...",
+    "failed": false,
+    "partial": false,
+    "partialChars": null,
+    "ocrRaw": "馬頭觀世音　文化八年…",
+    "title": "馬頭観世音の石碑",
+    "easyText": "…",
+    "detailText": "…",
+    "easyRuby": "&lt;ruby&gt;馬頭&lt;rt&gt;ばとう&lt;/rt&gt;&lt;/ruby&gt;…",
+    "detailRuby": "…",
+    "aiNote": "…",
+    "lat": 35.0,
+    "lng": 135.0,
+    "placeName": "〇〇寺"
+  }
+}</code></pre>
+      <p>failed 時:</p>
+      <pre><code>{
+  "ok": true,
+  "data": {
+    "photoUrl": "https://…",
+    "failed": true,
+    "partial": false,
+    "partialChars": null,
+    "ocrRaw": "",
+    "title": "",
+    "easyText": "",
+    "detailText": "",
+    "easyRuby": "",
+    "detailRuby": "",
+    "aiNote": ""
+  }
+}</code></pre>
+      <p>クライアントは <code>failed: true</code> で S-04、<code>partial: true</code> で 1i バナー付き S-03 を表示する。</p>
+
+      <h3>saveRecord</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">名前</th><th scope="col">型</th><th scope="col">必須</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>photoUrl</td><td>string</td><td>必須</td><td>Blob URL</td></tr>
+            <tr><td>title ほか解説フィールド</td><td>string / bool</td><td>必須</td><td>AI 契約に準拠</td></tr>
+            <tr><td>memo</td><td>string | null</td><td>任意</td><td>ユーザーメモ</td></tr>
+            <tr><td>lat / lng / placeName</td><td>—</td><td>任意</td><td>位置</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre><code>// 成功
+{ "ok": true, "data": { "id": "rec_xxx" } }
+// 失敗
+{ "ok": false, "error": "ログインが必要です" }</code></pre>
+
+      <h3>updateMemo</h3>
+      <ul>
+        <li>入力: <code>{ id: string, memo: string | null }</code></li>
+        <li>所有チェック必須</li>
+        <li>成功: <code>{ ok: true }</code></li>
+      </ul>
+
+      <h3>deleteRecord</h3>
+      <ul>
+        <li>入力: <code>{ id: string }</code></li>
+        <li>所有レコード削除。可能なら Blob も削除</li>
+        <li>成功: <code>{ ok: true }</code></li>
+      </ul>
+
+      <h3>updateSettings</h3>
+      <ul>
+        <li>入力: <code>{ furiganaDefault?: boolean, modeDefault?: "easy"|"detail", geoEnabled?: boolean }</code></li>
+        <li>upsert user_settings</li>
+        <li>成功: <code>{ ok: true, data: UserSettings }</code></li>
+      </ul>
+
+      <h3>deleteAllUserData</h3>
+      <ul>
+        <li>入力: 確認フラグ（クライアントで二段階確認後に呼ぶ）</li>
+        <li>当該 userId の records 全削除、関連 Blob 削除試行、user_settings リセットまたは削除</li>
+        <li>Auth ユーザー行の削除はプロダクト方針に従う（MVP はアプリデータ削除を優先）</li>
+        <li>成功: <code>{ ok: true }</code></li>
+      </ul>
+
+      <h2>Claude 呼び出し（internal / server-only）</h2>
+      <ul>
+        <li>クライアントから Anthropic へ直接呼ばない</li>
+        <li>Server Action または内部モジュール <code>src/lib/ai/*</code> から呼び出し</li>
+        <li>1 リクエストで Vision 入力＋JSON スキーマ応答</li>
+      </ul>
+      <p>AI レスポンス契約（PRODUCT_BRIEF 準拠）:</p>
+      <pre><code>{
+  "failed": false,
+  "partial": false,
+  "partialChars": null,
+  "ocrRaw": "...",
+  "title": "...",
+  "easyText": "...",
+  "detailText": "...",
+  "easyRuby": "&lt;ruby&gt;…&lt;/rt&gt;&lt;/ruby&gt;…",
+  "detailRuby": "...",
+  "aiNote": "..."
+}</code></pre>
+      <ul>
+        <li><code>failed: true</code> → 失敗画面 1h</li>
+        <li><code>partial: true</code> → 注意バナー＋読めた文字チップ 1i</li>
+      </ul>
+
+      <h2>写真 upload → Blob URL</h2>
+      <ol>
+        <li>認証済みリクエストで画像を受領</li>
+        <li>Vercel Blob に put（パスに userId またはランダム ID を含め推測困難化）</li>
+        <li>返却 URL を photoUrl として利用</li>
+        <li>一覧・結果画面ではアプリ経由で URL を埋め込み表示</li>
+      </ol>
+      <pre><code>// 概念
+const blob = await put(`toruhodo/${userId}/${id}.jpg`, file, { access: "public" });
+// blob.url → records.photo_url</code></pre>
+      <p>アクセス方針の詳細は <a href="07_認可設計.html">07_認可設計</a> を参照。</p>
+
+      <h2>シーケンス（概念）</h2>
+      <figure class="diagram">
+        <figcaption>撮影から解説生成・保存までの概念シーケンス</figcaption>
+        <img src="../assets/diagrams/sequence-example.svg" alt="API 呼び出しシーケンスの概念図。">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="05_DB設計.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">DB設計(論理)</span><span class="page-nav-phase">02 基本設計</span></a>
+      <a class="page-nav-item page-nav-next" href="07_認可設計.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">認可設計</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

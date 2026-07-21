@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>機能設計 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの各機能を外部から見た振る舞いとして定義する。F-00〜F-09。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a class="active" href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">02 基本設計 · 03/07</div>
+      <h1>機能設計書</h1>
+      <p class="lede">撮るほどの各機能を外部から見た振る舞いとして定義する。Google ログイン必須・ユーザー単位で Turso と Blob に永続化。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>内部アルゴリズムの詳細は 03_詳細設計/01_処理設計 へ。ここでは処理概要・入出力・依存関係を定義する。機能 ID は PRODUCT_BRIEF の F-00〜F-09 に対応する。</p>
+      </div>
+
+      <h2>機能一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">機能ID</th>
+              <th scope="col">名称</th>
+              <th scope="col">主画面</th>
+              <th scope="col">依存</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>F-00</td><td>Google ログイン / ログアウト</td><td>S-00</td><td>Better Auth / GCP</td></tr>
+            <tr><td>F-01</td><td>ホーム（かざして解説・さいきんの記録）</td><td>S-01</td><td>Auth / records 読取</td></tr>
+            <tr><td>F-02</td><td>撮影（カメラ・ギャラリー・フラッシュ UI）</td><td>S-02</td><td>端末カメラ / ファイル</td></tr>
+            <tr><td>F-03</td><td>OCR＋AI 解説生成</td><td>S-02→S-03/S-04</td><td>Claude Vision / Blob</td></tr>
+            <tr><td>F-04</td><td>解説結果（モード・ふりがな・メモ・保存・免責）</td><td>S-03</td><td>records / settings</td></tr>
+            <tr><td>F-05</td><td>読み取り失敗・部分読み取り UI</td><td>S-04 / S-03(1i)</td><td>Claude 結果フラグ</td></tr>
+            <tr><td>F-06</td><td>旅の記録（履歴一覧・空状態）</td><td>S-05</td><td>records 読取</td></tr>
+            <tr><td>F-07</td><td>旅の記録地図</td><td>S-06</td><td>MapLibre / Geo / records</td></tr>
+            <tr><td>F-08</td><td>設定</td><td>S-07</td><td>user_settings / データ削除</td></tr>
+            <tr><td>F-09</td><td>クラウド永続化</td><td>（横断）</td><td>Turso / Blob</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>F-00 Google ログイン / ログアウト</h2>
+      <ul>
+        <li><strong>処理概要</strong> — Better Auth 経由で Google OAuth にサインインする。セッション Cookie を発行。ログアウトでセッション破棄。</li>
+        <li><strong>入力</strong> — ユーザーの Google アカウント選択。</li>
+        <li><strong>出力</strong> — 認証済みセッション。成功後はホーム（S-01）へ。</li>
+        <li><strong>依存</strong> — Better Auth、<code>/api/auth/*</code>、GCP OAuth クライアント。</li>
+        <li><strong>受け入れ</strong> — 未ログインで保護ルートに入ると S-00 へ。ログイン後は自分のデータのみ見える。</li>
+      </ul>
+
+      <h2>F-01 ホーム</h2>
+      <ul>
+        <li><strong>処理概要</strong> — 「かざして解説」CTA と、直近の旅の記録カードを表示する。</li>
+        <li><strong>入力</strong> — セッション userId。任意で records 件数制限（例: 2〜3 件）。</li>
+        <li><strong>出力</strong> — 直近 records（title, photoUrl, createdAt, placeName, memo 有無）。</li>
+        <li><strong>依存</strong> — Auth、records 読取（F-09）。</li>
+        <li><strong>受け入れ</strong> — CTA 1 タップで撮影画面へ。「すべて見る」で履歴へ。</li>
+      </ul>
+
+      <h2>F-02 撮影</h2>
+      <ul>
+        <li><strong>処理概要</strong> — カメラプレビュー、シャッター、ギャラリー選択、フラッシュ UI を提供する。ガイド枠・ヒントピルを表示。</li>
+        <li><strong>入力</strong> — カメラ映像または画像ファイル。</li>
+        <li><strong>出力</strong> — 撮影／選択した画像バイナリ（クライアント保持後 F-03 へ）。</li>
+        <li><strong>依存</strong> — 端末 MediaDevices / file input。位置情報は geoEnabled 時に取得試行（任意）。</li>
+        <li><strong>受け入れ</strong> — 閉じるでホームへ。シャッター後はローディング（1d）へ遷移。</li>
+      </ul>
+
+      <h2>F-03 OCR＋AI 解説生成</h2>
+      <ul>
+        <li><strong>処理概要</strong> — 画像をサーバーへ送り Blob へ格納し、Claude Vision に 1 リクエストで OCR＋解説 JSON を生成させる。状態: ocr → generating → done | failed | partial。</li>
+        <li><strong>入力</strong> — 画像、任意 lat/lng/placeName。</li>
+        <li><strong>出力</strong> — AI 契約 JSON（failed, partial, partialChars, ocrRaw, title, easyText, detailText, easyRuby, detailRuby, aiNote）および photoUrl。</li>
+        <li><strong>依存</strong> — Claude Vision（AI）、Vercel Blob、Auth。</li>
+        <li><strong>受け入れ</strong> — failed 時は F-05 失敗 UI。partial 時は注意バナー付き結果。成功時は結果画面へ。</li>
+      </ul>
+
+      <h2>F-04 解説結果</h2>
+      <ul>
+        <li><strong>処理概要</strong> — 写真・タイトル・メタ・モード切替・ふりがな・原文カード・AI補足カード・メモ・記録に残す・免責を表示する。</li>
+        <li><strong>入力</strong> — スキャン結果または保存済み record id。settings の modeDefault / furiganaDefault を初期値に。</li>
+        <li><strong>出力</strong> — 画面ローカル mode / furigana。保存時は saveRecord / updateMemo。</li>
+        <li><strong>依存</strong> — records、user_settings。本文切替は即時（〜200ms fade）。</li>
+        <li><strong>受け入れ</strong> — やさしい⇄くわしい、ふりがな ON/OFF が即時反映。免責が常時表示。</li>
+      </ul>
+
+      <h2>F-05 読み取り失敗・部分読み取り</h2>
+      <ul>
+        <li><strong>処理概要</strong> — failed: 責めない失敗画面（コツ 3 項目・再撮影・ホーム）。partial: 結果画面上部バナー＋読めた文字チップ＋「もう一度撮る」「このまま記録に残す」。</li>
+        <li><strong>入力</strong> — AI の failed / partial / partialChars。</li>
+        <li><strong>出力</strong> — 再撮影遷移、または partial のまま保存。</li>
+        <li><strong>依存</strong> — F-03 の結果フラグ。</li>
+        <li><strong>受け入れ</strong> — 失敗文面が落胆させないトーンであること。</li>
+      </ul>
+
+      <h2>F-06 旅の記録（履歴）</h2>
+      <ul>
+        <li><strong>処理概要</strong> — ユーザーの records を新しい順に一覧。空状態では CTA で撮影へ。</li>
+        <li><strong>入力</strong> — userId。</li>
+        <li><strong>出力</strong> — カード（サムネイル・title・日付・場所・メモありバッジ）。</li>
+        <li><strong>依存</strong> — records 読取。場所は lat/lng がある場合のみ表示。</li>
+        <li><strong>受け入れ</strong> — タップで結果画面（保存版）。件数表示。</li>
+      </ul>
+
+      <h2>F-07 旅の記録地図</h2>
+      <ul>
+        <li><strong>処理概要</strong> — MapLibre で地図を描画し、位置付き records をピン表示。タップでポップアップ→結果画面。</li>
+        <li><strong>入力</strong> — lat/lng が非 null の records。geoEnabled 状態。</li>
+        <li><strong>出力</strong> — 地図 UI・件数チップ・位置情報オフ時の配慮メッセージ。</li>
+        <li><strong>依存</strong> — MapLibre（クライアント）、Geo 設定、records。</li>
+        <li><strong>受け入れ</strong> — 位置なし記録はピンに出さない。オフ時もタブは残し導線を出す。</li>
+      </ul>
+
+      <h2>F-08 設定</h2>
+      <ul>
+        <li><strong>処理概要</strong> — ふりがな初期値、解説モード初期値、位置情報記録 ON/OFF、データ削除、利用規約／免責への導線。shadcn リスト想定。</li>
+        <li><strong>入力</strong> — user_settings の更新値。削除確認。</li>
+        <li><strong>出力</strong> — 更新済み settings。deleteAllUserData 時は records・Blob・設定等の消去。</li>
+        <li><strong>依存</strong> — user_settings、F-09、認可。</li>
+        <li><strong>受け入れ</strong> — 初期値が結果画面の mode/furigana に反映される。</li>
+      </ul>
+
+      <h2>F-09 クラウド永続化</h2>
+      <ul>
+        <li><strong>処理概要</strong> — records を Turso に、写真を Vercel Blob に保存する。読取・更新・削除は userId スコープ。</li>
+        <li><strong>入力</strong> — Record 属性一式。写真バイナリ。</li>
+        <li><strong>出力</strong> — 永続化された id と photoUrl。</li>
+        <li><strong>依存</strong> — Turso / Drizzle、Vercel Blob、Auth。</li>
+        <li><strong>受け入れ</strong> — 他ユーザーの record は不可視。派生値は DB に持たない。</li>
+      </ul>
+
+      <h2>主要フロー（概要）</h2>
+      <pre><code>ログイン(F-00) → ホーム(F-01)
+  → 撮影(F-02) → OCR+AI(F-03)
+       ├ failed → 失敗UI(F-05) → 再撮影 or ホーム
+       ├ partial → 結果(F-04)+注意(F-05) → 保存(F-09)
+       └ done → 結果(F-04) → 記録に残す(F-09)
+  → 履歴(F-06) / 地図(F-07) / 設定(F-08)</code></pre>
+      <figure class="diagram">
+        <figcaption>処理フロー概念（撮影 → 解説 → 記録）</figcaption>
+        <img src="../assets/diagrams/process-flow.svg" alt="主要処理フローの概念図。">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+      <figure class="diagram">
+        <figcaption>スキャン状態機械（概念）</figcaption>
+        <img src="../assets/diagrams/state-machine.svg" alt="スキャン状態遷移の概念図。">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="02_用語集.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">用語集</span><span class="page-nav-phase">02 基本設計</span></a>
+      <a class="page-nav-item page-nav-next" href="04_画面設計.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">画面設計</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

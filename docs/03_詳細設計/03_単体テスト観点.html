@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>単体テスト観点 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの単体テスト観点（AI JSON・ルビ・settings・records スコープ・地図・メモ・削除）。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a class="active" href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">03 詳細設計 · 03/03</div>
+      <h1>単体テスト観点</h1>
+      <p class="lede">撮るほどの単体テスト観点を正常系・異常系・境界値で整理する。単体テストは詳細設計（処理・テーブル）に対応する（V 字）。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>本表は AI／開発者が単体テストコードを生成する際のインプットである。観点は「入力条件 → 期待結果」で検証可能に書く。</p>
+        <p>外部 Claude・Blob はモックする。DB はテスト用 libSQL／インメモリまたはトランザクションロールバックを用いる。</p>
+        <p>配置の目安: <code>src/**/__tests__</code> または <code>src/**/*.test.ts</code>（プロジェクトのテストランナー規約に従う）。</p>
+      </div>
+
+      <h2>観点整理の方針</h2>
+      <ul>
+        <li>各モジュールの分岐・バリデーションを正常系・異常系・境界値で洗い出す。</li>
+        <li>受け入れ基準・処理設計の failed/partial・所有境界と対応させる。</li>
+        <li>UI コンポーネントの見た目は本表の主対象外。純関数・Server Action・リポジトリ層を優先する。</li>
+      </ul>
+
+      <h2>観点表</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">機能</th>
+              <th scope="col">区分</th>
+              <th scope="col">観点（入力条件 → 期待結果）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- AI JSON パーサ -->
+            <tr>
+              <td>UT-01</td>
+              <td>AI JSON パーサ</td>
+              <td>正常系</td>
+              <td>必須フィールド完備・failed=false・partial=false の JSON → パース成功。title / easyText / detailText / easyRuby / detailRuby / aiNote / ocrRaw が得られる</td>
+            </tr>
+            <tr>
+              <td>UT-02</td>
+              <td>AI JSON パーサ</td>
+              <td>正常系</td>
+              <td>failed=true（他フィールド空可）→ 結果種別 failed。partial は false に正規化</td>
+            </tr>
+            <tr>
+              <td>UT-03</td>
+              <td>AI JSON パーサ</td>
+              <td>正常系</td>
+              <td>partial=true・partialChars あり・解説フィールドあり → 結果種別 partial。バナー用 partialChars 保持</td>
+            </tr>
+            <tr>
+              <td>UT-04</td>
+              <td>AI JSON パーサ</td>
+              <td>異常系</td>
+              <td>failed=true かつ partial=true → failed 優先に正規化（partial を落とす）</td>
+            </tr>
+            <tr>
+              <td>UT-05</td>
+              <td>AI JSON パーサ</td>
+              <td>異常系</td>
+              <td>JSON でない文字列・フェンス付き Markdown のみ → パース失敗（failed 相当またはエラー）</td>
+            </tr>
+            <tr>
+              <td>UT-06</td>
+              <td>AI JSON パーサ</td>
+              <td>異常系</td>
+              <td>failed=false なのに title または easyText 欠落 → バリデーションエラー／failed 扱い</td>
+            </tr>
+            <tr>
+              <td>UT-07</td>
+              <td>AI JSON パーサ</td>
+              <td>境界値</td>
+              <td>partial=true かつ partialChars=null または空文字 → partial は受理し partialChars は null 正規化（または警告付き受理）</td>
+            </tr>
+            <tr>
+              <td>UT-08</td>
+              <td>AI JSON パーサ</td>
+              <td>境界値</td>
+              <td>未知プロパティ付き JSON → 既知フィールドのみ採用し成功（前方互換）</td>
+            </tr>
+
+            <!-- ルビ HTML サニタイズ -->
+            <tr>
+              <td>UT-09</td>
+              <td>ルビ HTML サニタイズ</td>
+              <td>正常系</td>
+              <td><code>&lt;ruby&gt;漢字&lt;rt&gt;かんじ&lt;/rt&gt;&lt;/ruby&gt;</code> のみ → そのまま残る</td>
+            </tr>
+            <tr>
+              <td>UT-10</td>
+              <td>ルビ HTML サニタイズ</td>
+              <td>異常系</td>
+              <td><code>&lt;script&gt;</code>・onclick 等 → 除去され実行可能残骸なし</td>
+            </tr>
+            <tr>
+              <td>UT-11</td>
+              <td>ルビ HTML サニタイズ</td>
+              <td>異常系</td>
+              <td><code>&lt;a href&gt;</code>・<code>&lt;img&gt;</code> 等の非許可タグ → 除去またはエスケープ</td>
+            </tr>
+            <tr>
+              <td>UT-12</td>
+              <td>ルビ HTML サニタイズ</td>
+              <td>境界値</td>
+              <td>空文字・プレーンテキストのみ（ruby なし）→ 安全にそのまままたはエスケープして返る</td>
+            </tr>
+            <tr>
+              <td>UT-13</td>
+              <td>ルビ HTML サニタイズ</td>
+              <td>境界値</td>
+              <td>入れ子の不正 ruby / 未閉じタグ → クラッシュせずサニタイズ結果を返す</td>
+            </tr>
+
+            <!-- settings デフォルト -->
+            <tr>
+              <td>UT-14</td>
+              <td>settings デフォルト</td>
+              <td>正常系</td>
+              <td>user_settings 行なし → furiganaDefault=true, modeDefault="easy", geoEnabled=true</td>
+            </tr>
+            <tr>
+              <td>UT-15</td>
+              <td>settings デフォルト</td>
+              <td>正常系</td>
+              <td>modeDefault を "detail" に更新 → 再取得で "detail"。結果画面初期 mode に反映（初期化ロジック単体）</td>
+            </tr>
+            <tr>
+              <td>UT-16</td>
+              <td>settings デフォルト</td>
+              <td>異常系</td>
+              <td>modeDefault に "foo" を渡す → バリデーションエラー。DB は変わらない</td>
+            </tr>
+            <tr>
+              <td>UT-17</td>
+              <td>settings デフォルト</td>
+              <td>境界値</td>
+              <td>furiganaDefault を false に更新 → 結果初期 furigana が off</td>
+            </tr>
+
+            <!-- record userId スコープ -->
+            <tr>
+              <td>UT-18</td>
+              <td>record の userId スコープ</td>
+              <td>正常系</td>
+              <td>ユーザー A の一覧取得 → A の records のみ。B の行は含まれない</td>
+            </tr>
+            <tr>
+              <td>UT-19</td>
+              <td>record の userId スコープ</td>
+              <td>異常系</td>
+              <td>ユーザー A が B の record id で取得／更新／削除 → NOT_FOUND 相当。副作用なし</td>
+            </tr>
+            <tr>
+              <td>UT-20</td>
+              <td>record の userId スコープ</td>
+              <td>異常系</td>
+              <td>未認証で list / save / memo → UNAUTHORIZED</td>
+            </tr>
+            <tr>
+              <td>UT-21</td>
+              <td>record の userId スコープ</td>
+              <td>正常系</td>
+              <td>INSERT 時 userId はセッションから付与。クライアント指定 userId は無視または拒否</td>
+            </tr>
+
+            <!-- 位置情報 null -->
+            <tr>
+              <td>UT-22</td>
+              <td>位置情報 null 時の表示分岐</td>
+              <td>正常系</td>
+              <td>lat/lng 両方あり → 地図ピン対象に含まれる。メタに placeName があれば表示</td>
+            </tr>
+            <tr>
+              <td>UT-23</td>
+              <td>位置情報 null 時の表示分岐</td>
+              <td>正常系</td>
+              <td>lat/lng 両方 null → 履歴一覧には出るが地図ピン対象外。結果メタは日時のみ／「場所は記録されていません」</td>
+            </tr>
+            <tr>
+              <td>UT-24</td>
+              <td>位置情報 null 時の表示分岐</td>
+              <td>境界値</td>
+              <td>lat のみ非 null・lng null → 両方 null に正規化（またはピン対象外）。片肺でピンしない</td>
+            </tr>
+            <tr>
+              <td>UT-25</td>
+              <td>位置情報 null 時の表示分岐</td>
+              <td>境界値</td>
+              <td>記録はあるが全件座標なし → 地図はピン 0 件用メッセージ（位置オフ配慮）</td>
+            </tr>
+
+            <!-- 履歴ソート -->
+            <tr>
+              <td>UT-26</td>
+              <td>同ユーザー履歴ソート</td>
+              <td>正常系</td>
+              <td>同一 userId で createdAt が異なる複数件 → createdAt 降順（新しい順）</td>
+            </tr>
+            <tr>
+              <td>UT-27</td>
+              <td>同ユーザー履歴ソート</td>
+              <td>境界値</td>
+              <td>0 件 → 空配列。例外にしない</td>
+            </tr>
+            <tr>
+              <td>UT-28</td>
+              <td>同ユーザー履歴ソート</td>
+              <td>境界値</td>
+              <td>ホーム用 limit=3 → 最新 3 件のみ。全体件数とは独立</td>
+            </tr>
+
+            <!-- メモ更新 -->
+            <tr>
+              <td>UT-29</td>
+              <td>メモ更新</td>
+              <td>正常系</td>
+              <td>所有 record に memo 文字列 → 更新成功。再取得で一致。履歴「メモあり」判定が true</td>
+            </tr>
+            <tr>
+              <td>UT-30</td>
+              <td>メモ更新</td>
+              <td>正常系</td>
+              <td>memo を空文字で更新 → null 正規化（または空）。「メモあり」は false</td>
+            </tr>
+            <tr>
+              <td>UT-31</td>
+              <td>メモ更新</td>
+              <td>異常系</td>
+              <td>他ユーザー record の memo 更新 → NOT_FOUND。元 memo 不変</td>
+            </tr>
+            <tr>
+              <td>UT-32</td>
+              <td>メモ更新</td>
+              <td>境界値</td>
+              <td>最大長超過（実装上限）→ バリデーションエラー</td>
+            </tr>
+
+            <!-- 削除 cascade -->
+            <tr>
+              <td>UT-33</td>
+              <td>削除 cascade 的振る舞い</td>
+              <td>正常系</td>
+              <td>データ全削除 Action → 当該 user の records が 0 件。他 user の records は残る</td>
+            </tr>
+            <tr>
+              <td>UT-34</td>
+              <td>削除 cascade 的振る舞い</td>
+              <td>正常系</td>
+              <td>全削除後 user_settings は既定値（または再作成後の既定）。users 行は残存</td>
+            </tr>
+            <tr>
+              <td>UT-35</td>
+              <td>削除 cascade 的振る舞い</td>
+              <td>異常系</td>
+              <td>確認フラグなしの全削除要求 → 拒否。データ不変</td>
+            </tr>
+            <tr>
+              <td>UT-36</td>
+              <td>削除 cascade 的振る舞い</td>
+              <td>正常系</td>
+              <td>users 削除（退会相当の FK テスト）→ 紐づく records / user_settings / sessions が CASCADE で消える</td>
+            </tr>
+
+            <!-- スキャン状態・結果ローカル（補助） -->
+            <tr>
+              <td>UT-37</td>
+              <td>スキャン状態機械</td>
+              <td>正常系</td>
+              <td>合法遷移 idle→capturing→ocr→generating→done が受理される</td>
+            </tr>
+            <tr>
+              <td>UT-38</td>
+              <td>スキャン状態機械</td>
+              <td>異常系</td>
+              <td>禁止遷移 idle→generating / failed→done が拒否または no-op</td>
+            </tr>
+            <tr>
+              <td>UT-39</td>
+              <td>結果 mode / furigana</td>
+              <td>正常系</td>
+              <td>mode=easy, furigana=on → easyRuby を選択。off → easyText</td>
+            </tr>
+            <tr>
+              <td>UT-40</td>
+              <td>結果 mode / furigana</td>
+              <td>正常系</td>
+              <td>mode=detail, furigana=on → detailRuby。設定初期値が modeDefault/furiganaDefault から入る</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>カテゴリ別件数</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カテゴリ</th><th scope="col">ID 範囲</th><th scope="col">件数</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>AI JSON パーサ（failed/partial/必須）</td><td>UT-01〜08</td><td>8</td></tr>
+            <tr><td>ルビ HTML サニタイズ</td><td>UT-09〜13</td><td>5</td></tr>
+            <tr><td>settings デフォルト</td><td>UT-14〜17</td><td>4</td></tr>
+            <tr><td>record の userId スコープ</td><td>UT-18〜21</td><td>4</td></tr>
+            <tr><td>位置情報 null 時の表示分岐</td><td>UT-22〜25</td><td>4</td></tr>
+            <tr><td>同ユーザー履歴ソート（createdAt desc）</td><td>UT-26〜28</td><td>3</td></tr>
+            <tr><td>メモ更新</td><td>UT-29〜32</td><td>4</td></tr>
+            <tr><td>削除 cascade 的振る舞い</td><td>UT-33〜36</td><td>4</td></tr>
+            <tr><td>スキャン状態機械・結果ローカル（補助）</td><td>UT-37〜40</td><td>4</td></tr>
+            <tr><td><strong>合計</strong></td><td>UT-01〜40</td><td><strong>40</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>網羅の目安</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">区分</th><th scope="col">最低限カバーする内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>正常系</td><td>撮影結果パース成功、記録保存、履歴ソート、設定既定、メモ更新、地図ピン対象判定</td></tr>
+            <tr><td>異常系</td><td>JSON 不正、他ユーザーアクセス、未認証、禁止状態遷移、未確認全削除</td></tr>
+            <tr><td>境界値</td><td>partialChars 空、座標片肺、0 件一覧、メモ空、ruby なしプレーン</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>モック方針</h2>
+      <ul>
+        <li>Claude API: 固定 JSON フィクスチャ（成功／failed／partial／壊れた本文）。</li>
+        <li>Vercel Blob: put/del をモックし URL 文字列のみ返す。</li>
+        <li>Geolocation: 単体では lat/lng 引数を直接渡し、ブラウザ API は結合以降。</li>
+        <li>時刻: createdAt ソート検証時は固定クロックまたは明示タイムスタンプ挿入。</li>
+      </ul>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="02_テーブル定義.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">テーブル定義</span><span class="page-nav-phase">03 詳細設計</span></a>
+      <a class="page-nav-item page-nav-next" href="../04_テスト/01_テスト計画.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">テスト計画</span><span class="page-nav-phase">04 テスト</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · 正本: PRODUCT_BRIEF · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

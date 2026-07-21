@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,0&display=block" rel="stylesheet">
+<style>
+body{margin:0;background:#2B2721;font-family:'Zen Maru Gothic',sans-serif;color:#3A352C;-webkit-font-smoothing:antialiased}
+a{color:#33566E}a:hover{color:#B9502F}
+rt{font-family:'Zen Maru Gothic',sans-serif;font-size:.5em;color:#8D8471;letter-spacing:.04em;font-weight:500}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dv-turn{padding:48px 56px 96px;scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:12px;margin:0 0 28px}
+.dv-tid{font:700 11px ui-monospace,Menlo,monospace;padding:4px 8px;background:#F6F1E5;color:#3A352C;border-radius:6px;text-decoration:none}
+.dv-tname{font-size:14px;font-weight:700;color:#EFE8D6;letter-spacing:.06em}
+.dv-opts{display:flex;flex-wrap:wrap;gap:44px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:700 11px ui-monospace,Menlo,monospace;padding:4px 8px;background:rgba(246,241,229,.14);color:#F2ECDC;border-radius:6px;text-decoration:none}
+.dv-oid:hover{color:#F2ECDC;background:rgba(246,241,229,.28)}
+.dv-olabel{display:flex;align-items:baseline;gap:9px;font-size:13px;color:#CFC5AF}
+.dv-opt:target .dv-oid{background:#B9502F;color:#FDFBF4}
+.dv-kick{flex-basis:100%;margin-top:18px;font-size:12px;font-weight:700;letter-spacing:.3em;color:#A2977E}
+.dv-next{margin:36px 0 0;font-size:12.5px;color:#A2977E;line-height:1.8}
+</style>
+</helmet>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">撮るほど — かざすと、やさしく教えてくれる／6画面ハイファイ＋ブランド定義</span><span style="font-size:12px;color:#A2977E">写真はプレースホルダー（実写差し替え前提）・本文はサンプル・375px基準／縦は実機スクロール想定で可変</span></div>
+<div class="dv-opts">
+
+<div class="dv-kick">ブランド</div>
+<div class="dv-opt" id="1a" data-screen-label="ブランド定義">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>ロゴ案・カラーパレット・タイポグラフィ（ルビ含む）</div>
+<div style="width:840px;background:#F6F1E5;border-radius:28px;padding:30px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;gap:16px">
+    <div style="flex:1;background:#FDFBF4;border:1px solid #EDE5D2;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:8px;font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">案A — 朱印<span style="background:#B9502F;color:#FDFBF4;font-family:'Zen Maru Gothic',sans-serif;font-size:10px;font-weight:700;border-radius:999px;padding:2px 8px">推奨</span></div>
+      <div style="height:112px;display:flex;align-items:center;justify-content:center;gap:16px">
+        <div style="width:56px;height:56px;border-radius:14px;background:#B9502F;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(185,80,47,.3)"><span style="font-family:'Shippori Mincho',serif;font-size:28px;font-weight:700;color:#FDFBF4">撮</span></div>
+        <div><div style="font-family:'Shippori Mincho',serif;font-size:30px;font-weight:700;letter-spacing:.14em">撮るほど</div><div style="margin-top:5px;font-size:11.5px;color:#8A8272;letter-spacing:.08em">かざすと、やさしく教えてくれる</div></div>
+      </div>
+      <div style="font-size:12px;color:#8A8272;line-height:1.7">御朱印帳のように記録がたまる世界観。朱の印にアプリの核「撮」。アイコン展開しやすい。</div>
+    </div>
+    <div style="flex:1;background:#FDFBF4;border:1px solid #EDE5D2;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">案B — ふりがな</div>
+      <div style="height:112px;display:flex;align-items:center;justify-content:center">
+        <ruby style="font-family:'Shippori Mincho',serif;font-size:46px;font-weight:700;letter-spacing:.12em">撮程<rt style="font-size:13px;color:#B9502F;letter-spacing:.4em;font-weight:700;font-family:'Zen Maru Gothic',sans-serif">とるほど</rt></ruby>
+      </div>
+      <div style="font-size:12px;color:#8A8272;line-height:1.7">「むずかしい字に、ふりがなを。」機能そのものをロゴに。正式表記はカタカナのまま。</div>
+    </div>
+    <div style="flex:1;background:#FDFBF4;border:1px solid #EDE5D2;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">案C — 木札</div>
+      <div style="height:112px;display:flex;align-items:center;justify-content:center">
+        <div style="width:50px;height:130px;background:#FBF5E6;border:1px solid #E4D6AE;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding-top:10px;box-shadow:0 3px 8px rgba(90,75,40,.14)">
+          <div style="width:8px;height:8px;flex:none;border-radius:999px;background:#B9502F"></div>
+          <div style="writing-mode:vertical-rl;font-family:'Shippori Mincho',serif;font-size:17px;font-weight:700;letter-spacing:.18em;white-space:nowrap">撮るほど</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#8A8272;line-height:1.7">道標・しおりのような縦書き札。地図ピンやスタンプへの展開が楽しい。</div>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:13px;font-weight:700;letter-spacing:.18em;color:#6B6350">カラーパレット — 和紙×和色（朱・藍の2色運用）</div>
+    <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#B9502F"></div><div style="margin-top:8px;font-size:13px;font-weight:700">朱（しゅ）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#B9502F</div><div style="font-size:11px;color:#8A8272">主ボタン・現在タブ・強調</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#33566E"></div><div style="margin-top:8px;font-size:13px;font-weight:700">藍（あい）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#33566E</div><div style="font-size:11px;color:#8A8272">AI補足・リンク</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#3A352C"></div><div style="margin-top:8px;font-size:13px;font-weight:700">墨（すみ）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#3A352C</div><div style="font-size:11px;color:#8A8272">見出し・本文</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#8A8272"></div><div style="margin-top:8px;font-size:13px;font-weight:700">灰茶（はいちゃ）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#8A8272</div><div style="font-size:11px;color:#8A8272">補助テキスト・ルビ</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#F6F1E5;border:1px solid #E8E0CC"></div><div style="margin-top:8px;font-size:13px;font-weight:700">生成り（きなり）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#F6F1E5</div><div style="font-size:11px;color:#8A8272">画面背景</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#FDFBF4;border:1px solid #E8E0CC"></div><div style="margin-top:8px;font-size:13px;font-weight:700">和紙（わし）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#FDFBF4</div><div style="font-size:11px;color:#8A8272">カード面</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#FBF5E6;border:1px solid #E8DCBB"></div><div style="margin-top:8px;font-size:13px;font-weight:700">古紙（こし）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#FBF5E6</div><div style="font-size:11px;color:#8A8272">「原文」カード背景</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#EAF0F4;border:1px solid #CBD9E1"></div><div style="margin-top:8px;font-size:13px;font-weight:700">薄藍（うすあい）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#EAF0F4</div><div style="font-size:11px;color:#8A8272">「AI補足」カード背景</div></div>
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:14px;padding:10px"><div style="height:46px;border-radius:10px;background:#E6DECB"></div><div style="margin-top:8px;font-size:13px;font-weight:700">砂色（すないろ）</div><div style="font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">#E6DECB</div><div style="font-size:11px;color:#8A8272">罫線・区切り</div></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:16px">
+    <div style="flex:1.25;background:#FDFBF4;border:1px solid #EDE5D2;border-radius:20px;padding:20px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.18em;color:#6B6350">タイポグラフィ見本</div>
+      <div style="margin-top:14px;font-family:'Shippori Mincho',serif;font-size:22px;font-weight:700;line-height:1.6">散歩の途中で、歴史に出会う。</div>
+      <div style="margin-top:10px;font-size:16px;line-height:1.95;text-wrap:pretty">むずかしい説明文を、やさしい言葉で。撮るほどは、あなたの旅の記録帳になります。</div>
+      <div style="margin-top:14px;font-family:'Shippori Mincho',serif;font-size:17px;line-height:2.4;text-wrap:pretty"><ruby>石碑<rt>せきひ</rt></ruby>の<ruby>文字<rt>もじ</rt></ruby>を、<ruby>誰<rt>だれ</rt></ruby>でも<ruby>読<rt>よ</rt></ruby>み<ruby>解<rt>と</rt></ruby>けるように。</div>
+      <div style="margin-top:10px;font-family:ui-monospace,monospace;font-size:11px;color:#A89F8A">ルビ＝HTML rubyタグ／本文の50%サイズ・灰茶・行間はルビ時2.4</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:1.6">
+        <div style="font-size:13px;font-weight:700;letter-spacing:.18em;color:#6B6350">タイプスケール</div>
+        <div><b>見出し</b> — Shippori Mincho 600–700／20–22px</div>
+        <div><b>本文</b> — Zen Maru Gothic 400–500／16px・行間1.9</div>
+        <div><b>原文の言いかえ</b> — Shippori Mincho 500／17px・行間2.2（ルビ時2.4）</div>
+        <div><b>補足・メタ</b> — 12–13px（最小12px）</div>
+        <div><b>ルビ</b> — 本文の50%／灰茶</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="background:#ECE5D0;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;color:#6B6350">1画面1目的</span>
+        <span style="background:#ECE5D0;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;color:#6B6350">角丸16–24px・影ひかえめ</span>
+        <span style="background:#ECE5D0;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;color:#6B6350">本文16px以上</span>
+        <span style="background:#ECE5D0;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;color:#6B6350">タップ領域44px以上</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-kick">基本フロー — ホーム → 撮影 → 読み取り → 解説</div>
+
+<div class="dv-opt" id="1b" data-screen-label="ホーム">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>ホーム — 「かざして解説」が主役</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:16px 24px 4px">
+    <div style="width:34px;height:34px;border-radius:9px;background:#B9502F;display:flex;align-items:center;justify-content:center"><span style="font-family:'Shippori Mincho',serif;font-size:17px;font-weight:700;color:#FDFBF4">撮</span></div>
+    <span style="font-family:'Shippori Mincho',serif;font-size:20px;font-weight:700;letter-spacing:.12em">撮るほど</span>
+  </div>
+  <div style="margin:14px 20px 0;background:#B9502F;border-radius:26px;padding:34px 24px 30px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 10px 26px rgba(185,80,47,.32)">
+    <div style="width:84px;height:84px;border-radius:999px;background:rgba(253,251,244,.16);display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:42px;line-height:1;color:#FDFBF4;font-variation-settings:'FILL' 1">photo_camera</span></div>
+    <div style="font-size:23px;font-weight:700;color:#FDFBF4;letter-spacing:.06em">かざして解説</div>
+    <div style="font-size:14px;color:rgba(253,251,244,.86)">石碑や案内板にカメラを向けるだけ</div>
+  </div>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;padding:28px 24px 12px">
+    <span style="font-family:'Shippori Mincho',serif;font-size:18px;font-weight:700;letter-spacing:.06em">さいきんの記録</span>
+    <a href="#1j" style="font-size:13px;font-weight:700;text-decoration:none">すべて見る</a>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;padding:0 20px">
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:18px;padding:12px;display:flex;gap:12px;align-items:center">
+      <div style="width:74px;height:74px;border-radius:12px;flex:none;background:repeating-linear-gradient(45deg,#E7DFC8 0 12px,#EFE8D4 12px 24px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700">旧東海道 一里塚跡</div><div style="margin-top:4px;font-size:12.5px;color:#8A8272">7月18日・神奈川県藤沢市</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#33566E;background:#EAF0F4;border-radius:999px;padding:3px 9px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">edit_note</span>メモあり</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:18px;padding:12px;display:flex;gap:12px;align-items:center">
+      <div style="width:74px;height:74px;border-radius:12px;flex:none;background:repeating-linear-gradient(45deg,#E2DAC4 0 12px,#EAE2CE 12px 24px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700">道祖神</div><div style="margin-top:4px;font-size:12.5px;color:#8A8272">7月12日・神奈川県大磯町</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+  </div>
+  <div style="margin-top:auto;background:#FDFBF4;border-top:1px solid #E6DECB">
+    <div style="display:flex;padding:10px 8px 2px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1">home</span><span style="font-size:11px;font-weight:700;color:#B9502F">ホーム</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">menu_book</span><span style="font-size:11px;font-weight:700;color:#9A917D">履歴</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">map</span><span style="font-size:11px;font-weight:700;color:#9A917D">地図</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">settings</span><span style="font-size:11px;font-weight:700;color:#9A917D">設定</span></div>
+    </div>
+    <div style="display:flex;justify-content:center;padding:6px 0 10px"><div style="width:120px;height:5px;border-radius:99px;background:#DDD5C1"></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1c" data-screen-label="撮影">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>撮影 — ガイド枠とひとことヒント</div>
+<div style="width:375px;background:#221F1A;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px;color:#F6F1E5"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="position:relative;flex:1;background:repeating-linear-gradient(45deg,#38342B 0 14px,#423D32 14px 28px)">
+    <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#8A8272;letter-spacing:.1em">カメラ映像（ライブ）</span>
+    <div style="position:absolute;top:14px;left:16px;width:40px;height:40px;border-radius:999px;background:rgba(20,17,13,.55);display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#F6F1E5">close</span></div>
+    <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:rgba(253,251,244,.94);border-radius:999px;padding:9px 15px;white-space:nowrap"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;color:#B9502F">lightbulb</span><span style="font-size:13px;font-weight:700;color:#4A4436">文字がはっきり写るように撮ってね</span></div>
+    <div style="position:absolute;left:30px;right:30px;top:110px;bottom:120px">
+      <div style="position:absolute;top:0;left:0;width:34px;height:34px;border-top:3.5px solid #F6F1E5;border-left:3.5px solid #F6F1E5;border-top-left-radius:12px"></div>
+      <div style="position:absolute;top:0;right:0;width:34px;height:34px;border-top:3.5px solid #F6F1E5;border-right:3.5px solid #F6F1E5;border-top-right-radius:12px"></div>
+      <div style="position:absolute;bottom:0;left:0;width:34px;height:34px;border-bottom:3.5px solid #F6F1E5;border-left:3.5px solid #F6F1E5;border-bottom-left-radius:12px"></div>
+      <div style="position:absolute;bottom:0;right:0;width:34px;height:34px;border-bottom:3.5px solid #F6F1E5;border-right:3.5px solid #F6F1E5;border-bottom-right-radius:12px"></div>
+      <div style="position:absolute;left:0;right:0;bottom:16px;text-align:center;font-size:13px;color:rgba(246,241,229,.92);letter-spacing:.06em">石碑や案内板を、枠のなかに</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:26px 44px 40px;background:#221F1A">
+    <div style="width:46px;height:46px;border-radius:999px;background:rgba(246,241,229,.14);display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;color:#F6F1E5">photo_library</span></div>
+    <div style="width:80px;height:80px;border-radius:999px;border:4px solid #F6F1E5;display:flex;align-items:center;justify-content:center"><div style="width:60px;height:60px;border-radius:999px;background:#B9502F"></div></div>
+    <div style="width:46px;height:46px;border-radius:999px;background:rgba(246,241,229,.14);display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;color:#F6F1E5">bolt</span></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1d" data-screen-label="読み取り中">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>読み取り中 — 2段階のローディング</div>
+<div style="width:375px;background:#221F1A;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px;color:#F6F1E5"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="position:relative;flex:1;background:repeating-linear-gradient(45deg,#38342B 0 14px,#423D32 14px 28px)">
+    <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#8A8272;letter-spacing:.1em">撮影した写真</span>
+    <div style="position:absolute;inset:0;background:rgba(20,17,13,.38)"></div>
+  </div>
+  <div style="background:#F6F1E5;border-radius:26px 26px 0 0;padding:14px 26px 36px;display:flex;flex-direction:column;gap:18px">
+    <div style="width:44px;height:5px;border-radius:99px;background:#D8CFBA;margin:0 auto"></div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="font-family:'Material Symbols Rounded';font-size:26px;line-height:1;color:#33566E;font-variation-settings:'FILL' 1">check_circle</span>
+      <div style="font-size:15px;font-weight:700;color:#6B6350">読み取りました</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:22px;height:22px;flex:none;border-radius:999px;border:3px solid #E5DCC4;border-top-color:#B9502F;animation:spin 1s linear infinite;margin:0 2px"></div>
+      <div><div style="font-size:16.5px;font-weight:700">解説を作っています…</div><div style="margin-top:3px;font-size:12.5px;color:#8A8272">やさしい言葉に言いかえています</div></div>
+    </div>
+    <div style="text-align:center;font-size:12px;color:#A89F8A">そのまま少しだけお待ちください</div>
+    <div style="text-align:center;font-size:14px;font-weight:700;color:#8A8272">キャンセル</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1e" data-screen-label="解説結果（やさしい・ふりがなON）">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>解説結果 — やさしい＋ふりがなON（コア画面）</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 20px 10px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#6B6350">arrow_back_ios_new</span><div style="flex:1;text-align:center;font-size:16px;font-weight:700;letter-spacing:.08em">解説</div><div style="width:20px"></div></div>
+  <div style="display:flex;flex-direction:column;gap:16px;padding:2px 20px 28px">
+    <div style="position:relative;height:196px;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(45deg,#E7DFC8 0 12px,#EFE8D4 12px 24px)">
+      <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#9A9078;letter-spacing:.1em">写真：一里塚跡の石碑</span>
+      <div style="position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:4px;background:rgba(41,36,29,.72);color:#F6F1E5;font-size:11px;border-radius:999px;padding:5px 11px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">zoom_in</span>タップで拡大</div>
+    </div>
+    <div>
+      <div style="font-family:'Shippori Mincho',serif;font-size:21px;font-weight:700;line-height:1.5">旧東海道 一里塚跡</div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:13px;color:#8A8272">7月18日 14:22・<span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1">location_on</span>神奈川県藤沢市</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="flex:1;display:flex;background:#EAE2CB;border-radius:999px;padding:4px">
+        <div style="flex:1;text-align:center;padding:9px 0;border-radius:999px;background:#FDFBF4;font-size:14px;font-weight:700;box-shadow:0 1px 3px rgba(58,53,44,.14)">やさしい</div>
+        <div style="flex:1;text-align:center;padding:9px 0;font-size:14px;font-weight:700;color:#8A8272">くわしい</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px;font-weight:700">ふりがな</span>
+        <div style="position:relative;width:52px;height:31px;border-radius:999px;background:#B9502F"><div style="position:absolute;top:3px;right:3px;width:25px;height:25px;border-radius:999px;background:#FDFBF4;box-shadow:0 1px 3px rgba(0,0,0,.22)"></div></div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FCF7E9,#F8F1DD);border:1px solid #E7DBB8;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#9C4327;font-variation-settings:'FILL' 1">menu_book</span><span style="font-size:13px;font-weight:700;color:#9C4327;letter-spacing:.1em;white-space:nowrap">ここに書かれていること</span><span style="margin-left:auto;font-size:10.5px;color:#A6946C;text-align:right;min-width:0">やさしく言いかえ</span></div>
+      <div style="margin-top:12px;font-family:'Shippori Mincho',serif;font-size:17px;line-height:2.4;text-wrap:pretty"><ruby>一里塚<rt>いちりづか</rt></ruby>は、<ruby>江戸時代<rt>えどじだい</rt></ruby>のはじめ（<ruby>今<rt>いま</rt></ruby>から<ruby>約<rt>やく</rt></ruby>400<ruby>年前<rt>ねんまえ</rt></ruby>）に、<ruby>道<rt>みち</rt></ruby>を<ruby>歩<rt>ある</rt></ruby>く<ruby>人<rt>ひと</rt></ruby>のためにつくられた「<ruby>道<rt>みち</rt></ruby>しるべ」です。<ruby>一里<rt>いちり</rt></ruby>（<ruby>約<rt>やく</rt></ruby>4キロ）ごとに<ruby>土<rt>つち</rt></ruby>を<ruby>盛<rt>も</rt></ruby>って<ruby>木<rt>き</rt></ruby>を<ruby>植<rt>う</rt></ruby>え、<ruby>旅人<rt>たびびと</rt></ruby>はその<ruby>木<rt>こ</rt></ruby>かげでひと<ruby>休<rt>やす</rt></ruby>みしました。ここには、その<ruby>塚<rt>つか</rt></ruby>がありました。</div>
+    </div>
+    <div style="background:#EAF0F4;border:1px solid #CBD9E1;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#33566E;font-variation-settings:'FILL' 1">auto_awesome</span><span style="font-size:13px;font-weight:700;color:#33566E;letter-spacing:.1em">AIによる補足</span><span style="margin-left:auto;font-size:10.5px;color:#7C8B96">背景知識のおぎない</span></div>
+      <div style="margin-top:12px;font-size:16px;line-height:2.3;color:#3D4750;text-wrap:pretty"><ruby>塚<rt>つか</rt></ruby>には<ruby>榎<rt>えのき</rt></ruby>という<ruby>木<rt>き</rt></ruby>がよく<ruby>植<rt>う</rt></ruby>えられました。<ruby>根<rt>ね</rt></ruby>がじょうぶで、<ruby>大<rt>おお</rt></ruby>きな<ruby>木<rt>こ</rt></ruby>かげをつくるからだと<ruby>言<rt>い</rt></ruby>われています。このあたりには、ほかにも<ruby>当時<rt>とうじ</rt></ruby>の<ruby>道<rt>みち</rt></ruby>しるべが<ruby>残<rt>のこ</rt></ruby>っています。</div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#6B6350;letter-spacing:.1em">じぶんのメモ</div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:flex-start;background:#FDFBF4;border:1.5px dashed #D8CDB0;border-radius:16px;padding:14px;min-height:64px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#A89F8A">edit_note</span><span style="font-size:14px;color:#A89F8A;line-height:1.7">気づいたことをメモしておけます（例：子どもと来た。榎はどれ？）</span></div>
+    </div>
+    <div style="height:56px;border-radius:999px;background:#B9502F;display:flex;align-items:center;justify-content:center;gap:8px;color:#FDFBF4;font-size:17px;font-weight:700;box-shadow:0 8px 18px rgba(185,80,47,.3)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">bookmark_add</span>記録に残す</div>
+    <div style="text-align:center;font-size:11px;color:#A89F8A;line-height:1.6">AIによる解説です。正確な情報は現地の案内をご確認ください。</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-kick">解説結果のバリエーション — モード切替×ふりがな</div>
+
+<div class="dv-opt" id="1f" data-screen-label="解説結果（やさしい・ふりがなOFF）">
+<div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>やさしい＋ふりがなOFF</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 20px 10px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#6B6350">arrow_back_ios_new</span><div style="flex:1;text-align:center;font-size:16px;font-weight:700;letter-spacing:.08em">解説</div><div style="width:20px"></div></div>
+  <div style="display:flex;flex-direction:column;gap:16px;padding:2px 20px 28px">
+    <div style="position:relative;height:196px;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(45deg,#E7DFC8 0 12px,#EFE8D4 12px 24px)">
+      <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#9A9078;letter-spacing:.1em">写真：一里塚跡の石碑</span>
+      <div style="position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:4px;background:rgba(41,36,29,.72);color:#F6F1E5;font-size:11px;border-radius:999px;padding:5px 11px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">zoom_in</span>タップで拡大</div>
+    </div>
+    <div>
+      <div style="font-family:'Shippori Mincho',serif;font-size:21px;font-weight:700;line-height:1.5">旧東海道 一里塚跡</div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:13px;color:#8A8272">7月18日 14:22・<span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1">location_on</span>神奈川県藤沢市</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="flex:1;display:flex;background:#EAE2CB;border-radius:999px;padding:4px">
+        <div style="flex:1;text-align:center;padding:9px 0;border-radius:999px;background:#FDFBF4;font-size:14px;font-weight:700;box-shadow:0 1px 3px rgba(58,53,44,.14)">やさしい</div>
+        <div style="flex:1;text-align:center;padding:9px 0;font-size:14px;font-weight:700;color:#8A8272">くわしい</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px;font-weight:700;color:#8A8272">ふりがな</span>
+        <div style="position:relative;width:52px;height:31px;border-radius:999px;background:#D9D0BB"><div style="position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:999px;background:#FDFBF4;box-shadow:0 1px 3px rgba(0,0,0,.18)"></div></div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FCF7E9,#F8F1DD);border:1px solid #E7DBB8;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#9C4327;font-variation-settings:'FILL' 1">menu_book</span><span style="font-size:13px;font-weight:700;color:#9C4327;letter-spacing:.1em;white-space:nowrap">ここに書かれていること</span><span style="margin-left:auto;font-size:10.5px;color:#A6946C;text-align:right;min-width:0">やさしく言いかえ</span></div>
+      <div style="margin-top:12px;font-family:'Shippori Mincho',serif;font-size:17px;line-height:2.2;text-wrap:pretty">一里塚は、江戸時代のはじめ（今から約400年前）に、道を歩く人のためにつくられた「道しるべ」です。一里（約4キロ）ごとに土を盛って木を植え、旅人はその木かげでひと休みしました。ここには、その塚がありました。</div>
+    </div>
+    <div style="background:#EAF0F4;border:1px solid #CBD9E1;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#33566E;font-variation-settings:'FILL' 1">auto_awesome</span><span style="font-size:13px;font-weight:700;color:#33566E;letter-spacing:.1em">AIによる補足</span><span style="margin-left:auto;font-size:10.5px;color:#7C8B96">背景知識のおぎない</span></div>
+      <div style="margin-top:12px;font-size:16px;line-height:2;color:#3D4750;text-wrap:pretty">塚には榎（えのき）という木がよく植えられました。根がじょうぶで、大きな木かげをつくるからだと言われています。このあたりには、ほかにも当時の道しるべが残っています。</div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#6B6350;letter-spacing:.1em">じぶんのメモ</div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:flex-start;background:#FDFBF4;border:1.5px dashed #D8CDB0;border-radius:16px;padding:14px;min-height:64px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#A89F8A">edit_note</span><span style="font-size:14px;color:#A89F8A;line-height:1.7">気づいたことをメモしておけます</span></div>
+    </div>
+    <div style="height:56px;border-radius:999px;background:#B9502F;display:flex;align-items:center;justify-content:center;gap:8px;color:#FDFBF4;font-size:17px;font-weight:700;box-shadow:0 8px 18px rgba(185,80,47,.3)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">bookmark_add</span>記録に残す</div>
+    <div style="text-align:center;font-size:11px;color:#A89F8A;line-height:1.6">AIによる解説です。正確な情報は現地の案内をご確認ください。</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1g" data-screen-label="解説結果（くわしい）">
+<div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>くわしい＋ふりがなOFF</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 20px 10px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#6B6350">arrow_back_ios_new</span><div style="flex:1;text-align:center;font-size:16px;font-weight:700;letter-spacing:.08em">解説</div><div style="width:20px"></div></div>
+  <div style="display:flex;flex-direction:column;gap:16px;padding:2px 20px 28px">
+    <div style="position:relative;height:150px;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(45deg,#E7DFC8 0 12px,#EFE8D4 12px 24px)">
+      <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#9A9078;letter-spacing:.1em">写真：一里塚跡の石碑</span>
+    </div>
+    <div>
+      <div style="font-family:'Shippori Mincho',serif;font-size:21px;font-weight:700;line-height:1.5">旧東海道 一里塚跡</div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:13px;color:#8A8272">7月18日 14:22・<span style="font-family:'Material Symbols Rounded';font-size:15px;line-height:1">location_on</span>神奈川県藤沢市</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="flex:1;display:flex;background:#EAE2CB;border-radius:999px;padding:4px">
+        <div style="flex:1;text-align:center;padding:9px 0;font-size:14px;font-weight:700;color:#8A8272">やさしい</div>
+        <div style="flex:1;text-align:center;padding:9px 0;border-radius:999px;background:#FDFBF4;font-size:14px;font-weight:700;box-shadow:0 1px 3px rgba(58,53,44,.14)">くわしい</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px;font-weight:700;color:#8A8272">ふりがな</span>
+        <div style="position:relative;width:52px;height:31px;border-radius:999px;background:#D9D0BB"><div style="position:absolute;top:3px;left:3px;width:25px;height:25px;border-radius:999px;background:#FDFBF4;box-shadow:0 1px 3px rgba(0,0,0,.18)"></div></div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FCF7E9,#F8F1DD);border:1px solid #E7DBB8;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#9C4327;font-variation-settings:'FILL' 1">menu_book</span><span style="font-size:13px;font-weight:700;color:#9C4327;letter-spacing:.1em">ここに書かれていること</span><span style="margin-left:auto;font-size:10.5px;color:#A6946C">原文にそった説明</span></div>
+      <div style="margin-top:12px;font-family:'Shippori Mincho',serif;font-size:16px;line-height:2.15;text-wrap:pretty">一里塚は、慶長九年（1604年）、江戸幕府の命により全国の主要街道に築かれた里程標です。日本橋を起点に一里（約3.9km）ごとに五間（約9m）四方の塚を築き、榎などを植えて目印としました。旅人には距離の目安であり、木陰の休み場でもありました。この塚は、東海道を江戸から数えて十二里目にあたります。</div>
+    </div>
+    <div style="background:#EAF0F4;border:1px solid #CBD9E1;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#33566E;font-variation-settings:'FILL' 1">auto_awesome</span><span style="font-size:13px;font-weight:700;color:#33566E;letter-spacing:.1em">AIによる補足</span><span style="margin-left:auto;font-size:10.5px;color:#7C8B96">背景知識のおぎない</span></div>
+      <div style="margin-top:12px;font-size:15px;line-height:2;color:#3D4750;text-wrap:pretty">塚は本来、道の両側に一基ずつ対で築かれました。明治期以降の道路拡幅で多くが失われ、対で現存する例は全国でも貴重です。史跡指定を受けた塚は、いまも街道歩きの目印として親しまれています。</div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#6B6350;letter-spacing:.1em">じぶんのメモ</div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:flex-start;background:#FDFBF4;border:1.5px dashed #D8CDB0;border-radius:16px;padding:14px;min-height:64px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#A89F8A">edit_note</span><span style="font-size:14px;color:#A89F8A;line-height:1.7">気づいたことをメモしておけます</span></div>
+    </div>
+    <div style="height:56px;border-radius:999px;background:#B9502F;display:flex;align-items:center;justify-content:center;gap:8px;color:#FDFBF4;font-size:17px;font-weight:700;box-shadow:0 8px 18px rgba(185,80,47,.3)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">bookmark_add</span>記録に残す</div>
+    <div style="text-align:center;font-size:11px;color:#A89F8A;line-height:1.6">AIによる解説です。正確な情報は現地の案内をご確認ください。</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-kick">読み取れなかったとき — 責めないエラー</div>
+
+<div class="dv-opt" id="1h" data-screen-label="読み取り失敗">
+<div class="dv-olabel"><a class="dv-oid" href="#1h">1h</a>読み取り失敗 — コツを添えて、もう一度</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 20px 10px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#6B6350">close</span><div style="flex:1;text-align:center;font-size:16px;font-weight:700;letter-spacing:.08em">解説</div><div style="width:20px"></div></div>
+  <div style="display:flex;flex-direction:column;gap:18px;padding:8px 24px 32px;flex:1">
+    <div style="width:104px;height:104px;border-radius:999px;background:#F0E8D3;display:flex;align-items:center;justify-content:center;margin:22px auto 0"><span style="font-family:'Material Symbols Rounded';font-size:46px;line-height:1;color:#A89263">no_photography</span></div>
+    <div style="text-align:center;font-family:'Shippori Mincho',serif;font-size:20px;font-weight:700">うまく読み取れませんでした</div>
+    <div style="text-align:center;font-size:15px;line-height:2;color:#6B6350;text-wrap:pretty">文字が小さかったり、影に入っていたりすると、読み取りがむずかしいことがあります。だいじょうぶ、もう一度ためしてみましょう。</div>
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:20px;padding:18px">
+      <div style="font-size:13px;font-weight:700;color:#6B6350;letter-spacing:.12em">うまく撮るコツ</div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:11px;align-items:center"><div style="width:36px;height:36px;flex:none;border-radius:999px;background:#F3EDDC;display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1;color:#B9502F">zoom_in</span></div><span style="font-size:15px;line-height:1.6">文字に近づいて、大きく写す</span></div>
+        <div style="display:flex;gap:11px;align-items:center"><div style="width:36px;height:36px;flex:none;border-radius:999px;background:#F3EDDC;display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1;color:#B9502F">light_mode</span></div><span style="font-size:15px;line-height:1.6">影や反射をさけて、明るいところで</span></div>
+        <div style="display:flex;gap:11px;align-items:center"><div style="width:36px;height:36px;flex:none;border-radius:999px;background:#F3EDDC;display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:19px;line-height:1;color:#B9502F">center_focus_strong</span></div><span style="font-size:15px;line-height:1.6">正面から、まっすぐ撮る</span></div>
+      </div>
+    </div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:14px">
+      <div style="height:56px;border-radius:999px;background:#B9502F;display:flex;align-items:center;justify-content:center;gap:8px;color:#FDFBF4;font-size:17px;font-weight:700;box-shadow:0 8px 18px rgba(185,80,47,.3)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">photo_camera</span>もう一度撮る</div>
+      <a href="#1b" style="text-align:center;font-size:14px;font-weight:700">ホームにもどる</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1i" data-screen-label="部分読み取り">
+<div class="dv-olabel"><a class="dv-oid" href="#1i">1i</a>部分読み取り — 読めた分だけ解説（場所情報なしの例）</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 20px 10px"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#6B6350">arrow_back_ios_new</span><div style="flex:1;text-align:center;font-size:16px;font-weight:700;letter-spacing:.08em">解説</div><div style="width:20px"></div></div>
+  <div style="display:flex;flex-direction:column;gap:16px;padding:2px 20px 28px">
+    <div style="display:flex;gap:9px;align-items:flex-start;background:#F4E6CF;border:1px solid #E4CD9E;border-radius:14px;padding:12px 14px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#9C6B27">info</span><span style="font-size:13.5px;font-weight:700;color:#7A5A1F;line-height:1.6">一部だけ読み取れました。読み取れた部分だけ解説しています。</span></div>
+    <div style="position:relative;height:150px;border-radius:20px;overflow:hidden;background:repeating-linear-gradient(45deg,#DFD7C0 0 12px,#E8E0CB 12px 24px)">
+      <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,monospace;font-size:11px;color:#9A9078;letter-spacing:.1em">写真：風化した石碑</span>
+    </div>
+    <div>
+      <div style="font-family:'Shippori Mincho',serif;font-size:21px;font-weight:700;line-height:1.5">馬頭観音碑</div>
+      <div style="margin-top:6px;font-size:13px;color:#8A8272">7月20日 10:05・場所は記録されていません</div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FCF7E9,#F8F1DD);border:1px solid #E7DBB8;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#9C4327;font-variation-settings:'FILL' 1">menu_book</span><span style="font-size:13px;font-weight:700;color:#9C4327;letter-spacing:.1em">ここに書かれていること</span></div>
+      <div style="margin-top:12px;display:inline-block;font-family:ui-monospace,monospace;font-size:12px;color:#8A7A52;background:#F3ECD6;border:1px solid #E7DBB8;border-radius:8px;padding:6px 10px">読めた文字：馬頭觀世音 ／ 文化八年</div>
+      <div style="margin-top:12px;font-family:'Shippori Mincho',serif;font-size:17px;line-height:2.2;text-wrap:pretty">「馬頭観音（ばとうかんのん）」と書かれた石碑です。むかし、荷物をはこんで働いた馬をいたわり、旅の安全を願って建てられました。「文化八年」は1811年、今から200年以上前です。</div>
+    </div>
+    <div style="background:#EAF0F4;border:1px solid #CBD9E1;border-radius:20px;padding:18px 18px 20px">
+      <div style="display:flex;align-items:center;gap:7px"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#33566E;font-variation-settings:'FILL' 1">auto_awesome</span><span style="font-size:13px;font-weight:700;color:#33566E;letter-spacing:.1em">AIによる補足</span></div>
+      <div style="margin-top:12px;font-size:16px;line-height:2;color:#3D4750;text-wrap:pretty">馬頭観音の碑は、街道ぞいや坂道の入り口によく残されています。すり減った文字が多いほど、長く旅人を見守ってきた証かもしれません。</div>
+    </div>
+    <div style="margin-top:4px;display:flex;flex-direction:column;gap:12px">
+      <div style="height:54px;border-radius:999px;border:2px solid #B9502F;color:#B9502F;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700"><span style="font-family:'Material Symbols Rounded';font-size:21px;line-height:1">photo_camera</span>もう一度撮る</div>
+      <div style="height:56px;border-radius:999px;background:#B9502F;display:flex;align-items:center;justify-content:center;gap:8px;color:#FDFBF4;font-size:17px;font-weight:700;box-shadow:0 8px 18px rgba(185,80,47,.3)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">bookmark_add</span>このまま記録に残す</div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:#A89F8A;line-height:1.6">AIによる解説です。正確な情報は現地の案内をご確認ください。</div>
+  </div>
+</div>
+</div>
+
+<div class="dv-kick">記録をふりかえる — 履歴・地図</div>
+
+<div class="dv-opt" id="1j" data-screen-label="履歴">
+<div class="dv-olabel"><a class="dv-oid" href="#1j">1j</a>履歴 — 旅の記録帳</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="padding:16px 24px 6px">
+    <div style="font-family:'Shippori Mincho',serif;font-size:22px;font-weight:700;letter-spacing:.08em">旅の記録</div>
+    <div style="margin-top:4px;font-size:13px;color:#8A8272">あるいた分だけ、たまっていきます — 12件</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;padding:12px 20px 20px">
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:18px;padding:12px;display:flex;gap:12px;align-items:center">
+      <div style="width:74px;height:74px;border-radius:12px;flex:none;background:repeating-linear-gradient(45deg,#E7DFC8 0 12px,#EFE8D4 12px 24px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700">旧東海道 一里塚跡</div><div style="margin-top:4px;font-size:12.5px;color:#8A8272">7月18日・神奈川県藤沢市</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#33566E;background:#EAF0F4;border-radius:999px;padding:3px 9px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">edit_note</span>メモあり</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:18px;padding:12px;display:flex;gap:12px;align-items:center">
+      <div style="width:74px;height:74px;border-radius:12px;flex:none;background:repeating-linear-gradient(45deg,#E2DAC4 0 12px,#EAE2CE 12px 24px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700">道祖神</div><div style="margin-top:4px;font-size:12.5px;color:#8A8272">7月12日・神奈川県大磯町</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:18px;padding:12px;display:flex;gap:12px;align-items:center">
+      <div style="width:74px;height:74px;border-radius:12px;flex:none;background:repeating-linear-gradient(45deg,#DFD7C0 0 12px,#E8E0CB 12px 24px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700">二宮尊徳 生家の碑</div><div style="margin-top:4px;font-size:12.5px;color:#8A8272">6月29日・神奈川県小田原市</div><div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#33566E;background:#EAF0F4;border-radius:999px;padding:3px 9px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">edit_note</span>メモあり</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+    <div style="background:#FDFBF4;border:1px solid #EDE5D2;border-radius:18px;padding:12px;display:flex;gap:12px;align-items:center">
+      <div style="width:74px;height:74px;border-radius:12px;flex:none;background:repeating-linear-gradient(45deg,#E5DCC2 0 12px,#EDE5D0 12px 24px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700">大山道 道標</div><div style="margin-top:4px;font-size:12.5px;color:#8A8272">6月21日・神奈川県伊勢原市</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+  </div>
+  <div style="margin-top:auto;background:#FDFBF4;border-top:1px solid #E6DECB">
+    <div style="display:flex;padding:10px 8px 2px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">home</span><span style="font-size:11px;font-weight:700;color:#9A917D">ホーム</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1">menu_book</span><span style="font-size:11px;font-weight:700;color:#B9502F">履歴</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">map</span><span style="font-size:11px;font-weight:700;color:#9A917D">地図</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">settings</span><span style="font-size:11px;font-weight:700;color:#9A917D">設定</span></div>
+    </div>
+    <div style="display:flex;justify-content:center;padding:6px 0 10px"><div style="width:120px;height:5px;border-radius:99px;background:#DDD5C1"></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1k" data-screen-label="履歴（空）">
+<div class="dv-olabel"><a class="dv-oid" href="#1k">1k</a>履歴・空の状態 — 最初の一枚への誘い</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="padding:16px 24px 6px">
+    <div style="font-family:'Shippori Mincho',serif;font-size:22px;font-weight:700;letter-spacing:.08em">旅の記録</div>
+  </div>
+  <div style="margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 32px">
+    <div style="width:104px;height:104px;border-radius:999px;background:#F0E8D3;display:flex;align-items:center;justify-content:center"><span style="font-family:'Material Symbols Rounded';font-size:46px;line-height:1;color:#A89263">auto_stories</span></div>
+    <div style="font-family:'Shippori Mincho',serif;font-size:19px;font-weight:700">まだ記録がありません</div>
+    <div style="text-align:center;font-size:15px;line-height:2;color:#6B6350;text-wrap:pretty">散歩に出かけて、最初の一枚を撮ってみませんか。石碑や案内板が、きっと何かを教えてくれます。</div>
+    <div style="margin-top:6px;height:54px;border-radius:999px;background:#B9502F;display:inline-flex;align-items:center;justify-content:center;gap:8px;color:#FDFBF4;font-size:16px;font-weight:700;padding:0 26px;box-shadow:0 8px 18px rgba(185,80,47,.3)"><span style="font-family:'Material Symbols Rounded';font-size:21px;line-height:1">photo_camera</span>かざして解説をはじめる</div>
+  </div>
+  <div style="margin-top:auto;background:#FDFBF4;border-top:1px solid #E6DECB">
+    <div style="display:flex;padding:10px 8px 2px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">home</span><span style="font-size:11px;font-weight:700;color:#9A917D">ホーム</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1">menu_book</span><span style="font-size:11px;font-weight:700;color:#B9502F">履歴</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">map</span><span style="font-size:11px;font-weight:700;color:#9A917D">地図</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">settings</span><span style="font-size:11px;font-weight:700;color:#9A917D">設定</span></div>
+    </div>
+    <div style="display:flex;justify-content:center;padding:6px 0 10px"><div style="width:120px;height:5px;border-radius:99px;background:#DDD5C1"></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1l" data-screen-label="地図">
+<div class="dv-olabel"><a class="dv-oid" href="#1l">1l</a>地図 — 旅の振り返り（位置情報オフでも成立）</div>
+<div style="width:375px;background:#F6F1E5;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;min-height:812px;box-shadow:0 18px 44px rgba(15,12,8,.45)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px 6px"><span style="font-size:14px;font-weight:700">9:41</span><span style="display:flex;gap:5px;align-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1">battery_full</span></span></div>
+  <div style="padding:16px 24px 12px;display:flex;align-items:center">
+    <div style="font-family:'Shippori Mincho',serif;font-size:22px;font-weight:700;letter-spacing:.08em">旅の記録地図</div>
+    <span style="margin-left:auto;font-size:12px;font-weight:700;color:#6B6350;background:#ECE5D0;border-radius:999px;padding:6px 13px">7月・4件</span>
+  </div>
+  <div style="position:relative;flex:1;min-height:520px;background:#EDE6D3;overflow:hidden">
+    <svg viewBox="0 0 375 560" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
+      <ellipse cx="86" cy="130" rx="78" ry="50" fill="#DFE3C6"></ellipse>
+      <path d="M 250 580 C 268 470 330 430 390 418" fill="none" stroke="#C9D8DE" stroke-width="30" stroke-linecap="round"></path>
+      <path d="M -10 420 C 90 380 150 300 192 212 C 224 142 300 92 390 72" fill="none" stroke="#FBF7EC" stroke-width="22" stroke-linecap="round"></path>
+      <path d="M -10 252 C 80 262 190 302 390 262" fill="none" stroke="#FBF7EC" stroke-width="13" stroke-linecap="round"></path>
+    </svg>
+    <span style="position:absolute;left:148px;top:196px;font-family:'Material Symbols Rounded';font-size:40px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1;filter:drop-shadow(0 3px 4px rgba(40,30,15,.3))">location_on</span>
+    <span style="position:absolute;left:58px;top:330px;font-family:'Material Symbols Rounded';font-size:30px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1;filter:drop-shadow(0 2px 3px rgba(40,30,15,.25))">location_on</span>
+    <span style="position:absolute;left:252px;top:396px;font-family:'Material Symbols Rounded';font-size:30px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1;filter:drop-shadow(0 2px 3px rgba(40,30,15,.25))">location_on</span>
+    <span style="position:absolute;left:308px;top:196px;font-family:'Material Symbols Rounded';font-size:30px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1;filter:drop-shadow(0 2px 3px rgba(40,30,15,.25))">location_on</span>
+    <div style="position:absolute;left:64px;top:112px;width:224px;background:#FDFBF4;border-radius:16px;box-shadow:0 10px 24px rgba(30,25,18,.28);padding:10px;display:flex;gap:10px;align-items:center">
+      <div style="width:48px;height:48px;flex:none;border-radius:10px;background:repeating-linear-gradient(45deg,#E7DFC8 0 10px,#EFE8D4 10px 20px)"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700">旧東海道 一里塚跡</div><div style="margin-top:2px;font-size:11.5px;color:#8A8272">7月18日・藤沢市</div></div>
+      <span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:#B4AA94">chevron_right</span>
+    </div>
+    <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);white-space:nowrap;background:rgba(253,251,244,.94);border:1px solid #E6DECB;border-radius:999px;padding:8px 15px;font-size:11.5px;font-weight:700;color:#6B6350">位置情報がオフでも、記録は残せます</div>
+  </div>
+  <div style="margin-top:auto;background:#FDFBF4;border-top:1px solid #E6DECB">
+    <div style="display:flex;padding:10px 8px 2px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">home</span><span style="font-size:11px;font-weight:700;color:#9A917D">ホーム</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">menu_book</span><span style="font-size:11px;font-weight:700;color:#9A917D">履歴</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#B9502F;font-variation-settings:'FILL' 1">map</span><span style="font-size:11px;font-weight:700;color:#B9502F">地図</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;color:#9A917D">settings</span><span style="font-size:11px;font-weight:700;color:#9A917D">設定</span></div>
+    </div>
+    <div style="display:flex;justify-content:center;padding:6px 0 10px"><div style="width:120px;height:5px;border-radius:99px;background:#DDD5C1"></div></div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">つづきの例：「ロゴは<a class="dv-oid" href="#1a">1a</a>の案Aで統一して各画面に反映」・「<a class="dv-oid" href="#1e">1e</a>の原文カードに和紙の質感をもっと」・「写真プレースホルダーに実写を差し替えたい」</p>
+</section>
+</x-dc>
+</body>
+</html>

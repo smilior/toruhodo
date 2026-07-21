@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>画面設計 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの画面一覧・主要 UI 要素・遷移・レイアウト要点。S-00〜S-07、デザインID 1b〜1l。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a class="active" href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">02 基本設計 · 04/07</div>
+      <h1>画面設計書</h1>
+      <p class="lede">撮るほどの画面一覧（S-00〜S-07）、デザイン ID 対応、主要 UI 要素と遷移、企画書に基づくレイアウト要点を定義する。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>UI 正本は <code>docs/00. 企画書/README.md</code> と <code>撮るほど UIデザイン.dc.html</code>。色・タイポ・余白は hifi。本文 16px 以上、タップ 44px 以上、主ボタン高さ 56px。設定画面はデザイン未作成のため shadcn リストで実装する。</p>
+      </div>
+
+      <h2>画面一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">画面ID</th>
+              <th scope="col">名称</th>
+              <th scope="col">パス</th>
+              <th scope="col">デザインID</th>
+              <th scope="col">認証</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>S-00</td><td>ログイン</td><td><code>/login</code></td><td>（未作成・shadcn）</td><td>不要</td></tr>
+            <tr><td>S-01</td><td>ホーム</td><td><code>/</code></td><td>1b</td><td>要</td></tr>
+            <tr><td>S-02</td><td>撮影</td><td><code>/scan</code></td><td>1c, 1d</td><td>要</td></tr>
+            <tr><td>S-03</td><td>解説結果</td><td><code>/result/:id</code></td><td>1e, 1f, 1g, 1i</td><td>要</td></tr>
+            <tr><td>S-04</td><td>読み取り失敗</td><td><code>/scan</code> 内 or <code>/result/failed</code></td><td>1h</td><td>要</td></tr>
+            <tr><td>S-05</td><td>履歴</td><td><code>/history</code></td><td>1j, 1k</td><td>要</td></tr>
+            <tr><td>S-06</td><td>地図</td><td><code>/map</code></td><td>1l</td><td>要</td></tr>
+            <tr><td>S-07</td><td>設定</td><td><code>/settings</code></td><td>（未作成・shadcn）</td><td>要</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>タブバー: ホーム / 履歴 / 地図 / 設定（4 タブ）。撮影・結果はタブ外フロー。</p>
+
+      <h2>画面遷移</h2>
+      <pre><code>S-00 ログイン
+  └→ S-01 ホーム ⇄ S-05 履歴 ⇄ S-06 地図 ⇄ S-07 設定（タブ）
+           │
+           └→ S-02 撮影 → (1d ローディング)
+                    ├→ S-04 失敗 → 再撮影 or S-01
+                    └→ S-03 結果（done / partial）
+                         ├ 記録に残す → S-05 に出現
+                         └ 履歴・地図のピンから再表示</code></pre>
+      <figure class="diagram">
+        <figcaption>画面遷移の概念図</figcaption>
+        <img src="../assets/diagrams/screen-flow.svg" alt="画面遷移の概念図。">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+
+      <h2>レイアウト要点（企画書対応）</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">画面</th>
+              <th scope="col">主要 UI 要素</th>
+              <th scope="col">レイアウト要点</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>S-00 ログイン</td>
+              <td>Google ログインボタン、ロゴ、タグライン</td>
+              <td>shadcn 標準。生成り背景・朱 primary。未作成デザインに合わせる</td>
+            </tr>
+            <tr>
+              <td>S-01 ホーム (1b)</td>
+              <td>朱印ロゴ＋ワードマーク、「かざして解説」CTA、さいきんの記録、タブバー</td>
+              <td>縦 flex。朱角丸 26px の主役ブロック。履歴カード 2〜3 件。「すべて見る」→ S-05</td>
+            </tr>
+            <tr>
+              <td>S-02 撮影 (1c)</td>
+              <td>カメラ全面、閉じる、ヒントピル、ガイド枠、ギャラリー／シャッター／フラッシュ</td>
+              <td>ダーク地 <code>#221F1A</code>。シャッター外輪 80px・内円 60px 朱</td>
+            </tr>
+            <tr>
+              <td>S-02 読取中 (1d)</td>
+              <td>暗幕、ボトムシート、2 段階スピナー（OCR→解説）、キャンセル</td>
+              <td>「読み取っています…」→「解説を作っています…」</td>
+            </tr>
+            <tr>
+              <td>S-03 結果 (1e–1g)</td>
+              <td>写真、タイトル、メタ、モードセグメント、ふりがな SW、原文カード、AI補足カード、メモ、記録に残す、免責</td>
+              <td>縦スクロール 1 カラム。原文＝古紙／AI＝薄藍の 3 重区別。主ボタン 56px 朱</td>
+            </tr>
+            <tr>
+              <td>S-03 partial (1i)</td>
+              <td>注意バナー、読めた文字チップ、「もう一度撮る」「このまま記録に残す」</td>
+              <td>警告色 <code>#F4E6CF</code> 系。位置なしメタの例も兼ねる</td>
+            </tr>
+            <tr>
+              <td>S-04 失敗 (1h)</td>
+              <td>no_photography アイコン、説明、うまく撮るコツ 3 行、再撮影、ホーム</td>
+              <td>責めないトーン。中央揃え縦 flex</td>
+            </tr>
+            <tr>
+              <td>S-05 履歴 (1j/1k)</td>
+              <td>「旅の記録」見出し、件数、履歴カード、空状態 CTA</td>
+              <td>カード横 flex。メモありバッジ（藍）。空は auto_stories</td>
+            </tr>
+            <tr>
+              <td>S-06 地図 (1l)</td>
+              <td>MapLibre 地図、朱ピン、ポップアップカード、件数チップ、位置オフ配慮</td>
+              <td>淡色スタイル。ポップアップから S-03 へ</td>
+            </tr>
+            <tr>
+              <td>S-07 設定</td>
+              <td>ふりがな初期値、モード初期値、位置情報、データ削除、規約／免責</td>
+              <td>shadcn リスト。他画面の和紙×和色トーンに合わせる</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>結果画面の状態マトリクス</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">デザイン</th>
+              <th scope="col">mode</th>
+              <th scope="col">furigana</th>
+              <th scope="col">備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1e</td><td>easy</td><td>ON</td><td>やさしい＋ルビ表示</td></tr>
+            <tr><td>1f</td><td>easy</td><td>OFF</td><td>やさしい・ルビ非表示</td></tr>
+            <tr><td>1g</td><td>detail</td><td>OFF</td><td>くわしい（ルビ OFF 例）</td></tr>
+            <tr><td>1i</td><td>（任意）</td><td>（任意）</td><td>partial。バナー＋チップ</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>本文テキストはモードで別内容（AI が 2 種生成）。ルビは同一テキストの rt 表示切替でよい。初期値は settings.modeDefault / furiganaDefault。</p>
+
+      <h2>デザイントークン（要約）</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">トークン</th><th scope="col">Hex</th><th scope="col">用途</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>朱 primary</td><td><code>#B9502F</code></td><td>主ボタン、現在タブ、強調、地図ピン</td></tr>
+            <tr><td>朱・濃</td><td><code>#9C4327</code></td><td>原文カードラベル</td></tr>
+            <tr><td>藍 secondary</td><td><code>#33566E</code></td><td>AI補足ラベル、リンク</td></tr>
+            <tr><td>墨 ink</td><td><code>#3A352C</code></td><td>見出し・本文</td></tr>
+            <tr><td>生成り bg</td><td><code>#F6F1E5</code></td><td>画面背景</td></tr>
+            <tr><td>和紙 card</td><td><code>#FDFBF4</code></td><td>カード面</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>見出し: Shippori Mincho / 本文: Zen Maru Gothic</li>
+        <li>ロゴ: 朱印「撮」＋ワードマーク「撮るほど」</li>
+      </ul>
+
+      <h2>インタラクション要約</h2>
+      <ul>
+        <li>ホーム CTA → 撮影 → シャッター → ローディング（2 段階）→ 結果 or 失敗</li>
+        <li>セグメント／ふりがなは即時（〜200ms ease）</li>
+        <li>写真タップでライトボックス拡大</li>
+        <li>「記録に残す」後は履歴に出現。メモは保存後も編集可</li>
+        <li>アニメーション控えめ（ボトムシート 300ms ease-out 等）</li>
+        <li>レスポンシブ: 375px 基準、max-width 480px 程度で中央寄せ</li>
+      </ul>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="03_機能設計.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">機能設計</span><span class="page-nav-phase">02 基本設計</span></a>
+      <a class="page-nav-item page-nav-next" href="05_DB設計.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">DB設計(論理)</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

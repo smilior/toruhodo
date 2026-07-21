@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 455" width="960" height="455" font-family="'Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="af" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#00755c"/>
+    </marker>
+    <marker id="ax" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="455" fill="#ffffff"/>
+  <text x="480" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#333333">CI/CD パイプライン（push 連動の自動CD）</text>
+  <rect x="40" y="95" width="160" height="56" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="120" y="119" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">develop</text>
+  <text x="120" y="138" text-anchor="middle" font-size="11" fill="#6b7280">STG 系ブランチ</text>
+  <rect x="40" y="250" width="160" height="56" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="120" y="274" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">main</text>
+  <text x="120" y="293" text-anchor="middle" font-size="11" fill="#6b7280">PRD 系ブランチ</text>
+  <rect x="350" y="145" width="260" height="130" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="480" y="169" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">GitHub Actions</text>
+  <text x="480" y="188" text-anchor="middle" font-size="11" fill="#6b7280">Self-Hosted Runner</text>
+  <text x="480" y="204" text-anchor="middle" font-size="11" fill="#6b7280">push で自動トリガー</text>
+  <text x="480" y="220" text-anchor="middle" font-size="11" fill="#6b7280">自動CD → STG / PRD</text>
+  <rect x="770" y="95" width="160" height="56" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="850" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">STG 環境</text>
+  <rect x="770" y="250" width="160" height="56" rx="10" fill="#e9f7f2" stroke="#00a984" stroke-width="2"/>
+  <text x="850" y="283" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">PRD 環境</text>
+  <rect x="350" y="330" width="260" height="60" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="480" y="354" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">GitHub Secrets / Variables</text>
+  <text x="480" y="373" text-anchor="middle" font-size="11" fill="#6b7280">環境別の機密・設定値</text>
+  <line x1="200" y1="123" x2="350" y2="175" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="224.7" y="124.5" width="100.6" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="275" y="136.8" text-anchor="middle" font-size="11" fill="#6b7280">push（トリガー）</text>
+  <line x1="200" y1="278" x2="350" y2="250" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="224.7" y="279.5" width="100.6" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="275" y="291.9" text-anchor="middle" font-size="11" fill="#6b7280">push（トリガー）</text>
+  <line x1="610" y1="175" x2="770" y2="123" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="652.0" y="124.5" width="76.0" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="690" y="136.8" text-anchor="middle" font-size="11" fill="#6b7280">自動デプロイ</text>
+  <line x1="610" y1="250" x2="770" y2="278" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="652.0" y="279.5" width="76.0" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="690" y="291.9" text-anchor="middle" font-size="11" fill="#6b7280">自動デプロイ</text>
+  <line x1="480" y1="330" x2="480" y2="277" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ax)"/>
+  <rect x="430.1" y="294.5" width="99.8" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="480" y="306.9" text-anchor="middle" font-size="11" fill="#6b7280">.env.&lt;ENV&gt; 生成</text>
+  <rect x="40" y="408" width="890" height="31" rx="6" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="40" y="408" width="4" height="31" rx="2" fill="#00a984"/>
+  <text x="56" y="428" font-size="11" fill="#6b7280">DEV（ローカル環境）は手動デプロイのため CD 対象外。自動CD は STG（develop へ push）/ PRD（main へ push）のみ。</text>
+</svg>

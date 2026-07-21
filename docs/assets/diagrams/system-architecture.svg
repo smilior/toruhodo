@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 600" width="1120" height="600" font-family="'Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="af" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#00755c"/>
+    </marker>
+    <marker id="ax" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1120" height="600" fill="#ffffff"/>
+  <text x="560" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#333333">システム全体構成図</text>
+  <rect x="235" y="58" width="250" height="52" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="360" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">利用者（ブラウザ）</text>
+  <circle cx="248" cy="70" r="2.4" fill="#6b7280"/>
+  <circle cx="262" cy="70" r="2.4" fill="#6b7280"/>
+  <circle cx="276" cy="70" r="2.4" fill="#6b7280"/>
+  <rect x="210" y="138" width="300" height="82" rx="12" fill="none" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <rect x="224" y="129" width="134" height="18" fill="#ffffff"/>
+  <text x="231" y="142" font-size="12" fill="#6b7280">プロキシ基盤（共有）</text>
+  <rect x="250" y="158" width="220" height="46" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="360" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">nginx</text>
+  <text x="360" y="201" text-anchor="middle" font-size="11" fill="#6b7280">TLS 終端 / リバースプロキシ</text>
+  <rect x="205" y="250" width="310" height="122" rx="10" fill="#e9f7f2" stroke="#00a984" stroke-width="2"/>
+  <text x="360" y="274" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">本アプリ　{{アプリ名}}</text>
+  <text x="360" y="293" text-anchor="middle" font-size="11" fill="#6b7280">FastAPI（ASGI）</text>
+  <text x="360" y="309" text-anchor="middle" font-size="11" fill="#6b7280">Jinja2 + Alpine.js + Tailwind</text>
+  <text x="360" y="325" text-anchor="middle" font-size="11" fill="#6b7280">app/features 構成（機能単位）</text>
+  <rect x="205" y="412" width="310" height="108" rx="12" fill="none" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <rect x="219" y="403" width="122" height="18" fill="#ffffff"/>
+  <text x="226" y="416" font-size="12" fill="#6b7280">データ基盤（共有）</text>
+  <rect x="224" y="436" width="132" height="66" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="290" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">PostgreSQL</text>
+  <text x="290" y="479" text-anchor="middle" font-size="11" fill="#6b7280">アプリDB</text>
+  <rect x="372" y="436" width="124" height="66" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="434" y="460" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">Redis</text>
+  <text x="434" y="479" text-anchor="middle" font-size="11" fill="#6b7280">セッション</text>
+  <rect x="600" y="120" width="210" height="82" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="705" y="144" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">ap-safedx</text>
+  <text x="705" y="163" text-anchor="middle" font-size="11" fill="#6b7280">外部認証DB</text>
+  <text x="705" y="179" text-anchor="middle" font-size="11" fill="#6b7280">ユーザー情報参照（任意）</text>
+  <rect x="600" y="250" width="230" height="122" rx="12" fill="none" stroke="#e5e7eb" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <rect x="614" y="241" width="110" height="18" fill="#ffffff"/>
+  <text x="621" y="254" font-size="12" fill="#6b7280">認証基盤（共有）</text>
+  <rect x="615" y="280" width="200" height="62" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="715" y="304" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">AP-Auth</text>
+  <text x="715" y="323" text-anchor="middle" font-size="11" fill="#6b7280">認証コンテナ</text>
+  <rect x="905" y="270" width="180" height="84" rx="10" fill="#fafafa" stroke="#cdeae0" stroke-width="1.4" stroke-dasharray="5,4"/>
+  <text x="995" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">EntraID</text>
+  <text x="995" y="313" text-anchor="middle" font-size="11" fill="#6b7280">外部 IdP</text>
+  <line x1="360" y1="110" x2="360" y2="156" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="339.6" y="113.5" width="40.8" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="360" y="125.8" text-anchor="middle" font-size="11" fill="#6b7280">HTTPS</text>
+  <line x1="360" y1="220" x2="360" y2="250" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="300" y1="372" x2="290" y2="436" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="420" y1="372" x2="434" y2="436" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="500" y1="250" x2="655" y2="204" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ax)"/>
+  <rect x="505.0" y="205.5" width="142.0" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="576" y="217.8" text-anchor="middle" font-size="11" fill="#6b7280">ユーザー情報参照（任意）</text>
+  <line x1="515" y1="311" x2="615" y2="311" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="521.0" y="290.5" width="90.1" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="566" y="302.9" text-anchor="middle" font-size="11" fill="#00755c">① /auth/login</text>
+  <line x1="815" y1="311" x2="905" y2="311" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="815.8" y="290.5" width="88.3" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="860" y="302.9" text-anchor="middle" font-size="11" fill="#00755c">② トークン取得</text>
+  <line x1="650" y1="342" x2="482" y2="434" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="521.8" y="382.5" width="88.3" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="566" y="394.9" text-anchor="middle" font-size="11" fill="#00755c">③ トークン保存</text>
+  <rect x="205" y="540" width="470" height="31" rx="6" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="205" y="540" width="4" height="31" rx="2" fill="#00a984"/>
+  <text x="221" y="560" font-size="11" fill="#6b7280">ネットワーク shared_backend：全サービスが同一ネットワークを共有</text>
+</svg>

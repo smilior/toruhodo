@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>認可設計 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの認可方針。認証済ユーザーと userId によるデータ分離。Blob アクセス方針。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a class="active" href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">02 基本設計 · 07/07</div>
+      <h1>認可設計書</h1>
+      <p class="lede">撮るほどの認証・認可方針。個人アカウント単位で旅の記録を分離する。共有アルバムは MVP 外。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>ロールは「認証済みユーザー」のみ。管理者画面は MVP に含めない。すべての domain 操作は session.user.id を所有者キーとする。</p>
+      </div>
+
+      <h2>方針概要</h2>
+      <ul>
+        <li>認証: Better Auth + Google OAuth</li>
+        <li>未ログインは保護ルート不可（S-00 <code>/login</code> へ）</li>
+        <li>全 record は userId 一致必須</li>
+        <li>他ユーザーのデータは一覧・詳細・地図ピンのいずれでも不可視</li>
+        <li>Blob URL は推測困難パス ＋ アプリ経由で提示</li>
+      </ul>
+
+      <h2>ルート保護</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">区分</th>
+              <th scope="col">パス例</th>
+              <th scope="col">条件</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>公開</td><td><code>/login</code>、<code>/api/auth/*</code></td><td>未認証可</td></tr>
+            <tr><td>保護</td><td><code>/</code>、<code>/scan</code>、<code>/result/*</code>、<code>/history</code>、<code>/map</code>、<code>/settings</code></td><td>セッション必須。なければ S-00</td></tr>
+            <tr><td>Server Actions</td><td>records / settings / scan 系</td><td><code>requireUserId()</code> 必須</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Middleware でセッション Cookie を検証し、保護ルートへの未認証アクセスを <code>/login</code> にリダイレクトする。ログイン済みで <code>/login</code> に来た場合はホームへ誘導してよい。</p>
+
+      <h2>データ所有モデル</h2>
+      <pre><code>session.user.id
+  ├ records.user_id  ＝ 必須一致（SELECT/UPDATE/DELETE）
+  └ user_settings.user_id ＝ 必須一致（upsert/read）</code></pre>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">操作</th>
+              <th scope="col">認可ルール</th>
+              <th scope="col">違反時</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>listRecords</td><td><code>WHERE user_id = session.user.id</code></td><td>他ユーザー行は結果に出ない</td></tr>
+            <tr><td>getRecord</td><td>id 指定＋ user_id 一致</td><td>「記録が見つかりません」</td></tr>
+            <tr><td>saveRecord</td><td>user_id はセッションから強制付与（クライアント指定不可）</td><td>未認証エラー</td></tr>
+            <tr><td>updateMemo / deleteRecord</td><td>対象行の user_id 一致</td><td>同上</td></tr>
+            <tr><td>updateSettings</td><td>自 user_id のみ</td><td>未認証エラー</td></tr>
+            <tr><td>deleteAllUserData</td><td>自 user_id の全 records・settings のみ</td><td>未認証エラー</td></tr>
+            <tr><td>地図ピン</td><td>自 records かつ lat/lng 非 null のみ</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Blob URL のアクセス方針</h2>
+      <ul>
+        <li>オブジェクトキーに十分なエントロピー（userId ＋ ランダム id 等）を含め、<strong>推測困難 URL</strong> とする。</li>
+        <li>UI ではアプリが所有確認後に得た photoUrl のみを <code>img</code> 等に埋め込む（一覧・詳細は常にアプリ経由）。</li>
+        <li>MVP では Vercel Blob の public URL を用いる場合がある。その場合も URL 列挙を前提としない設計とし、共有リンク機能は提供しない。</li>
+        <li>record 削除時は Blob 削除を試行し、孤児オブジェクトを減らす。</li>
+        <li>将来強化: プライベート Blob ＋ 署名付き URL やプロキシ配信を検討可（ADR 化）。</li>
+      </ul>
+
+      <h2>シークレットと外部 API</h2>
+      <ul>
+        <li><code>ANTHROPIC_API_KEY</code>、<code>BLOB_READ_WRITE_TOKEN</code>、<code>TURSO_AUTH_TOKEN</code>、<code>BETTER_AUTH_SECRET</code>、<code>GOOGLE_CLIENT_SECRET</code> はサーバー環境のみ。</li>
+        <li>クライアントバンドルに秘密情報を埋め込まない。</li>
+        <li>Claude / Blob は Server Actions または server-only モジュール経由。</li>
+      </ul>
+
+      <h2>脅威と緩和（MVP）</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">脅威</th>
+              <th scope="col">緩和</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>他ユーザー record ID の直打ち</td><td>取得時 user_id 一致。不一致は存在秘匿メッセージ</td></tr>
+            <tr><td>userId のクライアント改ざん</td><td>サーバーでセッションから付与。入力の userId を信用しない</td></tr>
+            <tr><td>未認証での Server Action 実行</td><td>全ミューテーションで requireUserId</td></tr>
+            <tr><td>API キー漏洩</td><td>環境変数・server-only。ログにキーを出さない</td></tr>
+            <tr><td>Blob URL の漏えい</td><td>推測困難パス。アプリ外共有 UI なし。削除時クリーンアップ</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>スコープ外（MVP）</h2>
+      <ul>
+        <li>複数人・世帯共有、旅の共有アルバム</li>
+        <li>管理者ロール・監査ログ UI</li>
+        <li>細粒度 RBAC</li>
+      </ul>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="06_API設計.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">API設計</span><span class="page-nav-phase">02 基本設計</span></a>
+      <a class="page-nav-item page-nav-next" href="adr/0000_ADRテンプレート.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">ADR テンプレート</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

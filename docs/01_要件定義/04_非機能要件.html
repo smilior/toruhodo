@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>非機能要件 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほど（toruhodo）の品質目標・レスポンシブ方針・認証認可・プライバシー・PWA・法務要件を定義する。Vercel + Turso + Better Auth + Claude Vision。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a class="active" href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">全 24 文書 + インデックス<br>正本: docs/_spec/PRODUCT_BRIEF.md</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">01 要件定義 · 04/04</div>
+      <h1>非機能要件</h1>
+      <p class="lede">撮るほど（toruhodo）の品質目標・レスポンシブ方針・認証認可・プライバシー・PWA・法務要件を定義する。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>本ドキュメントの内容は企画書（<code>docs/00. 企画書/README.md</code>）および共有プロダクトブリーフ（<code>docs/_spec/PRODUCT_BRIEF.md</code>）を正本とする。</p>
+        <p>MVP は <strong>Next.js + Vercel + Turso + Better Auth + Google OAuth + Vercel Blob + Claude Vision + MapLibre</strong> を前提とする品質目標。会員制・ユーザー単位データ隔離が必須。PWA・モバイルファースト。</p>
+        <p>中高年配慮（本文 16px 以上・タップ領域 44px 以上）と AI 免責の常時表示を品質の一部として扱う。</p>
+      </div>
+
+      <h2>品質目標値</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">区分</th>
+              <th scope="col">項目</th>
+              <th scope="col">目標値</th>
+              <th scope="col">前提条件</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>性能</td><td>UI 応答（解説生成待ちを除く）</td><td>モード切替・ふりがな・タブ遷移など UI 操作は 200ms 級で反映</td><td>クライアント側状態切替。AI 待ち時間は含まない</td></tr>
+            <tr><td>性能</td><td>撮影プレビュー</td><td>シャッター後のプレビューは即時（体感ラグを感じさせない）</td><td>カメラ API / ローカル画像。ネットワーク非依存</td></tr>
+            <tr><td>性能</td><td>主要画面の表示</td><td>初回・再訪とも 2 秒以内（中位帯スマホ・通常回線）を目標</td><td>Vercel エッジ配信 + Server Components。モバイルファースト</td></tr>
+            <tr><td>性能</td><td>AI 解説生成</td><td>通常回線で数十秒以内を目安。2 段階ローディングで待ちを説明</td><td>Claude API（vision）依存。タイムアウト・失敗時は再試行または失敗 UI</td></tr>
+            <tr><td>性能</td><td>想定同時接続数</td><td>個人向け小規模（同時数十ユーザー程度を快適に扱えること）</td><td>Hobby / Free 枠での個人アプリ規模。大規模 B2B 負荷は対象外</td></tr>
+            <tr><td>性能</td><td>データ増加見込み</td><td>ユーザーあたり記録数百件・写真同数規模を快適に操作</td><td>Turso（libSQL）+ Blob。クエリは userId で絞る</td></tr>
+            <tr><td>可用性</td><td>稼働率(SLO)</td><td>Vercel 前提で 99.9% を目標。個人アプリとしてマネージド基盤の現実的稼働に準拠。計画メンテは事前告知</td><td>Vercel / Turso / Claude API の SLA に依存。過剰な冗長化はしない</td></tr>
+            <tr><td>可用性</td><td>復旧目標 RTO / RPO</td><td>RTO: 再デプロイ・設定復旧で数分〜数時間 / RPO: Turso バックアップ方針に準拠（日次相当を目標）</td><td>ユーザーデータは Turso + Blob。コードは Git 管理</td></tr>
+            <tr><td>セキュリティ</td><td>通信</td><td>HTTPS 必須</td><td>Vercel 既定</td></tr>
+            <tr><td>セキュリティ</td><td>認証</td><td>Better Auth + Google OAuth。セッション Cookie。メール / パスワードは提供しない</td><td>GCP で OAuth クライアント管理</td></tr>
+            <tr><td>セキュリティ</td><td>データ隔離</td><td>すべての records / 設定は userId で所有。他ユーザーのデータは参照・更新不可</td><td>Server Actions / Route Handlers でセッション検証必須</td></tr>
+            <tr><td>セキュリティ</td><td>画像アクセス</td><td>写真は認証ユーザー本人のみ参照可能（Blob URL の露出方針は認可設計で定める）</td><td>未ログイン・他ユーザーからの直接閲覧を防ぐ</td></tr>
+            <tr><td>セキュリティ</td><td>脆弱性診断</td><td>公開前に依存パッケージ監査と認証・認可・XSS 観点の自己チェックを実施</td><td>課金なし。個人アカウントと位置・画像を扱うため最低限の点検は必須</td></tr>
+            <tr><td>アクセシビリティ</td><td>文字サイズ</td><td>本文 16px 以上。メタ・注記は最小 12px</td><td>中高年配慮。企画書タイポに準拠</td></tr>
+            <tr><td>アクセシビリティ</td><td>タップ領域</td><td>最低 44px。主ボタン高さ 56px、シャッター 80px</td><td>企画書 Design Tokens</td></tr>
+            <tr><td>プライバシー</td><td>位置情報</td><td>任意。拒否時も解説・記録は可能。場所名は出さない</td><td>設定で ON/OFF。geoEnabled 既定 true</td></tr>
+            <tr><td>プライバシー</td><td>データ削除</td><td>ユーザーが自分の記録・関連データを削除できる</td><td>設定画面 F-08 / US-11</td></tr>
+            <tr><td>AI</td><td>免責表示</td><td>結果画面に「AI による解説です。正確な情報は現地の案内をご確認ください。」を常時表示</td><td>企画書・プロダクトブリーフ必須</td></tr>
+            <tr><td>運用保守</td><td>ログ保管期間</td><td>Vercel のランタイムログはプラットフォーム既定に従う。個人を特定しうるログは最小限</td><td>サーバーレス / マネージド</td></tr>
+            <tr><td>運用保守</td><td>バックアップ頻度</td><td>Turso 側のバックアップ・スナップショット機能を利用（利用可能プランに合わせる）</td><td>ユーザーデータの正はクラウド DB + Blob</td></tr>
+            <tr><td>移行性</td><td>既存データ移行</td><td>無（新規アプリ）。スキーマ変更は Drizzle マイグレーションで管理</td><td>本番 DB は Turso リモート</td></tr>
+            <tr><td>UX</td><td>やさしく教える</td><td>失敗 UI は責めない。原文と AI 補足を一目で区別。和紙×和色</td><td>企画書デザイン原則に準拠</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>レスポンシブ・PWA・対応ブラウザ</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">項目</th>
+              <th scope="col">内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>スマートフォン</td><td>320px〜767px 必須（プライマリ。375px 基準・モバイルファースト）</td></tr>
+            <tr><td>タブレット</td><td>768px〜1023px 対応（レイアウトを崩さず利用可能）</td></tr>
+            <tr><td>デスクトップ PC</td><td>1024px 以上対応（コンテンツをセンタリングし最大幅を制限。max-width 約 480px 中央寄せ推奨）</td></tr>
+            <tr><td>PWA</td><td>インストール可能な PWA として提供（マニフェスト・アイコン朱印「撮」）。オフライン完全同期・オフライン OCR は OUT-02 で対象外</td></tr>
+            <tr><td>対応ブラウザ</td><td>モバイル Safari およびモバイル Chrome の最新 2 メジャーバージョンを主対象</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>認証・認可要件</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">項目</th>
+              <th scope="col">内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>会員制</td><td>要（ログイン必須で自分のデータにアクセス）</td></tr>
+            <tr><td>認証方式</td><td>Better Auth + Google OAuth のみ（MVP）。メール / パスワード登録は提供しない</td></tr>
+            <tr><td>OAuth 資格情報</td><td>Google Cloud Console（GCP）でクライアント ID / シークレットを管理</td></tr>
+            <tr><td>セッション管理</td><td>Better Auth のセッション Cookie。サーバー側セッション情報は Turso に保存</td></tr>
+            <tr><td>データ隔離</td><td>すべての records・設定は userId で所有。他ユーザーのデータは参照・更新不可</td></tr>
+            <tr><td>画像</td><td>Vercel Blob 上の写真は認証ユーザー本人のみアクセス可能とする</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ロール</th>
+              <th scope="col">想定利用者</th>
+              <th scope="col">主な権限</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>ログインユーザー</td><td>Google アカウントでサインインした本人</td><td>自分の記録・設定の参照・登録・編集・削除。撮影と AI 解説。ログアウト</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>プライバシー・位置情報</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">項目</th>
+              <th scope="col">内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>位置情報の取得</td><td>任意。ブラウザ権限拒否または設定 OFF 時も、解説生成と記録保存は可能</td></tr>
+            <tr><td>位置情報拒否時の表示</td><td>結果画面は日時のみ（場所名なし）。地図は配慮メッセージまたは空状態＋設定導線</td></tr>
+            <tr><td>データ削除</td><td>設定からユーザー自身の records（および関連写真）を削除できる。確認ステップを経る</td></tr>
+            <tr><td>収集データ例</td><td>Google 経由のプロフィール、撮影画像、OCR／解説テキスト、任意の位置・メモ</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>法務チェックリスト</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">項目</th>
+              <th scope="col">要否</th>
+              <th scope="col">備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>利用規約</td><td>任意（簡易で可）</td><td>個人向け無料アプリ。公開時に免責・サービスの性質を短く記載推奨</td></tr>
+            <tr><td>プライバシーポリシー</td><td>要</td><td>アカウント（Google 経由のメール・プロフィール等）、画像、位置（任意）、利用データを扱うため必須。収集項目・目的・保管・第三者（Google OAuth / Claude API / Vercel / Turso）を記載</td></tr>
+            <tr><td>AI 免責</td><td>要</td><td>結果画面に常時表示。正確な情報は現地の案内を確認する旨</td></tr>
+            <tr><td>特定商取引法に基づく表記</td><td>不要</td><td>課金なし（OUT-06）</td></tr>
+            <tr><td>外部サービス・ライセンス条件確認</td><td>要</td><td>Google Fonts（Zen Maru Gothic / Shippori Mincho）、Material Symbols、Google OAuth、Claude API、MapLibre、Vercel / Turso / Blob の利用規約を確認</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="03_機能要件.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">機能要件</span><span class="page-nav-phase">01 要件定義</span></a>
+      <a class="page-nav-item page-nav-next" href="../02_基本設計/01_システム構成.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">システム構成</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+/* 撮るほど Design Tokens — 和紙×和色 */
+:root {
+  /* Colors */
+  --color-primary: #B9502F;
+  --color-primary-deep: #9C4327;
+  --color-secondary: #33566E;
+  --color-ink: #3A352C;
+  --color-muted: #8A8272;
+  --color-muted-2: #A89F8A;
+  --color-label: #6B6350;
+  --color-bg: #F6F1E5;
+  --color-card: #FDFBF4;
+  --color-washi-card: #FBF5E6;
+  --color-washi-grad: linear-gradient(180deg, #FCF7E9, #F8F1DD);
+  --color-ai-card: #EAF0F4;
+  --color-border: #E6DECB;
+  --color-card-border: #EDE5D2;
+  --color-washi-border: #E7DBB8;
+  --color-ai-border: #CBD9E1;
+  --color-tab-inactive: #9A917D;
+  --color-segment: #EAE2CB;
+  --color-toggle-off: #D9D0BB;
+  --color-camera-bg: #221F1A;
+  --color-warn-bg: #F4E6CF;
+  --color-warn-border: #E4CD9E;
+  --color-warn-text: #7A5A1F;
+  --color-warn-icon: #9C6B27;
+  --color-ai-body: #3D4750;
+  --color-chip-bg: #F3ECD6;
+  --color-chip-text: #8A7A52;
+  --color-chevron: #B4AA94;
+  --color-hint-bg: #F3EDDC;
+  --color-empty-icon-bg: #F0E8D3;
+  --color-empty-icon: #A89263;
+  --color-count-chip: #ECE5D0;
+  --color-ruby: #8A8272;
+  --color-washi-hint: #A6946C;
+  --color-ai-hint: #7C8B96;
+
+  /* Typography */
+  --font-heading: 'Shippori Mincho', serif;
+  --font-body: 'Zen Maru Gothic', sans-serif;
+  --font-mono: ui-monospace, Menlo, monospace;
+
+  /* Radius */
+  --radius-card: 18px;
+  --radius-card-lg: 20px;
+  --radius-block: 26px;
+  --radius-pill: 999px;
+  --radius-thumb: 12px;
+  --radius-logo: 9px;
+  --radius-logo-lg: 14px;
+
+  /* Shadows */
+  --shadow-btn: 0 8px 18px rgba(185, 80, 47, 0.3);
+  --shadow-cta: 0 10px 26px rgba(185, 80, 47, 0.32);
+  --shadow-segment: 0 1px 3px rgba(58, 53, 44, 0.14);
+  --shadow-popup: 0 10px 24px rgba(30, 25, 18, 0.28);
+  --shadow-logo: 0 4px 10px rgba(185, 80, 47, 0.3);
+
+  /* Layout */
+  --app-max-width: 480px;
+  --tab-height: 72px;
+  --tap-min: 44px;
+  --btn-height: 56px;
+  --shutter-size: 80px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 200ms;
+  --duration-sheet: 300ms;
+}

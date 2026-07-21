@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460" font-family="'Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="af" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#00755c"/>
+    </marker>
+    <marker id="ax" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="460" fill="#ffffff"/>
+  <text x="480" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#333333">V字モデル（工程と検証基準の対応）</text>
+  <text x="70" y="66" text-anchor="start" font-size="12" font-weight="400" fill="#6b7280">開発工程（詳細化）</text>
+  <text x="890" y="66" text-anchor="end" font-size="12" font-weight="400" fill="#6b7280">テスト工程（積み上げ）</text>
+  <rect x="70" y="90" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="150" y="122" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">要件定義</text>
+  <rect x="175" y="174" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="255" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">基本設計</text>
+  <rect x="280" y="258" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="360" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">詳細設計</text>
+  <rect x="730" y="90" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="810" y="122" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">総合・受け入れテスト</text>
+  <rect x="625" y="174" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="705" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">結合テスト</text>
+  <rect x="520" y="258" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="600" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">単体テスト</text>
+  <rect x="400" y="354" width="160" height="54" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="480" y="386" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">実装</text>
+  <line x1="150" y1="144" x2="255" y2="174" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="255" y1="228" x2="360" y2="258" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="360" y1="312" x2="440" y2="354" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="520" y1="354" x2="600" y2="312" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="600" y1="258" x2="705" y2="228" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="705" y1="174" x2="810" y2="144" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="230" y1="117" x2="730" y2="117" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ax)"/>
+  <rect x="451.0" y="108.0" width="58.0" height="18.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="480" y="121.2" text-anchor="middle" font-size="12" fill="#6b7280">検証基準</text>
+  <line x1="335" y1="201" x2="625" y2="201" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ax)"/>
+  <rect x="451.0" y="192.0" width="58.0" height="18.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="480" y="205.2" text-anchor="middle" font-size="12" fill="#6b7280">検証基準</text>
+  <line x1="440" y1="285" x2="520" y2="285" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ax)"/>
+  <rect x="451.0" y="276.0" width="58.0" height="18.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="480" y="289.2" text-anchor="middle" font-size="12" fill="#6b7280">検証基準</text>
+</svg>

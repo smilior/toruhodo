@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" font-family="'Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="af" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#00755c"/>
+    </marker>
+    <marker id="ax" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="300" fill="#ffffff"/>
+  <text x="480" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#333333">リポジトリ運用フロー</text>
+  <rect x="40" y="100" width="196" height="90" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="138" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">テンプレート</text>
+  <text x="138" y="143" text-anchor="middle" font-size="11" fill="#6b7280">ap-template-v4</text>
+  <rect x="272" y="100" width="220" height="90" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="382" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">app-setup スキル</text>
+  <text x="382" y="143" text-anchor="middle" font-size="11" fill="#6b7280">生成 → ~/work/ap-用途</text>
+  <rect x="532" y="100" width="196" height="90" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="630" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">個別リポジトリ</text>
+  <text x="630" y="143" text-anchor="middle" font-size="11" fill="#6b7280">push で作成</text>
+  <rect x="764" y="100" width="176" height="90" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="852" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">開発者</text>
+  <text x="852" y="143" text-anchor="middle" font-size="11" fill="#6b7280">clone して開発</text>
+  <line x1="236" y1="145" x2="272" y2="145" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="221.5" y="124.5" width="65.0" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="254" y="136.8" text-anchor="middle" font-size="11" fill="#6b7280">スキル生成</text>
+  <line x1="492" y1="145" x2="532" y2="145" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="494.7" y="124.5" width="34.6" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="512" y="136.8" text-anchor="middle" font-size="11" fill="#6b7280">push</text>
+  <line x1="728" y1="145" x2="764" y2="145" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="725.6" y="124.5" width="40.8" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="746" y="136.8" text-anchor="middle" font-size="11" fill="#6b7280">clone</text>
+  <rect x="40" y="224" width="880" height="31" rx="6" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="40" y="224" width="4" height="31" rx="2" fill="#00a984"/>
+  <text x="56" y="244" font-size="11" fill="#6b7280">一方向フロー：テンプレートは直接編集せず、生成された個別リポジトリ側で開発する</text>
+</svg>

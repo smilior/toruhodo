@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" font-family="'Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="af" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#00755c"/>
+    </marker>
+    <marker id="ax" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#9aa0a6"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="300" fill="#ffffff"/>
+  <text x="480" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#333333">起動順序</text>
+  <rect x="46" y="88" width="250" height="104" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="171" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">① データ基盤</text>
+  <text x="171" y="131" text-anchor="middle" font-size="11" fill="#6b7280">PostgreSQL</text>
+  <text x="171" y="147" text-anchor="middle" font-size="11" fill="#6b7280">Redis</text>
+  <rect x="355" y="88" width="250" height="104" rx="10" fill="#ffffff" stroke="#cdeae0" stroke-width="1.4"/>
+  <text x="480" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">② プロキシ基盤</text>
+  <text x="480" y="131" text-anchor="middle" font-size="11" fill="#6b7280">nginx</text>
+  <rect x="664" y="88" width="250" height="104" rx="10" fill="#e9f7f2" stroke="#00a984" stroke-width="2"/>
+  <text x="789" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#333333">③ 本アプリ</text>
+  <text x="789" y="131" text-anchor="middle" font-size="11" fill="#6b7280">{{アプリ名}}</text>
+  <line x1="296" y1="140" x2="355" y2="140" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="262.8" y="119.5" width="124.4" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="325" y="131.8" text-anchor="middle" font-size="11" fill="#6b7280">shared_backend 確立</text>
+  <line x1="605" y1="140" x2="664" y2="140" stroke="#00755c" stroke-width="2" marker-end="url(#af)"/>
+  <rect x="596.0" y="119.5" width="76.0" height="17.0" rx="3" fill="#ffffff" opacity="0.95"/>
+  <text x="634" y="131.8" text-anchor="middle" font-size="11" fill="#6b7280">上流準備完了</text>
+  <rect x="46" y="224" width="868" height="31" rx="6" fill="#fafafa" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="46" y="224" width="4" height="31" rx="2" fill="#00a984"/>
+  <text x="62" y="244" font-size="11" fill="#6b7280">逆順で起動すると network shared_backend not found（依存順: データ基盤 → プロキシ基盤 → 本アプリ）</text>
+</svg>

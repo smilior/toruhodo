@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>用語集 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどのドメイン用語とインフラ用語を統一する。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a class="active" href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">02 基本設計 · 02/07</div>
+      <h1>用語集</h1>
+      <p class="lede">撮るほどのドメイン用語と技術用語を定義する。設計・実装・受け入れで同一の語を用いる。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>ドメインの正は <code>docs/_spec/PRODUCT_BRIEF.md</code> と企画書 README。UI 文言はユーザー向けにひらがな寄り、内部識別子は英語（records, partial 等）を用いる。</p>
+      </div>
+
+      <h2>プロダクト・ブランド</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">用語</th><th scope="col">定義</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>撮るほど</td><td>アプリ表示名・ブランド名。タグライン「かざすと、やさしく教えてくれる」。</td></tr>
+            <tr><td>toruhodo</td><td>プロジェクトコード名。リポジトリ・環境識別に用いる。</td></tr>
+            <tr><td>朱印ロゴ</td><td>朱色正方形に白の「撮」1 文字（Shippori Mincho）。ワードマーク「撮るほど」と併記。PWA アイコンにも使用。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>ドメイン用語</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">用語</th><th scope="col">定義</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>旅の記録 / Record</td><td>1 回の撮影・解説結果をまとめた永続エンティティ。テーブル名 <code>records</code>。写真 URL・解説文・位置・メモ等を持つ。</td></tr>
+            <tr><td>OCR</td><td>撮影画像から文字を読み取ること。Claude Vision が OCR 原文（ocrRaw）を返す。</td></tr>
+            <tr><td>ocrRaw</td><td>AI が読み取った原文テキスト。結果画面では主に内部保持し、やさしい／くわしい言いかえの根拠となる。</td></tr>
+            <tr><td>やさしい（easy）</td><td>原文を平易に言いかえた解説モード。既定の modeDefault。</td></tr>
+            <tr><td>くわしい（detail）</td><td>原文にそったより詳しい解説モード。</td></tr>
+            <tr><td>ふりがな / ruby</td><td>HTML <code>&lt;ruby&gt;</code> による読み仮名。easyRuby / detailRuby として保存。表示 ON/OFF は結果画面ローカル状態（rt の表示切替）。</td></tr>
+            <tr><td>原文カード</td><td>結果画面の「ここに書かれていること」カード。古紙グラデ地。やさしい／くわしいの本文を表示。</td></tr>
+            <tr><td>AI補足カード</td><td>結果画面の「AIによる補足」カード。薄藍地。背景知識（aiNote）。原文カードと色・アイコン・ラベルの 3 重で区別する。</td></tr>
+            <tr><td>aiNote</td><td>AI による補足・背景知識テキスト。</td></tr>
+            <tr><td>partial</td><td>一部のみ読めた状態。注意バナーと読めた文字チップを表示。</td></tr>
+            <tr><td>partialChars</td><td>部分読み取り時に読めた文字の表示用文字列。</td></tr>
+            <tr><td>failed</td><td>テキスト検出失敗。読み取り失敗 UI（デザイン 1h）へ。</td></tr>
+            <tr><td>スキャン状態機械</td><td><code>idle → capturing → ocr → generating → done | failed | partial</code>。</td></tr>
+            <tr><td>メモ（memo）</td><td>ユーザーが結果に書き足す自由記述。保存後も編集可。</td></tr>
+            <tr><td>位置情報</td><td>lat / lng / placeName。geoEnabled が false または拒否時は null 可。記録自体は可能。</td></tr>
+            <tr><td>UserSettings</td><td>ユーザー設定。furiganaDefault / modeDefault / geoEnabled。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>画面・UI</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">用語</th><th scope="col">定義</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>かざして解説</td><td>ホーム主役 CTA。撮影画面（S-02）へ遷移する。</td></tr>
+            <tr><td>デザインID</td><td>企画書 UI デザインの画面識別子（1b〜1l 等）。</td></tr>
+            <tr><td>タブバー</td><td>ホーム / 履歴 / 地図 / 設定の 4 タブ。</td></tr>
+            <tr><td>免責注記</td><td>結果画面最下部の常時表示文「AIによる解説です。正確な情報は現地の案内をご確認ください。」</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>技術用語</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">用語</th><th scope="col">定義</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Better Auth</td><td>認証ライブラリ。Google OAuth とセッション Cookie を提供。<code>/api/auth/*</code>。</td></tr>
+            <tr><td>Turso</td><td>libSQL ベースのクラウド DB。records / user_settings / 認証テーブルを保持。</td></tr>
+            <tr><td>Drizzle</td><td>TypeScript ORM。スキーマ正本は <code>src/lib/db/schema.ts</code>。</td></tr>
+            <tr><td>Vercel Blob</td><td>撮影写真のオブジェクトストレージ。records.photoUrl に URL を保存。</td></tr>
+            <tr><td>Claude Vision</td><td>Anthropic Claude の画像入力 API。OCR＋解説 JSON を 1 リクエストで取得。</td></tr>
+            <tr><td>MapLibre</td><td>MapLibre GL JS。旅の記録地図（S-06）でピン表示に用いるクライアントライブラリ。</td></tr>
+            <tr><td>Server Actions</td><td>Next.js のサーバー側ミューテーション。records 保存・メモ更新・設定変更等。</td></tr>
+            <tr><td>Middleware</td><td>セッション Cookie による保護ルートのゲート。未ログインは S-00 へ。</td></tr>
+            <tr><td>PWA</td><td>Progressive Web App。モバイルファーストの Web アプリとして配信。</td></tr>
+            <tr><td>nanoid / cuid</td><td>レコード ID 生成方式。文字列 PK。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="01_システム構成.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">システム構成</span><span class="page-nav-phase">02 基本設計</span></a>
+      <a class="page-nav-item page-nav-next" href="03_機能設計.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">機能設計</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

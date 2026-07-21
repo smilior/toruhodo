@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DB設計(論理) ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの論理データモデル。records / user_settings と Better Auth 標準テーブル。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a class="active" href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">02 基本設計 · 05/07</div>
+      <h1>データベース論理設計書</h1>
+      <p class="lede">撮るほどのエンティティと Turso 論理テーブルを定義する。正本は実装時の <code>src/lib/db/schema.ts</code> および PRODUCT_BRIEF の Record モデル。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>DB は Turso（libSQL）+ Drizzle ORM。写真実体は Vercel Blob に置き、DB には URL のみ保持する。<strong>派生値は永続化しない</strong>（画面ローカルの mode / furigana 表示状態など）。</p>
+      </div>
+
+      <h2>永続化方針</h2>
+      <ul>
+        <li>エンジン: Turso / libSQL（SQLite 互換）</li>
+        <li>アクセス: Drizzle ORM（<code>@libsql/client</code>）</li>
+        <li>所有境界: <code>records.user_id</code> / <code>user_settings.user_id</code> → <code>users.id</code></li>
+        <li>写真: Vercel Blob。削除時は Blob オブジェクトも可能な範囲で削除</li>
+        <li>派生値: 結果画面の mode / furigana はクライアント状態。DB に持たない</li>
+      </ul>
+
+      <h2>命名規則</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">区分</th>
+              <th scope="col">規約</th>
+              <th scope="col">例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>テーブル</td><td>snake_case 複数形</td><td><code>records</code>, <code>user_settings</code>, <code>users</code></td></tr>
+            <tr><td>カラム</td><td>snake_case</td><td><code>user_id</code>, <code>photo_url</code>, <code>easy_text</code></td></tr>
+            <tr><td>TS プロパティ</td><td>camelCase（Drizzle）</td><td><code>userId</code>, <code>photoUrl</code>, <code>easyText</code></td></tr>
+            <tr><td>タイムスタンプ</td><td>integer mode timestamp または text ISO</td><td><code>created_at</code></td></tr>
+            <tr><td>id</td><td>text（nanoid / cuid）</td><td>records 等</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>論理 ER</h2>
+      <pre><code>User 1 ── * Record
+User 1 ── 0..1 UserSettings
+
+User（Better Auth）
+├ id, name, email, email_verified, image
+└ created_at, updated_at
+
+Record（旅の記録）
+├ id (PK)
+├ user_id (FK → users.id)
+├ photo_url
+├ title, easy_text, detail_text
+├ easy_ruby, detail_ruby, ai_note, ocr_raw
+├ partial, partial_chars
+├ lat, lng, place_name
+├ memo
+└ created_at
+  INDEX (user_id), INDEX (user_id, created_at)
+
+UserSettings
+├ user_id (PK, FK → users.id)
+├ furigana_default (bool, 既定 true)
+├ mode_default ("easy" | "detail", 既定 "easy")
+└ geo_enabled (bool, 既定 true)
+
+Better Auth 付帯:
+  sessions (user_id), accounts (user_id), verifications</code></pre>
+      <figure class="diagram">
+        <figcaption>ER 概念図（records 中心。図は汎用テンプレート参照。実装は User–Record / User–UserSettings）</figcaption>
+        <img src="../assets/diagrams/er-example.svg" alt="ER 概念図。撮るほどでは records を中心に User と関連する。">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+
+      <h2>エンティティ一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">エンティティ</th>
+              <th scope="col">テーブル</th>
+              <th scope="col">区分</th>
+              <th scope="col">概要</th>
+              <th scope="col">主な関連</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>User</td><td><code>users</code></td><td>認証</td><td>Google ログイン利用者</td><td>Record 1:*, Settings 1:0..1</td></tr>
+            <tr><td>Session</td><td><code>sessions</code></td><td>認証</td><td>Better Auth セッション</td><td>User N:1</td></tr>
+            <tr><td>Account</td><td><code>accounts</code></td><td>認証</td><td>OAuth プロバイダ紐付け</td><td>User N:1</td></tr>
+            <tr><td>Verification</td><td><code>verifications</code></td><td>認証</td><td>Better Auth 検証用</td><td>—</td></tr>
+            <tr><td>Record</td><td><code>records</code></td><td>ドメイン</td><td>旅の記録（撮影＋解説）</td><td>User N:1</td></tr>
+            <tr><td>UserSettings</td><td><code>user_settings</code></td><td>ドメイン</td><td>表示・位置の既定値</td><td>User 1:1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>属性詳細（論理）</h2>
+
+      <h3>users（Better Auth 標準）</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カラム</th><th scope="col">型</th><th scope="col">必須</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>id</td><td>text PK</td><td>必須</td><td>ユーザー ID</td></tr>
+            <tr><td>name</td><td>text</td><td>必須</td><td>表示名</td></tr>
+            <tr><td>email</td><td>text unique</td><td>必須</td><td>メール</td></tr>
+            <tr><td>email_verified</td><td>integer bool</td><td>必須</td><td>既定 false</td></tr>
+            <tr><td>image</td><td>text</td><td>任意</td><td>アバター URL</td></tr>
+            <tr><td>created_at / updated_at</td><td>timestamp</td><td>必須</td><td>監査</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>sessions / accounts / verifications は Better Auth 既定スキーマに従う。</p>
+
+      <h3>records</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カラム</th><th scope="col">型</th><th scope="col">必須</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>id</td><td>text PK</td><td>必須</td><td>nanoid / cuid</td></tr>
+            <tr><td>user_id</td><td>text FK</td><td>必須</td><td>所有者。users.id</td></tr>
+            <tr><td>photo_url</td><td>text</td><td>必須</td><td>Vercel Blob URL</td></tr>
+            <tr><td>title</td><td>text</td><td>必須</td><td>AI 生成の短い題名</td></tr>
+            <tr><td>easy_text</td><td>text</td><td>必須</td><td>やさしい言いかえ（プレーンまたは HTML）</td></tr>
+            <tr><td>detail_text</td><td>text</td><td>必須</td><td>くわしい説明</td></tr>
+            <tr><td>easy_ruby</td><td>text</td><td>必須</td><td>やさしい＋&lt;ruby&gt; HTML</td></tr>
+            <tr><td>detail_ruby</td><td>text</td><td>必須</td><td>くわしい＋&lt;ruby&gt; HTML</td></tr>
+            <tr><td>ai_note</td><td>text</td><td>必須</td><td>AI 補足・背景知識</td></tr>
+            <tr><td>ocr_raw</td><td>text</td><td>必須</td><td>OCR 原文</td></tr>
+            <tr><td>partial</td><td>integer bool</td><td>必須</td><td>一部のみ読めた</td></tr>
+            <tr><td>partial_chars</td><td>text</td><td>任意</td><td>読めた文字チップ用</td></tr>
+            <tr><td>lat</td><td>real</td><td>任意</td><td>緯度</td></tr>
+            <tr><td>lng</td><td>real</td><td>任意</td><td>経度</td></tr>
+            <tr><td>place_name</td><td>text</td><td>任意</td><td>場所名表示用</td></tr>
+            <tr><td>memo</td><td>text</td><td>任意</td><td>ユーザーメモ</td></tr>
+            <tr><td>created_at</td><td>timestamp</td><td>必須</td><td>作成日時</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>user_settings</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カラム</th><th scope="col">型</th><th scope="col">必須</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>user_id</td><td>text PK FK</td><td>必須</td><td>users.id</td></tr>
+            <tr><td>furigana_default</td><td>integer bool</td><td>必須</td><td>既定 true</td></tr>
+            <tr><td>mode_default</td><td>text</td><td>必須</td><td><code>easy</code> | <code>detail</code>。既定 easy</td></tr>
+            <tr><td>geo_enabled</td><td>integer bool</td><td>必須</td><td>位置情報記録。既定 true</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>永続化しないもの</h2>
+      <ul>
+        <li>結果画面ローカルの mode / furigana（表示状態）</li>
+        <li>スキャン中間状態（idle / capturing / ocr / generating）</li>
+        <li>地図のビューポート・ズーム</li>
+        <li>写真バイナリ本体（Blob 側）</li>
+      </ul>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="04_画面設計.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">画面設計</span><span class="page-nav-phase">02 基本設計</span></a>
+      <a class="page-nav-item page-nav-next" href="06_API設計.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">API設計</span><span class="page-nav-phase">02 基本設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

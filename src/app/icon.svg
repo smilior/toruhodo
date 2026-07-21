@@ -1,0 +1,13 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- 朱印: 朱色の角丸正方形 + 白の「撮」 -->
+  <rect width="32" height="32" rx="9" fill="#B9502F"/>
+  <text
+    x="16"
+    y="22.5"
+    text-anchor="middle"
+    font-family="serif, 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', 'Shippori Mincho', serif"
+    font-size="18"
+    font-weight="700"
+    fill="#FDFBF4"
+  >撮</text>
+</svg>

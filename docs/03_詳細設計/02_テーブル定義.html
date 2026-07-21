@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>テーブル定義 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほどの Turso 物理テーブル定義（records / user_settings / Better Auth）と Drizzle スキーマ。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR-0001（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0002_ローカルファースト技術スタック.html"><span class="n">A2</span>ADR-0002（廃止）</a></li>
+          <li><a href="../02_基本設計/adr/0003_menva同型スタック(Vercel+Turso+BetterAuth).html"><span class="n">A3</span>ADR-0003 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a class="active" href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">撮るほど / toruhodo<br>正本: PRODUCT_BRIEF · ADR-0003</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">03 詳細設計 · 02/03</div>
+      <h1>テーブル定義</h1>
+      <p class="lede">撮るほどの物理テーブル定義と設計意図を記す。DB は Turso（libSQL）+ Drizzle ORM。正は <code>src/lib/db/schema.ts</code> および <code>npm run db:push</code> によるスキーマ適用である。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>ドメインテーブルは <code>records</code>（旅の記録）と <code>user_settings</code>。認証は Better Auth 標準（users / sessions / accounts / verifications）。</p>
+        <p>写真バイナリは DB に持たず Vercel Blob URL（<code>photo_url</code>）のみ保持する。</p>
+        <p>failed は永続化しない（再撮影前提）。partial は records 行にフラグとして保存する。</p>
+      </div>
+
+      <h2>正の所在</h2>
+      <ul>
+        <li>スキーマの正: <code>src/lib/db/schema.ts</code>（Drizzle）。</li>
+        <li>適用: <code>npm run db:push</code>（ローカルは <code>turso dev --db-file local.db</code> 等）。</li>
+        <li>論理設計の概要は <code>02_基本設計/05_DB設計.html</code>。本書は物理寄り詳細である。</li>
+      </ul>
+
+      <h2>命名規則</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">区分</th><th scope="col">規約</th><th scope="col">例</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>テーブル</td><td>snake_case 複数形</td><td><code>records</code>, <code>user_settings</code>, <code>users</code></td></tr>
+            <tr><td>カラム（DB）</td><td>snake_case</td><td><code>user_id</code>, <code>photo_url</code>, <code>easy_ruby</code></td></tr>
+            <tr><td>TS プロパティ</td><td>camelCase（Drizzle map）</td><td><code>userId</code>, <code>photoUrl</code>, <code>easyRuby</code></td></tr>
+            <tr><td>id</td><td>text（nanoid / cuid）</td><td>records.id</td></tr>
+            <tr><td>真偽</td><td>integer mode boolean</td><td>0/1。Drizzle <code>integer(..., { mode: "boolean" })</code></td></tr>
+            <tr><td>タイムスタンプ</td><td>integer mode timestamp</td><td><code>created_at</code></td></tr>
+            <tr><td>緯度経度</td><td>real</td><td><code>lat</code>, <code>lng</code> NULL 可</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>論理 ER（物理対応）</h2>
+      <pre><code>User 1 ── * Record
+User 1 ── 0..1 UserSettings
+
+Better Auth:
+  sessions.user_id → users.id
+  accounts.user_id → users.id
+  verifications（独立）</code></pre>
+      <figure class="diagram">
+        <figcaption>ER 概念図（User・Record・UserSettings。認証付帯は users 配下）</figcaption>
+        <img src="../assets/diagrams/er-example.svg" alt="エンティティ関連を示す ER 概念図。">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+
+      <h2>テーブル一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">テーブル</th><th scope="col">区分</th><th scope="col">概要</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>records</code></td><td>ドメイン</td><td>旅の記録（写真 URL・OCR・解説・位置・メモ）</td></tr>
+            <tr><td><code>user_settings</code></td><td>ドメイン</td><td>ふりがな／モード初期値・位置情報 ON/OFF</td></tr>
+            <tr><td><code>users</code></td><td>認証</td><td>Better Auth ユーザー</td></tr>
+            <tr><td><code>sessions</code></td><td>認証</td><td>セッション</td></tr>
+            <tr><td><code>accounts</code></td><td>認証</td><td>OAuth アカウント紐付け（Google）</td></tr>
+            <tr><td><code>verifications</code></td><td>認証</td><td>検証トークン（Better Auth 標準）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ========== records ========== -->
+      <h2 id="records">records（旅の記録）</h2>
+      <p>1 行 = ユーザーが「記録に残す」した 1 件の石碑・案内板解説。</p>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">カラム（DB）</th>
+              <th scope="col">TS</th>
+              <th scope="col">型</th>
+              <th scope="col">NULL</th>
+              <th scope="col">制約</th>
+              <th scope="col">説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>id</td><td>text</td><td>NO</td><td>PK</td><td>nanoid / cuid</td></tr>
+            <tr><td><code>user_id</code></td><td>userId</td><td>text</td><td>NO</td><td>FK → users.id ON DELETE CASCADE, INDEX</td><td>所有者</td></tr>
+            <tr><td><code>photo_url</code></td><td>photoUrl</td><td>text</td><td>NO</td><td>—</td><td>Vercel Blob URL</td></tr>
+            <tr><td><code>title</code></td><td>title</td><td>text</td><td>NO</td><td>—</td><td>AI 生成の短い題名</td></tr>
+            <tr><td><code>easy_text</code></td><td>easyText</td><td>text</td><td>NO</td><td>—</td><td>やさしい言いかえ（プレーン）</td></tr>
+            <tr><td><code>detail_text</code></td><td>detailText</td><td>text</td><td>NO</td><td>—</td><td>くわしい説明（プレーン）</td></tr>
+            <tr><td><code>easy_ruby</code></td><td>easyRuby</td><td>text</td><td>NO</td><td>—</td><td>やさしい＋&lt;ruby&gt; HTML</td></tr>
+            <tr><td><code>detail_ruby</code></td><td>detailRuby</td><td>text</td><td>NO</td><td>—</td><td>くわしい＋&lt;ruby&gt; HTML</td></tr>
+            <tr><td><code>ai_note</code></td><td>aiNote</td><td>text</td><td>NO</td><td>—</td><td>AI 補足・背景知識</td></tr>
+            <tr><td><code>ocr_raw</code></td><td>ocrRaw</td><td>text</td><td>NO</td><td>—</td><td>OCR 原文</td></tr>
+            <tr><td><code>partial</code></td><td>partial</td><td>integer(bool)</td><td>NO</td><td>DEFAULT 0</td><td>一部のみ読めた</td></tr>
+            <tr><td><code>partial_chars</code></td><td>partialChars</td><td>text</td><td>YES</td><td>—</td><td>読めた文字チップ用。partial=false 時は null 推奨</td></tr>
+            <tr><td><code>lat</code></td><td>lat</td><td>real</td><td>YES</td><td>—</td><td>緯度。位置オフ・拒否時 null</td></tr>
+            <tr><td><code>lng</code></td><td>lng</td><td>real</td><td>YES</td><td>—</td><td>経度。lat と対で null 可否を揃える</td></tr>
+            <tr><td><code>place_name</code></td><td>placeName</td><td>text</td><td>YES</td><td>—</td><td>場所名表示用。座標なし時 null</td></tr>
+            <tr><td><code>memo</code></td><td>memo</td><td>text</td><td>YES</td><td>—</td><td>ユーザーメモ</td></tr>
+            <tr><td><code>created_at</code></td><td>createdAt</td><td>integer(timestamp)</td><td>NO</td><td>INDEX（user_id 複合可）</td><td>作成日時</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>インデックス</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">名前（例）</th><th scope="col">列</th><th scope="col">目的</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>records_user_id_idx</code></td><td><code>user_id</code></td><td>所有者スコープの一覧・削除</td></tr>
+            <tr><td><code>records_user_created_idx</code></td><td><code>(user_id, created_at DESC)</code></td><td>履歴・ホーム「さいきんの記録」ソート</td></tr>
+            <tr><td>PK</td><td><code>id</code></td><td>結果画面 <code>/result/:id</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>地図用に lat/lng 部分インデックスは必須としない。件数は個人利用想定で全件取得後にクライアント／サーバーで null 除外してよい。</p>
+
+      <!-- ========== user_settings ========== -->
+      <h2 id="user_settings">user_settings（ユーザー設定）</h2>
+      <p>1 ユーザー 1 行。未作成時はアプリ既定値を用いる（読み取り時の暗黙作成可）。</p>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">カラム（DB）</th>
+              <th scope="col">TS</th>
+              <th scope="col">型</th>
+              <th scope="col">NULL</th>
+              <th scope="col">制約</th>
+              <th scope="col">デフォルト</th>
+              <th scope="col">説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>user_id</code></td><td>userId</td><td>text</td><td>NO</td><td>PK, FK → users.id ON DELETE CASCADE</td><td>—</td><td>所有者（1:1）</td></tr>
+            <tr><td><code>furigana_default</code></td><td>furiganaDefault</td><td>integer(bool)</td><td>NO</td><td>—</td><td>1 (true)</td><td>結果画面ふりがな初期 ON</td></tr>
+            <tr><td><code>mode_default</code></td><td>modeDefault</td><td>text</td><td>NO</td><td>アプリ層: <code>easy</code> | <code>detail</code></td><td><code>easy</code></td><td>解説モード初期値</td></tr>
+            <tr><td><code>geo_enabled</code></td><td>geoEnabled</td><td>integer(bool)</td><td>NO</td><td>—</td><td>1 (true)</td><td>位置情報の記録を試みるか</td></tr>
+            <tr><td><code>updated_at</code></td><td>updatedAt</td><td>integer(timestamp)</td><td>NO</td><td>—</td><td>now</td><td>最終更新</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ========== auth ========== -->
+      <h2 id="auth">認証テーブル（Better Auth 標準・要約）</h2>
+      <p>Better Auth の Drizzle アダプタが生成・期待する形に従う。列名の微差はライブラリ版に合わせる。</p>
+
+      <h3>users</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カラム</th><th scope="col">型</th><th scope="col">制約</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>text</td><td>PK</td><td>ユーザー ID</td></tr>
+            <tr><td><code>name</code></td><td>text</td><td>NOT NULL</td><td>表示名</td></tr>
+            <tr><td><code>email</code></td><td>text</td><td>NOT NULL, UNIQUE</td><td>メール</td></tr>
+            <tr><td><code>email_verified</code></td><td>integer(bool)</td><td>NOT NULL</td><td>既定 false</td></tr>
+            <tr><td><code>image</code></td><td>text</td><td>NULL</td><td>アバター URL</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>integer(timestamp)</td><td>NOT NULL</td><td>監査</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>sessions</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カラム</th><th scope="col">型</th><th scope="col">制約</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>text</td><td>PK</td><td>セッション ID</td></tr>
+            <tr><td><code>user_id</code></td><td>text</td><td>FK → users.id CASCADE, INDEX</td><td>所有者</td></tr>
+            <tr><td><code>token</code></td><td>text</td><td>UNIQUE</td><td>セッショントークン</td></tr>
+            <tr><td><code>expires_at</code></td><td>integer(timestamp)</td><td>NOT NULL</td><td>有効期限</td></tr>
+            <tr><td><code>ip_address</code> / <code>user_agent</code></td><td>text</td><td>NULL</td><td>任意メタ</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>integer(timestamp)</td><td>NOT NULL</td><td>監査</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>accounts</h3>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">カラム</th><th scope="col">型</th><th scope="col">制約</th><th scope="col">説明</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>text</td><td>PK</td><td>—</td></tr>
+            <tr><td><code>user_id</code></td><td>text</td><td>FK → users.id CASCADE</td><td>所有者</td></tr>
+            <tr><td><code>account_id</code></td><td>text</td><td>NOT NULL</td><td>プロバイダ側 ID</td></tr>
+            <tr><td><code>provider_id</code></td><td>text</td><td>NOT NULL</td><td>例: <code>google</code></td></tr>
+            <tr><td><code>access_token</code> / <code>refresh_token</code> 等</td><td>text</td><td>NULL</td><td>OAuth トークン類</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>integer(timestamp)</td><td>NOT NULL</td><td>監査</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>verifications</h3>
+      <p>Better Auth 標準の検証用テーブル（identifier / value / expires_at 等）。メール検証を使わない Google OAuth 中心でもスキーマとしては用意する。</p>
+
+      <!-- ========== constraints ========== -->
+      <h2 id="rules">アプリ層ルール・制約</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">ID</th><th scope="col">ルール</th><th scope="col">実装箇所</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>R-01</td><td><strong>partial と failed を同時 true にしない</strong>。failed 優先で正規化。failed は DB 行を作らない</td><td>AI JSON パーサ／スキャン結果正規化</td></tr>
+            <tr><td>R-02</td><td><code>partial = false</code> のとき <code>partial_chars</code> は null（空文字は null へ）</td><td>INSERT 前バリデーション</td></tr>
+            <tr><td>R-03</td><td><code>lat</code> と <code>lng</code> は両方 null か両方非 null。片肺は両方 null に正規化</td><td>記録保存</td></tr>
+            <tr><td>R-04</td><td><code>mode_default</code> は <code>easy</code> | <code>detail</code> のみ</td><td>設定 upsert</td></tr>
+            <tr><td>R-05</td><td>すべての records 読み書きは <code>user_id = session.user.id</code></td><td>Server Actions</td></tr>
+            <tr><td>R-06</td><td>ruby HTML は許可タグのみ保存（サニタイズ後）</td><td>AI 応答処理</td></tr>
+            <tr><td>R-07</td><td>ユーザー削除時: records / user_settings / sessions / accounts は FK CASCADE</td><td>DB FK</td></tr>
+            <tr><td>R-08</td><td>データ全削除（設定）: 当該 user の records 全削除＋ Blob 掃除＋ settings リセット。users 行は残す</td><td>削除 Action</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>SQLite / libSQL では CHECK で boolean 組み合わせを強制しにくいため、<strong>アプリ層バリデーションを正</strong>とする。必要なら後続で CHECK を追加してよい。</p>
+
+      <!-- ========== drizzle ========== -->
+      <h2 id="drizzle">Drizzle スキーマ擬似コード</h2>
+      <pre><code>// src/lib/db/schema.ts（擬似・抜粋）
+import { relations } from "drizzle-orm";
+import {
+  index,
+  integer,
+  real,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+
+// --- Better Auth（要約。公式アダプタ定義に準拠）---
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: integer("email_verified", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  image: text("image"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+export const sessions = sqliteTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() =&gt; users.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  },
+  (t) =&gt; [index("sessions_user_id_idx").on(t.userId)],
+);
+
+export const accounts = sqliteTable("accounts", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() =&gt; users.id, { onDelete: "cascade" }),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  // … Better Auth が要求するその他トークン列
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+export const verifications = sqliteTable("verifications", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }),
+  updatedAt: integer("updated_at", { mode: "timestamp" }),
+});
+
+// --- ドメイン ---
+export const records = sqliteTable(
+  "records",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() =&gt; users.id, { onDelete: "cascade" }),
+    photoUrl: text("photo_url").notNull(),
+    title: text("title").notNull(),
+    easyText: text("easy_text").notNull(),
+    detailText: text("detail_text").notNull(),
+    easyRuby: text("easy_ruby").notNull(),
+    detailRuby: text("detail_ruby").notNull(),
+    aiNote: text("ai_note").notNull(),
+    ocrRaw: text("ocr_raw").notNull(),
+    partial: integer("partial", { mode: "boolean" }).notNull().default(false),
+    partialChars: text("partial_chars"),
+    lat: real("lat"),
+    lng: real("lng"),
+    placeName: text("place_name"),
+    memo: text("memo"),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (t) =&gt; [
+    index("records_user_id_idx").on(t.userId),
+    index("records_user_created_idx").on(t.userId, t.createdAt),
+  ],
+);
+
+export const userSettings = sqliteTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() =&gt; users.id, { onDelete: "cascade" }),
+  furiganaDefault: integer("furigana_default", { mode: "boolean" })
+    .notNull()
+    .default(true),
+  modeDefault: text("mode_default").notNull().default("easy"), // "easy" | "detail"
+  geoEnabled: integer("geo_enabled", { mode: "boolean" })
+    .notNull()
+    .default(true),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+export const usersRelations = relations(users, ({ many, one }) =&gt; ({
+  records: many(records),
+  settings: one(userSettings, {
+    fields: [users.id],
+    references: [userSettings.userId],
+  }),
+}));
+
+export const recordsRelations = relations(records, ({ one }) =&gt; ({
+  user: one(users, {
+    fields: [records.userId],
+    references: [users.id],
+  }),
+}));</code></pre>
+
+      <h2>削除時の振る舞い</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr><th scope="col">操作</th><th scope="col">DB</th><th scope="col">Blob</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>record 1 件削除（将来拡張）</td><td>当該行 DELETE</td><td>対応 photo 削除を試行</td></tr>
+            <tr><td>設定「データ全削除」</td><td><code>DELETE FROM records WHERE user_id = ?</code>、settings リセット</td><td>当該ユーザー photo を列挙削除</td></tr>
+            <tr><td>users 行削除（退会）</td><td>FK CASCADE で records / settings / sessions / accounts</td><td>別ジョブで orphan 掃除推奨</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="01_処理設計.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">処理設計</span><span class="page-nav-phase">03 詳細設計</span></a>
+      <a class="page-nav-item page-nav-next" href="03_単体テスト観点.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">単体テスト観点</span><span class="page-nav-phase">03 詳細設計</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · 正本: PRODUCT_BRIEF · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>

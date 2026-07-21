@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI検索・分析機能 ｜ 要件定義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --panel:#fafafa; --ink:#333333; --ink-soft:#6b7280; --ink-faint:#9ca3af;
+  --line:#e5e7eb; --line-soft:#f0f1f3; --sel:#f3f4f6;
+  --accent:#00a984; --accent-ink:#00755c; --accent-soft:#e9f7f2; --accent-line:#cdeae0;
+  /* API reference–style left nav (OpenAI developers.openai.com uses 16.5rem) */
+  --sidebar-width:16.5rem;
+  --content-width:64rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--bg); color:var(--ink);
+  border-top:3px solid var(--accent);
+  font-family:'Noto Sans JP',sans-serif; font-weight:400; font-size:15px; line-height:1.85;
+  -webkit-font-smoothing:antialiased;}
+a{color:var(--accent-ink); text-decoration:none}
+a:hover{text-decoration:underline}
+
+.wrap{display:grid; grid-template-columns:var(--sidebar-width) minmax(0,1fr); max-width:100%; margin:0 auto}
+aside{position:sticky; top:0; align-self:start; height:100vh; overflow:auto;
+  width:var(--sidebar-width); padding:28px 14px 32px; border-right:1px solid var(--line); background:var(--bg)}
+/* 本文はサイドバー右カラム内で中央寄せ。hero / prose / foot は同幅 */
+main{
+  min-width:0;
+  justify-self:center;
+  width:min(100%,var(--content-width));
+  max-width:var(--content-width);
+  padding:48px clamp(20px,3.5vw,40px) 100px;
+  box-sizing:border-box;
+}
+main > .hero,
+main > .prose,
+main > .foot,
+main > .callout,
+main > .phase-block,
+main > .doc{
+  width:100%;
+  max-width:100%;
+}
+
+.brand{font-size:12px; font-weight:700; letter-spacing:.04em; color:var(--ink); padding:0 8px}
+.brand small{display:block; font-weight:400; font-size:10.5px; color:var(--ink-faint); margin-top:4px; line-height:1.35}
+.side-title{margin:18px 0 4px; font-size:15px; font-weight:700; line-height:1.35; color:var(--ink); padding:0 8px}
+.side-meta{font-size:11px; color:var(--ink-faint); border-top:1px solid var(--line); padding:12px 8px 0; margin-top:14px; line-height:1.45}
+nav ol{list-style:none; margin:14px 0 0; padding:0}
+nav li{margin:1px 0}
+nav a{display:flex; gap:8px; align-items:baseline; padding:6px 8px; border-radius:6px;
+  color:var(--ink-soft); font-size:12px; line-height:1.35}
+nav a .n{font-size:10.5px; color:var(--ink-faint); min-width:16px; font-variant-numeric:tabular-nums}
+nav a:hover{background:var(--sel); color:var(--ink); text-decoration:none}
+nav a.active{background:var(--sel); color:var(--ink); font-weight:500}
+nav a.active .n{color:var(--accent-ink)}
+
+.hero{margin-bottom:48px; padding-bottom:36px; border-bottom:1px solid var(--line); width:100%}
+.kicker{font-size:12px; letter-spacing:.08em; color:var(--accent-ink); font-weight:500}
+.hero h1{font-weight:700; font-size:clamp(24px,3.4vw,32px); line-height:1.4; margin:12px 0 10px; color:var(--ink)}
+.hero .lede{font-size:15px; color:var(--ink-soft); max-width:none; width:100%; margin:0 0 22px}
+.chips{display:flex; flex-wrap:wrap; gap:8px; width:100%}
+.chip{font-size:12px; padding:5px 11px; border-radius:5px; background:var(--panel);
+  border:1px solid var(--line); color:var(--ink-soft)}
+.chip b{color:var(--ink); font-weight:500}
+
+.doc{padding-top:36px; margin-top:36px; border-top:1px solid var(--line); scroll-margin-top:20px}
+.doc:first-of-type{border-top:none; padding-top:0; margin-top:0}
+.doc-head{margin-bottom:22px}
+.doc-no{font-size:11.5px; letter-spacing:.06em; color:var(--ink-faint)}
+.doc-head h2{font-weight:700; font-size:clamp(21px,2.6vw,26px); margin:6px 0 3px; line-height:1.4; color:var(--ink)}
+.doc-sub{color:var(--ink-soft); margin:0; font-size:13.5px}
+
+.prose{max-width:none; width:100%}
+.prose h1{display:none}
+.prose h2{font-weight:700; font-size:19px; margin:44px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--line); color:var(--ink);
+  display:flex; align-items:center; gap:.55rem}
+.prose h2::before{content:""; flex:none; width:.5em; height:.5em; background:var(--accent); border-radius:2px}
+.prose h3{font-weight:700; font-size:16px; margin:30px 0 8px; color:var(--ink)}
+.prose h4{font-size:14px; font-weight:500; margin:20px 0 6px; color:var(--ink-soft)}
+.prose p{margin:11px 0}
+.prose ul,.prose ol{margin:11px 0; padding-left:1.4em}
+.prose li{margin:4px 0}
+.prose strong{font-weight:700; color:var(--ink)}
+.prose hr{border:none; border-top:1px solid var(--line-soft); margin:34px 0}
+.prose code{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace; font-size:.85em;
+  background:var(--sel); color:#374151; padding:1px 5px; border-radius:4px}
+
+.prose blockquote{margin:18px 0; padding:14px 18px; background:var(--accent-soft);
+  border:1px solid var(--accent-line); border-left:3px solid var(--accent); border-radius:0 6px 6px 0}
+.prose blockquote p{margin:5px 0; font-size:13.5px; color:var(--ink-soft)}
+.prose blockquote strong{color:var(--ink)}
+
+.prose .tblwrap{overflow-x:auto; margin:18px 0; border:1px solid var(--line); border-radius:8px}
+.prose table{width:100%; border-collapse:collapse; font-size:13px; background:var(--bg)}
+.prose th{background:var(--panel); color:var(--ink); font-weight:500; text-align:left;
+  padding:10px 13px; font-size:12.5px; white-space:nowrap; border-bottom:2px solid var(--accent-line)}
+.prose td{padding:9px 13px; border-top:1px solid var(--line-soft); vertical-align:top; color:var(--ink-soft)}
+.prose tbody tr:nth-child(even){background:#fcfcfd}
+.prose td code{white-space:nowrap}
+.prose td strong{color:var(--ink)}
+
+.diagram{margin:6px 0 26px; padding:18px; background:var(--bg); border:1px solid var(--line); border-radius:8px; cursor:zoom-in}
+.diagram figcaption{font-size:12px; letter-spacing:.04em; color:var(--ink-faint); margin-bottom:10px}
+.diagram svg{width:100%; height:auto; display:block}
+.mermaid{margin:20px 0; padding:18px; background:var(--panel); border:1px solid var(--line);
+  border-radius:8px; overflow-x:auto; text-align:center; cursor:zoom-in}
+.zoom-hint{display:inline-flex; align-items:center; gap:5px; margin-top:10px;
+  font-size:11.5px; color:var(--ink-faint)}
+.zoom-hint::before{content:"⤢"; font-size:13px; color:var(--accent-ink)}
+
+.zoom-dlg{border:none; padding:0; width:96vw; height:94vh; max-width:96vw; max-height:94vh;
+  background:#fff; border-radius:10px; overflow:hidden}
+.zoom-dlg::backdrop{background:rgba(32,44,57,.72)}
+.zoom-bar{position:absolute; top:0; left:0; right:0; height:52px; display:flex; align-items:center;
+  gap:8px; padding:0 14px; border-bottom:1px solid var(--line); background:var(--panel); z-index:2}
+.zoom-bar .title{font-size:13px; color:var(--ink-soft); margin-right:auto;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.zoom-bar button{font-family:inherit; font-size:13px; line-height:1; padding:7px 11px;
+  border:1px solid var(--line); background:#fff; border-radius:6px; color:var(--ink-soft); cursor:pointer}
+.zoom-bar button:hover{border-color:var(--accent); color:var(--accent-ink)}
+.zoom-stage{position:absolute; inset:52px 0 0 0; overflow:hidden; background:#fff; cursor:grab}
+.zoom-stage.dragging{cursor:grabbing}
+.zoom-stage svg{position:absolute; top:0; left:0; transform-origin:0 0}
+
+.foot{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:12px}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr}
+  aside{position:static; width:auto; height:auto; border-right:none; border-bottom:1px solid var(--line)}
+  main{padding:36px 20px 72px; width:100%; max-width:none}
+}
+@media print{
+  aside{display:none} .wrap{display:block} main{padding:0}
+  .doc{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside>
+    <div class="brand">ap-safedx<small>労働安全衛生システム / DX推進グループ</small></div>
+    <div class="side-title">AI検索・分析機能</div>
+    <nav><ol><li><a href="#bmc"><span class="n">01</span>ビジネスモデルキャンバス</a></li>
+<li><a href="#persona"><span class="n">02</span>ペルソナ設定</a></li>
+<li><a href="#usm"><span class="n">03</span>ユーザーストーリーマッピング</a></li>
+<li><a href="#freq"><span class="n">04</span>機能要件一覧</a></li></ol></nav>
+    <div class="side-meta">要件定義 v1.0 ・ 2026-07-17<br>災害水平展開への機能追加</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">要件定義 / Requirements</div>
+      <h1>蓄積した災害情報を、自然言語で検索できるようにする</h1>
+      <p class="lede">災害報告書を登録するとRAGに取り込み、要約で気付きを添える。全社員が過去の類似災害を日常の言葉で引き出し、安全事務局が傾向をレポート化する。</p>
+      <div class="chips">
+        <span class="chip"><b>対象</b> ヒヤリ・ハット / 救急箱 / 災害速報</span>
+        <span class="chip"><b>基盤</b> Azure OpenAI</span>
+        <span class="chip"><b>埋め込み</b> text-embedding-3-large</span>
+        <span class="chip"><b>利用者</b> 全社員</span>
+        <span class="chip"><b>新規権限</b> 追加なし</span>
+      </div>
+    </div>
+    <section id="bmc" class="doc">
+  <header class="doc-head">
+    <span class="doc-no">01 / 04</span>
+    <h2>ビジネスモデルキャンバス</h2>
+    <p class="doc-sub">価値提案とMVP検証計画</p>
+  </header>
+  
+  <div class="prose">
+<blockquote>
+<p><strong>本資料について</strong>
+本資料は、労働安全衛生システム（ap-safedx／災害水平展開アプリ）の「災害水平展開」機能に組み込む「AI検索・分析機能」のビジネス価値とMVP検証計画を整理したドキュメントです。
+本機能の目的・価値提案・成功基準を明確にし、ステークホルダー間の認識を揃えます。</p>
+<p>※ 本機能は既存アプリ（ap-safedx）の「災害水平展開」機能への機能追加であり、既存の技術基盤・認証基盤・組織/権限モデル、およびBOX連携を共用します。</p>
+</blockquote>
+<h2>プロジェクト名：労働安全衛生システム（ap-safedx） ／ AI検索・分析機能</h2>
+<p><strong>作成日</strong>: 2026-07-17
+<strong>バージョン</strong>: 1.0
+<strong>作成者</strong>: DX推進グループ</p>
+<hr />
+<h2>0. 背景（なぜ本機能を作るのか）</h2>
+<h3>0.1 災害水平展開と3つの災害区分</h3>
+<p>労働安全衛生システム（ap-safedx）では、社内外で発生した災害情報を全社員へ周知し、再発防止に活かす「災害水平展開」を運用している。災害は以下の3区分で登録・回覧される。</p>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>区分</th>
+<th>内容</th>
+<th>主な様式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ヒヤリ・ハット報告</strong></td>
+<td>実際に体感した／潜在的に想定したヒヤリ・ハット。原因・リスク評価・所属長／安全事務局コメントを含む</td>
+<td>ヒヤリ・ハット報告書</td>
+</tr>
+<tr>
+<td><strong>救急箱災害</strong></td>
+<td>救急箱で処置した程度の労働災害。災害の型・被災者情報・災害状況の概要・水平展開・安全事務局コメントを含む</td>
+<td>救急箱災害報告書（様式－４保安）</td>
+</tr>
+<tr>
+<td><strong>災害速報（重大災害）</strong></td>
+<td>休業・不休業を伴う労働災害の速報。労働災害報告書として被災状況・原因・対策を含む</td>
+<td>労働災害報告書（様式－２保安）</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>各報告書はPDF等のファイルとして作成され、<strong>BOX</strong>に保管される。災害情報の登録時には<strong>BOXの共有リンク</strong>が紐づけられ、回覧対象者はそのリンクから資料を参照する。</li>
+</ul>
+<h3>0.2 現状の課題</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>現状</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>過去災害の活用</td>
+<td>過去に蓄積された多数の災害報告書（ヒヤリ・ハット／救急箱／災害速報）が、区分・年度・拠点ごとに散在し、<strong>横断的に探せない</strong></td>
+</tr>
+<tr>
+<td>類似災害の検索</td>
+<td>「過去に似た事故はあったか」を調べるには、担当者が記憶と手作業でファイルを漁るしかなく、<strong>見落とし・属人化</strong>が発生する</td>
+</tr>
+<tr>
+<td>検索手段</td>
+<td>ファイル名・区分での絞り込みが中心で、<strong>本文（作業内容・原因・対策）を対象にした検索ができない</strong></td>
+</tr>
+<tr>
+<td>気付きの提供</td>
+<td>回覧された報告書は、読み手が全文を読んで初めて要点が分かる。<strong>要点・気付きが即座に伝わらず</strong>、確認が形骸化しやすい</td>
+</tr>
+<tr>
+<td>傾向把握</td>
+<td>災害の型・原因・拠点別の傾向を把握するには、都度Excelで集計する必要があり、<strong>タイムリーな傾向分析ができない</strong></td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>位置づけ</strong>: 26年度テーマ候補のうち、災害水平展開の高度化施策。No.1（議事録回覧の効率化）に続く優先施策として、蓄積データのAI活用を図る。</p>
+</blockquote>
+<h3>0.3 本機能で実現すること</h3>
+<p>災害情報の登録（回覧）時に、BOX共有リンクから報告書ファイルを取得し、以下を自動で行う。</p>
+<ol>
+<li><strong>RAGへの自動登録</strong>：報告書の本文をベクトル化してRAGに登録し、あいまい検索（自然言語検索）を可能にする</li>
+<li><strong>要約（気付き）の自動生成</strong>：報告書を要約し、読み手に気付きを与える文章を生成して記事確認画面に表示する</li>
+</ol>
+<p>蓄積されたデータに対しては、以下のAI活用を提供する。</p>
+<ol start="3">
+<li><strong>自然言語検索</strong>：全社員が「過去に似た事故はあるか」等を自然文で検索し、根拠（出典）付きで類似災害・再発防止策を引き出す</li>
+<li><strong>傾向分析・レポート</strong>：災害の型・原因・拠点・区分などの観点で傾向を分析し、レポートを生成する</li>
+</ol>
+<hr />
+<h2>1. 顧客セグメント（Customer Segments）</h2>
+<h3>主要顧客</h3>
+<ul>
+<li><strong>全社員（検索・閲覧者）</strong>：自分の作業や職場に関連する過去災害・類似災害・再発防止策を知りたい全ての従業員。主な確認者は三井金属総合研究所の研究者で、工場系の災害を実験・試作の安全に活かす。回覧された報告書の要約（気付き）を読み、必要に応じて自然言語で検索する</li>
+<li><strong>安全衛生管理者（組織管理者）＝災害情報の登録者</strong>：災害情報を登録・回覧する担当者。登録時にRAG登録・要約生成が自動実行される</li>
+<li><strong>安全事務局・安全衛生スタッフ（分析者）</strong>：災害の型・原因・拠点別の傾向を把握し、教育・対策立案に活かす担当者</li>
+</ul>
+<h3>顧客の特徴</h3>
+<ul>
+<li>全社員が対象だが、確認の中心は三井金属総合研究所の研究者。研究者からスタッフ職まで、ITリテラシーの幅が広い</li>
+<li>検索者は「専門的な検索構文」ではなく、日常の言葉で問いたい（自然言語検索がMUST）</li>
+<li>分析者は、区分・年度・拠点をまたいだ横断的な傾向を、集計作業なしで把握したい</li>
+</ul>
+<hr />
+<h2>2. 価値提案（Value Propositions）</h2>
+<h3>全社員（検索・閲覧者）向け</h3>
+<ul>
+<li><strong>自然言語での類似災害検索</strong>：「フォークリフトで転落しそうになった事例」のように日常の言葉で過去災害を検索できる</li>
+<li><strong>根拠付きの回答</strong>：検索結果には出典（どの報告書か）が明示され、元資料（BOX）を確認できる</li>
+<li><strong>要約（気付き）で要点把握</strong>：回覧された報告書の要点と再発防止の気付きが、記事確認画面で一目で分かる</li>
+</ul>
+<h3>安全衛生管理者（登録者）向け</h3>
+<ul>
+<li><strong>登録するだけでAI活用</strong>：災害情報を登録・回覧すると、RAG登録と要約生成が自動で行われる（追加作業なし）</li>
+<li><strong>気付きの自動付与</strong>：読み手に伝わりやすい要約が自動生成され、周知の質が上がる</li>
+</ul>
+<h3>安全事務局・分析者向け</h3>
+<ul>
+<li><strong>傾向分析の自動化</strong>：災害の型・原因・拠点・区分などの傾向を、集計作業なしでレポート化できる</li>
+<li><strong>横断的な把握</strong>：区分・年度・拠点をまたいで蓄積データを横断分析できる</li>
+</ul>
+<h3>全体的な価値（安全文化・再発防止）</h3>
+<ul>
+<li><strong>再発防止の高度化</strong>：過去の類似災害・対策を素早く引き出し、同種災害の再発を防ぐ</li>
+<li><strong>周知の実効性向上</strong>：要約（気付き）により、回覧された災害情報が「読まれる・伝わる」ものになる</li>
+<li><strong>属人化の解消</strong>：過去災害の検索を担当者の記憶に頼らず、誰でも同じ品質で行える</li>
+<li><strong>既存基盤の活用</strong>：災害水平展開・BOX・認証基盤をそのまま活用し、投資を最小化する</li>
+</ul>
+<hr />
+<h2>3. チャネル（Channels）</h2>
+<h3>提供方法</h3>
+<ul>
+<li><strong>Webアプリケーション</strong>：既存の労働安全衛生システム（ap-safedx）「災害水平展開」機能に、AI検索・分析のUIを組み込んで提供</li>
+<li><strong>Microsoft Entra ID SSO</strong>：既存認証基盤（ap-auth）を活用したシームレスなログイン</li>
+<li><strong>BOX連携</strong>：災害情報に紐づくBOX共有リンクから報告書ファイルを取得し、RAG登録・要約生成に利用</li>
+<li><strong>Azure OpenAI</strong>：埋め込み（text-embedding-3-large）・要約／検索応答生成（GPT系モデル）を提供</li>
+</ul>
+<h3>アクセス環境</h3>
+<ul>
+<li>デスクトップPC（メイン）：検索・閲覧・分析</li>
+</ul>
+<hr />
+<h2>4. 収益の流れ（Revenue Streams）</h2>
+<h3>直接的なコスト削減</h3>
+<ul>
+<li><strong>調査工数削減</strong>：過去災害・類似事例の調査にかかる手作業を削減</li>
+<li><strong>集計工数削減</strong>：傾向分析レポートの手作業集計を削減</li>
+<li><strong>教育・対策立案の効率化</strong>：類似災害・原因の把握が早くなり、対策検討が加速</li>
+</ul>
+<h3>間接的な価値</h3>
+<ul>
+<li><strong>労働災害リスクの低減</strong>：再発防止の実効性向上による災害の抑止</li>
+<li><strong>安全文化の醸成</strong>：気付きの提供により、全社員の安全意識が高まる</li>
+</ul>
+<hr />
+<h2>5. 主要リソース（Key Resources）</h2>
+<h3>人的リソース</h3>
+<ul>
+<li><strong>開発チーム</strong>：既存 ap-safedx の開発体制を継続利用</li>
+<li><strong>ユーザー代表</strong>：安全事務局・安全衛生管理者・現場担当者</li>
+</ul>
+<h3>技術リソース</h3>
+<ul>
+<li><strong>既存アプリ基盤（ap-safedx）</strong>：FastAPI、Jinja2、Alpine.js、PostgreSQL、Redis、Docker</li>
+<li><strong>既存認証基盤（ap-auth）</strong>：Microsoft Entra ID SSO、セッション管理</li>
+<li><strong>BOX</strong>：災害報告書ファイルの保管先（共有リンク経由で取得）</li>
+<li><strong>Azure OpenAI</strong>：埋め込みモデル（text-embedding-3-large）、生成モデル（GPT-5.4／5.4-mini を検討）</li>
+<li><strong>ベクトルストア</strong>：RAG用のベクトル検索基盤（PostgreSQL拡張／専用ストアは設計で選定）</li>
+</ul>
+<h3>データリソース</h3>
+<ul>
+<li><strong>既存の災害情報</strong>：<code>t_disaster_info</code>（区分・災害種別・件名・BOXリンク等）</li>
+<li><strong>災害報告書ファイル</strong>：BOX上のヒヤリ・ハット／救急箱／災害速報の各報告書</li>
+<li><strong>既存の組織・部署・ユーザー情報</strong>：<code>m_org</code> / <code>m_department</code> / <code>m_department_member</code></li>
+<li><strong>既存の権限情報</strong>：<code>m_role</code></li>
+</ul>
+<hr />
+<h2>6. 主要活動（Key Activities）</h2>
+<h3>開発活動</h3>
+<ul>
+<li><strong>要件定義</strong>：本ドキュメント群の作成</li>
+<li><strong>基本設計</strong>：画面設計・DB設計（ベクトルストア含む）・RAGパイプライン設計・権限設計</li>
+<li><strong>開発</strong>：既存アーキテクチャに準拠した機能モジュールの実装＋Azure OpenAI連携</li>
+<li><strong>テスト・POC</strong>：蓄積済み報告書を用いた検索精度・要約品質の検証</li>
+<li><strong>リリース・全社展開</strong></li>
+</ul>
+<h3>運用活動</h3>
+<ul>
+<li><strong>RAGインデックスの運用・再構築</strong>（過去分の一括取り込み含む）</li>
+<li><strong>プロンプト・モデルのチューニング</strong>（要約品質・検索精度の改善）</li>
+<li><strong>利用状況・精度のモニタリング</strong></li>
+</ul>
+<hr />
+<h2>7. コスト構造（Cost Structure）</h2>
+<h3>初期コスト</h3>
+<ul>
+<li><strong>開発費用</strong>：AI検索・分析機能の開発工数（既存基盤流用のため新規インフラ投資は最小）</li>
+<li><strong>過去分の一括取り込み費用</strong>：蓄積済み報告書のRAG登録（埋め込み）にかかるAPI費用</li>
+</ul>
+<h3>運用コスト</h3>
+<ul>
+<li><strong>既存インフラ費用に内包</strong>：Azure VM、PostgreSQL、Redis は既存アプリと共用</li>
+<li><strong>Azure OpenAI 従量課金</strong>：埋め込み・要約・検索応答生成のトークン費用（新規に発生）</li>
+<li><strong>ベクトルストア費用</strong>：既存DBに内包、または軽量な追加コンポーネント</li>
+</ul>
+<h3>コスト最適化方針</h3>
+<ul>
+<li><strong>既存基盤の最大活用</strong>：認証・組織/権限・BOX・災害水平展開を流用</li>
+<li><strong>モデルの使い分け</strong>：高精度が必要な用途は上位モデル、要約等は軽量モデル（5.4-mini）でコスト最適化</li>
+<li><strong>登録時の増分処理</strong>：新規登録分のみを都度RAG登録し、無駄な再計算を避ける</li>
+</ul>
+<hr />
+<h1>MVPキャンバス</h1>
+<hr />
+<h2>8. 検証したい仮説（Hypothesis）</h2>
+<h3>仮説1: 自然言語検索の受容性・実用性</h3>
+<p><strong>「全社員は、区分・年度での絞り込みより、自然言語での類似災害検索を好み、実務で使う」</strong>
+- <strong>背景</strong>: 現状は本文検索ができず、過去災害の調査が属人化している
+- <strong>検証ポイント</strong>: 日常の言葉で問うて、期待する類似災害・対策が根拠付きで返るか
+- <strong>リスク</strong>: 報告書のフォーマット揺れ・OCR品質により検索精度が上がらない可能性</p>
+<h3>仮説2: 要約（気付き）の効果</h3>
+<p><strong>「登録時に自動生成される要約は、回覧された災害情報の要点把握と気付きに役立つ」</strong>
+- <strong>背景</strong>: 全文を読まないと要点が伝わらず、確認が形骸化しやすい
+- <strong>検証ポイント</strong>: 要約が正確で、読み手に再発防止の気付きを与えられるか
+- <strong>リスク</strong>: 要約の誤り・重要点の欠落（ハルシネーション）による誤解</p>
+<h3>仮説3: RAG自動登録の運用性</h3>
+<p><strong>「災害情報の登録（回覧）時に、BOX共有リンクから報告書を取得し自動でRAG登録できる」</strong>
+- <strong>背景</strong>: 報告書はBOXに保管され、災害情報にBOXリンクが紐づく
+- <strong>検証ポイント</strong>: 各様式（ヒヤリ・ハット／救急箱／災害速報）のPDFを安定して取得・テキスト化・登録できるか
+- <strong>リスク</strong>: 画像PDF・レイアウト崩れ・BOX権限によりテキスト抽出に失敗する可能性</p>
+<h3>仮説4: 傾向分析・レポートの価値</h3>
+<p><strong>「災害の型・原因・拠点・区分などの傾向を、集計作業なしでレポート化でき、対策立案に役立つ」</strong>
+- <strong>背景</strong>: 傾向把握は都度のExcel集計に依存している
+- <strong>検証ポイント</strong>: 分析者が求める観点でタイムリーにレポートが得られるか
+- <strong>リスク</strong>: 分類・タグの粒度が揃わず、傾向の信頼性が低下する可能性</p>
+<hr />
+<h2>9. MVP範囲の定義</h2>
+<p>POC（蓄積済み報告書を用いた検証）で検証するために<strong>最小限必要な機能</strong>を定義する。</p>
+<h3>🔴 MVP Phase 1（必須機能のみ）</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能カテゴリ</th>
+<th>含める機能</th>
+<th>含めない機能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>認証</strong></td>
+<td>✅ Entra ID SSOログイン（既存）<br>✅ 既存ロールでの権限制御</td>
+<td>❌ 新規権限の追加</td>
+</tr>
+<tr>
+<td><strong>RAG自動登録（登録時）</strong></td>
+<td>✅ 災害情報登録（回覧）時に、BOX共有リンクから報告書ファイルを取得<br>✅ テキスト抽出・チャンク化・埋め込み（text-embedding-3-large）・ベクトルストア登録<br>✅ 3区分（ヒヤリ・ハット／救急箱／災害速報）の報告書に対応<br>✅ 過去分の一括取り込み（初期インデックス構築）</td>
+<td>❌ 議事録など災害報告書以外のデータ横断（Phase 2）</td>
+</tr>
+<tr>
+<td><strong>要約（気付き）生成</strong></td>
+<td>✅ 登録時に報告書を要約し、気付きを与える文章を自動生成<br>✅ 記事確認画面に要約（気付き）を表示</td>
+<td>❌ 要約の手動編集ワークフロー（Phase 2で検討）</td>
+</tr>
+<tr>
+<td><strong>自然言語検索（全社員）</strong></td>
+<td>✅ 自然言語での類似災害検索（あいまい検索）<br>✅ 出典（報告書・BOXリンク）付きの検索結果<br>✅ 自然言語チャット型で「過去に似た事故はあるか」等に根拠付きで回答（RAG）<br>🟡 検索条件（区分・年度・拠点等）の併用（Phase 1推奨）</td>
+<td>❌ 会話履歴の永続化・高度な対話（Phase 2で検討）</td>
+</tr>
+<tr>
+<td><strong>傾向分析・レポート</strong></td>
+<td>✅ 災害の型・原因・拠点・区分・年度などの観点での傾向分析<br>✅ 集計・可視化レポートの生成</td>
+<td>❌ 高度なBI連携・ダッシュボードのカスタマイズ（Phase 2以降）</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<p><strong>作成日</strong>: 2026-07-17
+<strong>作成者</strong>: DX推進グループ
+<strong>バージョン</strong>: 1.0</p></div>
+</section>
+<section id="persona" class="doc">
+  <header class="doc-head">
+    <span class="doc-no">02 / 04</span>
+    <h2>ペルソナ設定</h2>
+    <p class="doc-sub">対象ユーザーの人物像</p>
+  </header>
+  
+  <div class="prose">
+<blockquote>
+<p><strong>本資料について</strong>
+本資料は、労働安全衛生システム（ap-safedx）の「災害水平展開」機能に組み込む「AI検索・分析機能」の対象ユーザーを具体的な人物像として定義したドキュメントです。
+ユーザーの課題・ニーズ・ゴールを明確にし、ユーザー中心の設計・開発を実現します。</p>
+<p><strong>本機能の主な対象は、三井金属総合研究所の研究者</strong>です。三井金属グループで発生する災害は製錬・機械・薬品取扱いなど<strong>工場系</strong>が多くを占めますが、それを確認・活用する中心は研究所の研究者であり、実験・試作（パイロット設備）の安全に工場系の教訓を活かす観点で利用します。</p>
+</blockquote>
+<h2>プロジェクト名：労働安全衛生システム（ap-safedx） ／ AI検索・分析機能</h2>
+<p><strong>作成日</strong>: 2026-07-17
+<strong>バージョン</strong>: 1.0
+<strong>作成者</strong>: DX推進グループ</p>
+<hr />
+<h2>ペルソナ1：研究者（検索・閲覧者）＝主な確認者</h2>
+<h3>基本情報</h3>
+<ul>
+<li><strong>名前</strong>：山本 拓也（やまもと たくや）</li>
+<li><strong>年齢</strong>：34歳</li>
+<li><strong>所属</strong>：三井金属総合研究所 機能材料研究部</li>
+<li><strong>役職</strong>：研究員</li>
+<li><strong>勤務形態</strong>：日勤（実験・試作あり）</li>
+<li><strong>ITリテラシー</strong>：中〜高程度（PC・文献検索は日常的。ただし安全システムの検索構文には不慣れ）</li>
+</ul>
+<h3>背景・状況</h3>
+<ul>
+<li>実験室や試作ライン（パイロット設備）で、金属材料・薬品・高温炉・回転機器などを扱う</li>
+<li>グループの工場等で発生した災害情報が回覧されてくる。多くは工場系（製錬・機械・薬品取扱い等）だが、実験・試作で扱う設備・薬品・作業に共通するリスクを含む</li>
+<li>自分の研究テーマに関係する事例だけを知りたいが、報告書の全文を読む時間が取りにくい</li>
+<li>「区分」「年度」で絞る検索はあるが、自分の実験作業に<strong>似た事例</strong>を言葉で探す手段がない</li>
+</ul>
+<h3>困りごと・ニーズ</h3>
+<h4>困りごと</h4>
+<ul>
+<li><strong>工場事例と自分の研究が結び付けにくい</strong>：工場系の災害が、実験・試作のどの作業に効くのか判断しにくい</li>
+<li><strong>似た事例が探せない</strong>：薬品取扱い・加熱・回転体・運搬など、自分の作業に近い事例を日常の言葉で探せない</li>
+<li><strong>要点が分からない</strong>：回覧された報告書の要点・気付きが即座に伝わらない</li>
+</ul>
+<h4>ニーズ</h4>
+<ul>
+<li><strong>自然言語で聞きたい</strong>：「◯◯を加熱する実験に近いヒヤリはあるか？」のように問いたい</li>
+<li><strong>要点だけ知りたい</strong>：報告書の要点と再発防止の気付きを短時間で把握したい</li>
+<li><strong>根拠を確認したい</strong>：回答の出典（元の報告書）を確認できると安心</li>
+</ul>
+<h3>ゴール</h3>
+<ul>
+<li>実験・試作の前に、関連する過去災害と対策を数分で把握できる</li>
+<li>回覧された災害情報の要点を短時間で理解し、自分の研究活動の安全に活かす</li>
+</ul>
+<h3>システムへの期待</h3>
+<ul>
+<li>自然言語で類似災害を検索し、根拠（出典・BOXリンク）付きで結果が返る</li>
+<li>回覧された報告書の要約（気付き）が記事確認画面に表示される</li>
+</ul>
+<hr />
+<h2>ペルソナ2：安全衛生管理者（組織管理者）＝災害情報の登録者</h2>
+<h3>基本情報</h3>
+<ul>
+<li><strong>名前</strong>：田村 里奈（たむら りな）</li>
+<li><strong>年齢</strong>：38歳</li>
+<li><strong>所属</strong>：担当組織の安全衛生委員</li>
+<li><strong>役職</strong>：安全衛生委員（各組織に1名）</li>
+<li><strong>勤務形態</strong>：正社員（日勤）</li>
+<li><strong>ITリテラシー</strong>：中〜高程度（業務システム・Excelを日常的に利用）</li>
+</ul>
+<h3>背景・状況</h3>
+<ul>
+<li>社内外で発生した災害情報（ヒヤリ・ハット／救急箱／災害速報）を登録し、全社員へ水平展開している</li>
+<li>報告書はBOXに保管し、災害情報にBOXの共有リンクを紐づけて回覧している</li>
+<li>回覧しても「全文を読まれない・要点が伝わらない」ことがあり、周知の実効性に課題を感じている</li>
+</ul>
+<h3>困りごと・ニーズ</h3>
+<h4>困りごと</h4>
+<ul>
+<li><strong>周知が形骸化</strong>：回覧しても要点が伝わらず、確認が形だけになりがち</li>
+<li><strong>手間を増やしたくない</strong>：AI活用のために登録作業が増えるのは避けたい</li>
+</ul>
+<h4>ニーズ</h4>
+<ul>
+<li><strong>登録するだけでよい</strong>：いつもの登録・回覧を行えば、RAG登録と要約が自動で行われてほしい</li>
+<li><strong>気付きを添えたい</strong>：読み手に伝わる要約（気付き）が自動で付与されてほしい</li>
+</ul>
+<h3>ゴール</h3>
+<ul>
+<li>追加作業なしで、回覧する災害情報にAIの要約（気付き）を付与できる</li>
+<li>過去に登録した災害情報が、全社員の検索資産として活用される</li>
+</ul>
+<h3>システムへの期待</h3>
+<ul>
+<li>災害情報の登録（回覧）時に、BOX共有リンクから報告書が取得され、自動でRAG登録・要約生成される</li>
+<li>生成された要約（気付き）が記事確認画面に表示される</li>
+</ul>
+<hr />
+<h2>ペルソナ3：安全事務局・安全衛生スタッフ（分析者）</h2>
+<h3>基本情報</h3>
+<ul>
+<li><strong>名前</strong>：中村 亮介（なかむら りょうすけ）</li>
+<li><strong>年齢</strong>：45歳</li>
+<li><strong>所属</strong>：安全事務局</li>
+<li><strong>役職</strong>：安全衛生スタッフ</li>
+<li><strong>勤務形態</strong>：正社員（日勤）</li>
+<li><strong>ITリテラシー</strong>：高程度（Excel集計・資料作成を日常的に実施）</li>
+</ul>
+<h3>背景・状況</h3>
+<ul>
+<li>全社の災害情報を俯瞰し、災害の型・原因・拠点別の傾向を把握して、教育・対策立案に活かす立場</li>
+<li>現状は傾向を出すために、都度Excelで集計しており、タイムリーな分析ができない</li>
+<li>過去の類似災害を根拠に、水平展開のコメント（安全事務局より）を作成している</li>
+</ul>
+<h3>困りごと・ニーズ</h3>
+<h4>困りごと</h4>
+<ul>
+<li><strong>集計が手作業</strong>：災害の型・原因・拠点別の傾向を出すのに毎回Excel集計が必要</li>
+<li><strong>横断が難しい</strong>：区分・年度・拠点をまたいだ横断的な把握がしにくい</li>
+<li><strong>類似事例の引用が属人的</strong>：過去の類似災害を記憶と手作業で探している</li>
+</ul>
+<h4>ニーズ</h4>
+<ul>
+<li><strong>傾向を自動でレポート化したい</strong>：観点を指定すれば傾向分析レポートが得られてほしい</li>
+<li><strong>横断的に検索したい</strong>：区分・年度・拠点をまたいで蓄積データを検索したい</li>
+<li><strong>根拠付きで引用したい</strong>：類似災害を出典付きで素早く引き出したい</li>
+</ul>
+<h3>ゴール</h3>
+<ul>
+<li>傾向分析レポートを集計作業なしで作成できる</li>
+<li>対策立案・教育資料の作成に、蓄積データを根拠付きで活用できる</li>
+</ul>
+<h3>システムへの期待</h3>
+<ul>
+<li>災害の型・原因・拠点・区分・年度などの観点で傾向分析・レポートが生成される</li>
+<li>自然言語検索で、横断的に類似災害を出典付きで引き出せる</li>
+</ul>
+<hr />
+<h2>ペルソナサマリー</h2>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>研究者（検索・閲覧者）</th>
+<th>安全衛生管理者（登録者）</th>
+<th>安全事務局（分析者）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>主な困りごと</strong></td>
+<td>工場事例と研究が結び付けにくい・要点が掴めない</td>
+<td>周知が形骸化・手間を増やせない</td>
+<td>集計が手作業・横断が難しい</td>
+</tr>
+<tr>
+<td><strong>主なニーズ</strong></td>
+<td>自然言語検索・要約（気付き）</td>
+<td>登録するだけで自動RAG登録・要約</td>
+<td>傾向分析の自動化・横断検索</td>
+</tr>
+<tr>
+<td><strong>ゴール</strong></td>
+<td>実験・試作前に関連災害を数分で把握</td>
+<td>追加作業なしで気付きを付与</td>
+<td>集計なしで傾向レポート作成</td>
+</tr>
+<tr>
+<td><strong>期待する価値</strong></td>
+<td>根拠付きの類似災害検索</td>
+<td>自動要約による周知の質向上</td>
+<td>横断的な傾向分析・根拠付き引用</td>
+</tr>
+<tr>
+<td><strong>利用権限</strong></td>
+<td>認証済みユーザー（全社員）</td>
+<td>組織管理者（<code>organization</code>）</td>
+<td>既存ロール（分析UIの利用）</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>利用者について</strong>: 自然言語検索・要約（気付き）の閲覧は<strong>全社員</strong>が対象。RAG登録・要約生成は災害情報の登録（回覧）時に自動実行され、登録操作を行うのは既存の「組織管理者（<code>organization</code>）＝安全衛生管理者」である。傾向分析・レポートは安全事務局を中心とした分析者が主に利用する。<strong>本機能のための新規権限（ロール）追加は不要</strong>で、既存ロールで対応する。</p>
+<p><strong>データの取り扱いについて</strong>: RAGの対象となる報告書には被災者名等が含まれ得るが、報告書上は氏名がマスキング（例：<code>****</code>）されている運用を前提とする。AI連携先は<strong>Azure OpenAI</strong>（社内で利用可能な基盤）を用い、外部への学習利用が行われない構成とする。詳細な取り扱い方針は設計フェーズで定める。</p>
+</blockquote>
+<hr />
+<p><strong>作成日</strong>: 2026-07-17
+<strong>作成者</strong>: DX推進グループ
+<strong>バージョン</strong>: 1.0</p></div>
+</section>
+<section id="usm" class="doc">
+  <header class="doc-head">
+    <span class="doc-no">03 / 04</span>
+    <h2>ユーザーストーリーマッピング</h2>
+    <p class="doc-sub">誰が・何を・なぜ</p>
+  </header>
+  
+  <div class="prose">
+<blockquote>
+<p><strong>本資料について</strong>
+本資料は、労働安全衛生システム（ap-safedx）の「災害水平展開」機能に組み込む「AI検索・分析機能」のユーザーストーリーを整理したドキュメントです。
+各ユーザーが「何をしたいか」「なぜしたいか」を明確にし、機能の優先順位付けに活用します。</p>
+</blockquote>
+<h2>プロジェクト名：労働安全衛生システム（ap-safedx） ／ AI検索・分析機能</h2>
+<p><strong>作成日</strong>: 2026-07-17
+<strong>バージョン</strong>: 1.0
+<strong>作成者</strong>: DX推進グループ</p>
+<hr />
+<h2>ユーザージャーニー概要</h2>
+<div class="mermaid">flowchart LR
+    subgraph 安全衛生管理者（登録者）
+        A1[災害情報の登録・回覧&lt;br/&gt;区分・件名・BOX共有リンク]
+    end
+
+    subgraph システム（自動処理）
+        A1 --&gt; S1[BOX共有リンクから&lt;br/&gt;報告書ファイル取得]
+        S1 --&gt; S2[テキスト抽出・チャンク化]
+        S2 --&gt; S3[埋め込み生成&lt;br/&gt;text-embedding-3-large]
+        S3 --&gt; S4[ベクトルストアへ登録&lt;br/&gt;（RAGインデックス）]
+        S1 --&gt; S5[要約・気付き生成&lt;br/&gt;GPTモデル]
+        S5 --&gt; S6[記事確認画面へ&lt;br/&gt;要約（気付き）表示]
+    end
+
+    subgraph 全社員（検索・閲覧者）
+        S6 --&gt; B1[記事確認画面で&lt;br/&gt;要約（気付き）を読む]
+        B1 --&gt; B2[自然言語で類似災害を検索]
+        B2 --&gt; B3[根拠（出典）付きで結果参照]
+        B3 --&gt; B4[BOXの元資料を確認]
+    end
+
+    subgraph 安全事務局（分析者）
+        S4 --&gt; C1[観点を指定して&lt;br/&gt;傾向分析を実行]
+        C1 --&gt; C2[傾向レポート生成&lt;br/&gt;災害の型・原因・拠点別]
+    end
+
+    style A1 fill:#e3f2fd
+    style S4 fill:#fff3e0
+    style S6 fill:#fce4ec
+    style B3 fill:#e8f5e9
+    style C2 fill:#e8f5e9
+</div>
+<blockquote>
+<p><strong>背景</strong>: 災害情報（ヒヤリ・ハット／救急箱／災害速報）はBOXに保管され、災害水平展開で全社員へ回覧される。本機能は、その登録タイミングで報告書をRAGへ自動登録し、要約（気付き）を生成する。蓄積データは全社員が自然言語で検索でき、安全事務局が傾向分析に活用する。</p>
+</blockquote>
+<hr />
+<h2>1. 全社員（検索・閲覧者）のユーザーストーリー</h2>
+<h3>ユーザーアクティビティ：過去災害の検索と気付きの把握</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>フェーズ</th>
+<th>ユーザーストーリー</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. ログイン</strong></td>
+<td>社員として、Entra ID SSOでログインしたい。理由：既存の社内アカウントで簡単にアクセスしたいから</td>
+<td>🔴 必須</td>
+<td>既存認証基盤利用</td>
+</tr>
+<tr>
+<td><strong>2. 気付きの把握</strong></td>
+<td>回覧された災害情報の要約（気付き）を記事確認画面で読みたい。理由：全文を読まなくても要点と再発防止の気付きを掴みたいから</td>
+<td>🔴 必須</td>
+<td>記事確認画面に表示</td>
+</tr>
+<tr>
+<td><strong>3. 自然言語検索</strong></td>
+<td>「フォークリフトで転落しそうになった事例は？」のように自然言語で過去災害を検索したい。理由：日常の言葉で似た事例を探したいから</td>
+<td>🔴 必須</td>
+<td>あいまい検索（MUST）</td>
+</tr>
+<tr>
+<td><strong>3. 自然言語検索</strong></td>
+<td>検索結果に出典（どの報告書か・BOXリンク）を表示してほしい。理由：根拠を確認し元資料を見たいから</td>
+<td>🔴 必須</td>
+<td>出典付き回答</td>
+</tr>
+<tr>
+<td><strong>3. 自然言語検索</strong></td>
+<td>区分・年度・拠点などの条件を検索に併用したい。理由：関連する範囲に絞り込みたいから</td>
+<td>🟡 推奨</td>
+<td>条件併用</td>
+</tr>
+<tr>
+<td><strong>4. チャット質問</strong></td>
+<td>チャット形式で「過去に似た事故はあるか」等を質問し、根拠付きで回答を得たい。理由：対話的に深掘りしたいから</td>
+<td>🔴 必須</td>
+<td>RAG型応答</td>
+</tr>
+<tr>
+<td><strong>5. 元資料確認</strong></td>
+<td>検索・回答から、BOXの元報告書を開いて確認したい。理由：詳細を一次資料で確かめたいから</td>
+<td>🔴 必須</td>
+<td>BOXリンク遷移</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>2. 安全衛生管理者（組織管理者・登録者）のユーザーストーリー</h2>
+<h3>ユーザーアクティビティ：災害情報の登録に伴うAI自動処理</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>フェーズ</th>
+<th>ユーザーストーリー</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 登録・回覧</strong></td>
+<td>安全衛生管理者として、いつも通り災害情報を登録・回覧したい。理由：追加作業を増やさずAI活用したいから</td>
+<td>🔴 必須</td>
+<td>既存の災害登録フロー</td>
+</tr>
+<tr>
+<td><strong>2. RAG自動登録</strong></td>
+<td>登録時に、BOX共有リンクの報告書を自動でRAGに登録してほしい。理由：あいまい検索の対象にしたいから</td>
+<td>🔴 必須</td>
+<td>登録トリガーで自動実行</td>
+</tr>
+<tr>
+<td><strong>3. 要約自動生成</strong></td>
+<td>登録時に、報告書の要約（気付き）を自動生成してほしい。理由：読み手に気付きを与えたいから</td>
+<td>🔴 必須</td>
+<td>記事確認画面に表示</td>
+</tr>
+<tr>
+<td><strong>4. 処理結果の確認</strong></td>
+<td>RAG登録・要約生成が成功したか確認したい。理由：失敗時に再実行したいから</td>
+<td>🟡 推奨</td>
+<td>処理ステータス表示・再実行</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>3. 安全事務局（分析者）のユーザーストーリー</h2>
+<h3>ユーザーアクティビティ：傾向分析とレポート生成</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>フェーズ</th>
+<th>ユーザーストーリー</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. ログイン</strong></td>
+<td>安全事務局として、Entra ID SSOでログインしたい。理由：既存の社内アカウントで簡単にアクセスしたいから</td>
+<td>🔴 必須</td>
+<td>既存認証基盤利用</td>
+</tr>
+<tr>
+<td><strong>2. 横断検索</strong></td>
+<td>区分・年度・拠点をまたいで、蓄積データを自然言語で横断検索したい。理由：類似災害を根拠付きで引き出したいから</td>
+<td>🔴 必須</td>
+<td>横断検索</td>
+</tr>
+<tr>
+<td><strong>3. 傾向分析</strong></td>
+<td>災害の型・原因・拠点・区分・年度などの観点で傾向を分析したい。理由：対策・教育の重点を把握したいから</td>
+<td>🔴 必須</td>
+<td>傾向分析</td>
+</tr>
+<tr>
+<td><strong>4. レポート生成</strong></td>
+<td>傾向分析の結果をレポート（集計・可視化）として出力したい。理由：資料作成に活かしたいから</td>
+<td>🔴 必須</td>
+<td>レポート生成</td>
+</tr>
+<tr>
+<td><strong>5. 引用・活用</strong></td>
+<td>分析結果を出典付きで対策資料・教育資料に引用したい。理由：根拠のある資料を作りたいから</td>
+<td>🟡 推奨</td>
+<td>出典付き引用</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>4. 会社（安全文化・再発防止）の観点</h2>
+<blockquote>
+<p>災害水平展開は、社内外の災害を全社員へ周知し再発を防止する取り組みである。本機能は、蓄積された報告書をAIで検索・要約・分析可能にし、周知の実効性と再発防止の高度化を図る。</p>
+</blockquote>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>観点</th>
+<th>要件</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>再発防止</strong></td>
+<td>過去の類似災害・対策を素早く引き出し、同種災害の再発を防ぐ</td>
+<td>🔴 必須</td>
+<td>自然言語検索・傾向分析</td>
+</tr>
+<tr>
+<td><strong>周知の実効性</strong></td>
+<td>要約（気付き）により、回覧された災害情報を確実に読み・伝える</td>
+<td>🔴 必須</td>
+<td>要約生成</td>
+</tr>
+<tr>
+<td><strong>データ保護</strong></td>
+<td>被災者名等を含み得るデータを、外部学習に利用されない基盤（Azure OpenAI）で扱う</td>
+<td>🔴 必須</td>
+<td>データ取り扱い方針</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>ユーザーストーリーマップ（優先度別）</h2>
+<h3>🔴 MVP（必須機能）- Phase 1</h3>
+<ol>
+<li>
+<p><strong>認証・ログイン</strong>
+   - Entra ID SSOログイン（既存）</p>
+</li>
+<li>
+<p><strong>RAG自動登録（登録時・自動処理）</strong>
+   - 災害情報登録（回覧）時にBOX共有リンクから報告書ファイルを取得
+   - テキスト抽出・チャンク化・埋め込み（text-embedding-3-large）・ベクトルストア登録
+   - 3区分（ヒヤリ・ハット／救急箱／災害速報）に対応
+   - 過去分の一括取り込み（初期インデックス構築）</p>
+</li>
+<li>
+<p><strong>要約（気付き）生成</strong>
+   - 登録時に報告書を要約し、気付きを与える文章を自動生成
+   - 記事確認画面に要約（気付き）を表示</p>
+</li>
+<li>
+<p><strong>自然言語検索（全社員）</strong>
+   - 自然言語での類似災害検索（あいまい検索）
+   - 出典（報告書・BOXリンク）付きの検索結果
+   - チャット型で「過去に似た事故はあるか」等に根拠付きで回答（RAG）</p>
+</li>
+<li>
+<p><strong>傾向分析・レポート（安全事務局）</strong>
+   - 災害の型・原因・拠点・区分・年度などの観点での傾向分析
+   - 集計・可視化レポートの生成</p>
+</li>
+</ol>
+<hr />
+<h3>🟡 Phase 2（推奨機能）- POC後に追加</h3>
+<ol>
+<li>
+<p><strong>検索・閲覧者向け</strong>
+   - 検索条件（区分・年度・拠点）の高度な併用・絞り込み
+   - 会話履歴の永続化・対話の深掘り</p>
+</li>
+<li>
+<p><strong>登録者向け</strong>
+   - 要約（気付き）の手動編集・承認ワークフロー
+   - RAG登録・要約生成の処理結果の詳細確認・再実行</p>
+</li>
+<li>
+<p><strong>分析者向け</strong>
+   - 議事録など災害報告書以外のデータ横断検索・分析
+   - 分析結果の出典付き引用支援</p>
+</li>
+</ol>
+<hr />
+<h3>🟢 Phase 3（将来的な拡張）</h3>
+<ol>
+<li><strong>検索・閲覧者向け</strong>
+   - スマホ最適化・音声入力での検索</li>
+<li><strong>分析者向け</strong>
+   - 傾向のBIダッシュボード・自動アラート（特定の型・原因の増加検知）
+   - 再発防止策のレコメンド生成</li>
+</ol>
+<hr />
+<p><strong>作成日</strong>: 2026-07-17
+<strong>作成者</strong>: DX推進グループ
+<strong>バージョン</strong>: 1.0</p></div>
+</section>
+<section id="freq" class="doc">
+  <header class="doc-head">
+    <span class="doc-no">04 / 04</span>
+    <h2>機能要件一覧</h2>
+    <p class="doc-sub">機能・非機能・権限</p>
+  </header>
+  <figure class="diagram"><figcaption>図：AI検索・分析 データフロー</figcaption><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 640" font-family="'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif">
+<defs>
+<marker id="ad" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 z" fill="#00a984"/></marker>
+<marker id="al" markerWidth="9" markerHeight="7" refX="7.5" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7 z" fill="#9aa0a6"/></marker>
+</defs>
+<rect x="0" y="0" width="1240" height="640" fill="#ffffff"/>
+<text x="60" y="50" font-size="20" font-weight="600" fill="#2b2f36">AI検索・分析機能 — データフロー</text>
+<text x="60" y="74" font-size="13" fill="#8b9096">登録時に自動でRAG登録・要約し、全社員が自然言語で検索、安全事務局が傾向分析する</text>
+<text x="60" y="118" font-size="12.5" font-weight="600" fill="#6b7178">① 登録時（自動処理）</text>
+<text x="60" y="430" font-size="12.5" font-weight="600" fill="#6b7178">② 検索・分析</text>
+<rect x="48" y="128" width="196" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="146.0" y="158" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">災害情報を登録</text>
+<text x="146.0" y="178" font-size="11" fill="#8b9096" text-anchor="middle">安全衛生管理者</text>
+<rect x="300" y="128" width="196" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="398.0" y="158" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">BOXから取得・抽出</text>
+<text x="398.0" y="178" font-size="11" fill="#8b9096" text-anchor="middle">報告書 → テキスト</text>
+<rect x="552" y="128" width="210" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="657.0" y="158" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">チャンク化 → 埋め込み</text>
+<text x="657.0" y="178" font-size="11" fill="#8b9096" text-anchor="middle">text-embedding-3-large</text>
+<rect x="980" y="128" width="210" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="1085.0" y="158" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">要約・気付きを生成</text>
+<text x="1085.0" y="178" font-size="11" fill="#8b9096" text-anchor="middle">GPT → 記事確認画面</text>
+<rect x="360" y="272" width="580" height="92" rx="10" fill="#e9f7f2" stroke="#9fccbd" stroke-width="1.5"/>
+<line x1="380" y1="300" x2="920" y2="300" stroke="#dfe3e7" stroke-width="1"/>
+<line x1="380" y1="320" x2="920" y2="320" stroke="#dfe3e7" stroke-width="1"/>
+<line x1="380" y1="340" x2="920" y2="340" stroke="#dfe3e7" stroke-width="1"/>
+<text x="650" y="308" font-size="15" font-weight="600" fill="#00755c" text-anchor="middle">ベクトルストア（RAGインデックス）</text>
+<text x="650" y="330" font-size="11" fill="#8b9096" text-anchor="middle">区分・年度・拠点・災害種別をメタデータとして保持</text>
+<rect x="980" y="282" width="210" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="1085.0" y="312" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">傾向分析・レポート</text>
+<text x="1085.0" y="332" font-size="11" fill="#8b9096" text-anchor="middle">安全事務局</text>
+<rect x="48" y="440" width="196" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="146.0" y="470" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">自然言語検索 / チャット</text>
+<text x="146.0" y="490" font-size="11" fill="#8b9096" text-anchor="middle">全社員</text>
+<rect x="300" y="440" width="196" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="398.0" y="470" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">クエリ埋め込み・類似検索</text>
+<text x="398.0" y="490" font-size="11" fill="#8b9096" text-anchor="middle">ベクトル類似</text>
+<rect x="552" y="440" width="210" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="657.0" y="470" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">RAG応答を生成</text>
+<text x="657.0" y="490" font-size="11" fill="#8b9096" text-anchor="middle">出典付き回答</text>
+<rect x="980" y="440" width="210" height="72" rx="8" fill="#ffffff" stroke="#d6dade" stroke-width="1.3"/>
+<text x="1085.0" y="470" font-size="13.5" font-weight="500" fill="#2b2f36" text-anchor="middle">類似災害・再発防止策</text>
+<text x="1085.0" y="490" font-size="11" fill="#8b9096" text-anchor="middle">＋ BOX元資料</text>
+<path d="M244,164 L300,164" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<path d="M496,164 L552,164" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<path d="M657,200 L657,272" stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="6,4" fill="none" marker-end="url(#al)"/>
+<text x="670" y="242" font-size="10.5" fill="#8b9096">登録</text>
+<path d="M398,128 L398,102 L1085,102 L1085,128" stroke="#b3b8bd" stroke-width="1.4" stroke-dasharray="2,3" fill="none" marker-end="url(#al)"/>
+<text x="740" y="96" font-size="10.5" fill="#9aa0a6" text-anchor="middle">要約（非同期）</text>
+<path d="M244,476 L300,476" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<path d="M398,440 L398,364" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<text x="408" y="405" font-size="10.5" fill="#8b9096">検索</text>
+<path d="M657,364 L657,440" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<text x="670" y="405" font-size="10.5" fill="#8b9096">取得</text>
+<path d="M762,476 L980,476" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<path d="M940,318 L980,318" stroke="#00a984" stroke-width="1.6" fill="none" marker-end="url(#ad)"/>
+<g font-size="11" fill="#7a8087">
+<rect x="48" y="576" width="1142" height="42" rx="6" fill="#fafbfc" stroke="#e5e8eb" stroke-width="1"/>
+<line x1="70" y1="597" x2="104" y2="597" stroke="#00a984" stroke-width="1.6"/><text x="112" y="601">主要・読出し</text>
+<line x1="260" y1="597" x2="294" y2="597" stroke="#9aa0a6" stroke-width="1.6" stroke-dasharray="6,4"/><text x="302" y="601">登録（インデックス）</text>
+<line x1="500" y1="597" x2="534" y2="597" stroke="#b3b8bd" stroke-width="1.4" stroke-dasharray="2,3"/><text x="542" y="601">要約・非同期処理</text>
+<text x="960" y="601" fill="#9aa0a6">AI基盤：Azure OpenAI</text>
+</g>
+</svg><span class="zoom-hint">クリックで拡大表示</span></figure>
+  <div class="prose">
+<blockquote>
+<p><strong>本資料について</strong>
+本資料は、労働安全衛生システム（ap-safedx）の「災害水平展開」機能に組み込む「AI検索・分析機能」の機能要件・非機能要件を定義したドキュメントです。
+システムが「何をするか」を明確にし、設計・開発フェーズの基盤となります。</p>
+<p>※ プロジェクト概要・価値提案は「01_ビジネスモデルキャンバス.md」を参照
+※ 対象ユーザー詳細は「02_ペルソナ設定.md」を参照
+※ ユーザーストーリーは「03_ユーザーストーリーマッピング.md」を参照</p>
+</blockquote>
+<h2>プロジェクト名：労働安全衛生システム（ap-safedx） ／ AI検索・分析機能</h2>
+<p><strong>作成日</strong>: 2026-07-17
+<strong>バージョン</strong>: 1.0
+<strong>作成者</strong>: DX推進グループ</p>
+<hr />
+<h2>1. 機能要件一覧</h2>
+<h3>1.1 認証・権限機能（既存基盤の流用）</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>対象ユーザー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-AUTH-001</td>
+<td>Entra ID SSOログイン</td>
+<td>既存 ap-auth による Microsoft Entra ID シングルサインオン</td>
+<td>🔴 必須</td>
+<td>全ユーザー</td>
+</tr>
+<tr>
+<td>AIS-AUTH-002</td>
+<td>ユーザー・組織情報取得</td>
+<td>既存の <code>m_org</code>／<code>m_department</code>／<code>m_department_member</code> からユーザー・組織情報を取得</td>
+<td>🔴 必須</td>
+<td>全ユーザー</td>
+</tr>
+<tr>
+<td>AIS-AUTH-003</td>
+<td>権限判定</td>
+<td>既存ロール（一般利用者／組織管理者／全体管理者）で権限制御。<strong>新規権限追加は不要</strong></td>
+<td>🔴 必須</td>
+<td>全ユーザー</td>
+</tr>
+<tr>
+<td>AIS-AUTH-004</td>
+<td>検索・閲覧の開放</td>
+<td>自然言語検索・要約（気付き）の閲覧は全社員に開放</td>
+<td>🔴 必須</td>
+<td>全ユーザー</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3>1.2 メニュー機能</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-MENU-001</td>
+<td>AI検索メニュー</td>
+<td>「災害水平展開」機能内にAI検索（自然言語検索・チャット）への導線を追加</td>
+<td>🔴 必須</td>
+<td>全ユーザーに表示</td>
+</tr>
+<tr>
+<td>AIS-MENU-002</td>
+<td>分析メニュー</td>
+<td>傾向分析・レポートへの導線を追加</td>
+<td>🔴 必須</td>
+<td>分析者（安全事務局）向け</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3>1.3 RAG自動登録機能（登録時・自動処理）</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-RAG-001</td>
+<td>登録トリガー連携</td>
+<td>災害情報の登録（回覧）を契機に、RAG登録処理を自動起動</td>
+<td>🔴 必須</td>
+<td><code>t_disaster_info</code> 登録と連動</td>
+</tr>
+<tr>
+<td>AIS-RAG-002</td>
+<td>BOXファイル取得</td>
+<td>災害情報に紐づくBOX共有リンクから報告書ファイルを取得</td>
+<td>🔴 必須</td>
+<td>BOX API／共有リンク</td>
+</tr>
+<tr>
+<td>AIS-RAG-003</td>
+<td>テキスト抽出</td>
+<td>取得したPDF等からテキストを抽出（画像PDFはOCRを検討）</td>
+<td>🔴 必須</td>
+<td>3区分の様式に対応</td>
+</tr>
+<tr>
+<td>AIS-RAG-004</td>
+<td>チャンク化</td>
+<td>抽出テキストを検索に適した単位に分割（メタデータ：区分・年度・拠点・災害種別等を付与）</td>
+<td>🔴 必須</td>
+<td>チャンク＋メタデータ</td>
+</tr>
+<tr>
+<td>AIS-RAG-005</td>
+<td>埋め込み生成</td>
+<td>Azure OpenAI 埋め込みモデル（text-embedding-3-large）でベクトル化</td>
+<td>🔴 必須</td>
+<td>Azure OpenAI</td>
+</tr>
+<tr>
+<td>AIS-RAG-006</td>
+<td>ベクトルストア登録</td>
+<td>生成したベクトルとメタデータをベクトルストアに登録（RAGインデックス）</td>
+<td>🔴 必須</td>
+<td>ストアは設計で選定</td>
+</tr>
+<tr>
+<td>AIS-RAG-007</td>
+<td>過去分一括取り込み</td>
+<td>蓄積済み報告書を初期インデックスとして一括登録</td>
+<td>🔴 必須</td>
+<td>初期構築バッチ</td>
+</tr>
+<tr>
+<td>AIS-RAG-008</td>
+<td>再取り込み・更新</td>
+<td>対象報告書の差し替え・削除時にインデックスを更新／削除</td>
+<td>🟡 推奨</td>
+<td>整合性維持</td>
+</tr>
+<tr>
+<td>AIS-RAG-009</td>
+<td>処理ステータス管理</td>
+<td>RAG登録処理の成功／失敗を記録し、失敗時は再実行可能とする</td>
+<td>🟡 推奨</td>
+<td>非同期処理の可視化</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>対象区分</strong>: ヒヤリ・ハット報告／救急箱災害／災害速報（重大災害）の3区分の報告書を対象とする。MVPでは災害報告書以外（議事録等）のデータ横断はスコープ外（Phase 2）。</p>
+</blockquote>
+<hr />
+<h3>1.4 要約（気付き）生成機能</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-SUM-001</td>
+<td>要約生成</td>
+<td>登録時に、報告書本文から要約を自動生成</td>
+<td>🔴 必須</td>
+<td>GPTモデル（5.4／5.4-mini検討）</td>
+</tr>
+<tr>
+<td>AIS-SUM-002</td>
+<td>気付き生成</td>
+<td>読み手に再発防止の気付きを与える文章を生成</td>
+<td>🔴 必須</td>
+<td>気付き文</td>
+</tr>
+<tr>
+<td>AIS-SUM-003</td>
+<td>要約の保存</td>
+<td>生成した要約（気付き）を災害情報に紐づけて保存</td>
+<td>🔴 必須</td>
+<td>再表示・再利用</td>
+</tr>
+<tr>
+<td>AIS-SUM-004</td>
+<td>記事確認画面表示</td>
+<td>記事確認画面に要約（気付き）を表示</td>
+<td>🔴 必須</td>
+<td>表示位置は画面設計で確定</td>
+</tr>
+<tr>
+<td>AIS-SUM-005</td>
+<td>再生成</td>
+<td>要約生成失敗時、または内容更新時に要約を再生成</td>
+<td>🟡 推奨</td>
+<td>再実行</td>
+</tr>
+<tr>
+<td>AIS-SUM-006</td>
+<td>要約の手動編集</td>
+<td>生成された要約を担当者が手動で編集・承認</td>
+<td>🟢 検討</td>
+<td>Phase 2で検討</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3>1.5 自然言語検索機能（全社員向け）</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-SRC-001</td>
+<td>自然言語検索</td>
+<td>自然文の入力から、意味的に類似する過去災害を検索（あいまい検索）</td>
+<td>🔴 必須</td>
+<td>ベクトル検索。<strong>MUST</strong></td>
+</tr>
+<tr>
+<td>AIS-SRC-002</td>
+<td>チャット型応答</td>
+<td>チャット形式の質問に対し、RAGで根拠を参照して回答を生成</td>
+<td>🔴 必須</td>
+<td>RAG応答</td>
+</tr>
+<tr>
+<td>AIS-SRC-003</td>
+<td>出典表示</td>
+<td>回答・検索結果に出典（報告書・区分・年度・拠点・BOXリンク）を明示</td>
+<td>🔴 必須</td>
+<td>根拠提示</td>
+</tr>
+<tr>
+<td>AIS-SRC-004</td>
+<td>元資料への遷移</td>
+<td>出典からBOXの元報告書を開けるようにする</td>
+<td>🔴 必須</td>
+<td>BOXリンク遷移</td>
+</tr>
+<tr>
+<td>AIS-SRC-005</td>
+<td>検索条件併用</td>
+<td>区分・年度・拠点・災害種別などのメタデータで絞り込みを併用</td>
+<td>🟡 推奨</td>
+<td>ハイブリッド検索</td>
+</tr>
+<tr>
+<td>AIS-SRC-006</td>
+<td>該当なしの明示</td>
+<td>関連が乏しい場合は「該当なし」を明示し、憶測での回答を避ける</td>
+<td>🔴 必須</td>
+<td>ハルシネーション抑制</td>
+</tr>
+<tr>
+<td>AIS-SRC-007</td>
+<td>会話履歴の保持</td>
+<td>チャットの会話履歴を保持し、対話を継続</td>
+<td>🟢 検討</td>
+<td>Phase 2で検討</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3>1.6 傾向分析・レポート機能（分析者向け）</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-ANL-001</td>
+<td>観点別傾向分析</td>
+<td>災害の型・原因・拠点・区分・年度などの観点で傾向を分析</td>
+<td>🔴 必須</td>
+<td>観点指定</td>
+</tr>
+<tr>
+<td>AIS-ANL-002</td>
+<td>集計・可視化</td>
+<td>件数集計・構成比・時系列などを可視化</td>
+<td>🔴 必須</td>
+<td>グラフ・表</td>
+</tr>
+<tr>
+<td>AIS-ANL-003</td>
+<td>レポート生成</td>
+<td>分析結果をレポートとして生成・出力</td>
+<td>🔴 必須</td>
+<td>レポート出力</td>
+</tr>
+<tr>
+<td>AIS-ANL-004</td>
+<td>横断分析</td>
+<td>区分・年度・拠点をまたいだ横断的な分析</td>
+<td>🔴 必須</td>
+<td>横断</td>
+</tr>
+<tr>
+<td>AIS-ANL-005</td>
+<td>出典付き引用</td>
+<td>分析の根拠となった報告書を出典付きで提示</td>
+<td>🟡 推奨</td>
+<td>根拠提示</td>
+</tr>
+<tr>
+<td>AIS-ANL-006</td>
+<td>分類タグ付与</td>
+<td>分析のため、報告書に災害の型・原因等のタグを付与（登録時のメタデータ活用）</td>
+<td>🟡 推奨</td>
+<td>分類粒度の担保</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3>1.7 AI基盤連携機能</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-LLM-001</td>
+<td>Azure OpenAI連携</td>
+<td>埋め込み・要約・検索応答生成をAzure OpenAI経由で実行</td>
+<td>🔴 必須</td>
+<td>社内利用可能な基盤</td>
+</tr>
+<tr>
+<td>AIS-LLM-002</td>
+<td>モデル切替</td>
+<td>用途に応じてモデルを使い分け（要約は軽量モデル等）</td>
+<td>🟡 推奨</td>
+<td>コスト最適化</td>
+</tr>
+<tr>
+<td>AIS-LLM-003</td>
+<td>トークン・コスト管理</td>
+<td>API利用量（トークン）を記録し、コストを把握</td>
+<td>🟡 推奨</td>
+<td>従量課金管理</td>
+</tr>
+<tr>
+<td>AIS-LLM-004</td>
+<td>レート制御・リトライ</td>
+<td>API制限時のレート制御・リトライ・失敗ハンドリング</td>
+<td>🔴 必須</td>
+<td>安定運用</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h3>1.8 システム管理機能（既存基盤の流用）</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>機能ID</th>
+<th>機能名</th>
+<th>概要</th>
+<th>優先度</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIS-SYS-001</td>
+<td>ログ管理</td>
+<td>操作ログ・検索ログ・AI処理ログの記録</td>
+<td>🔴 必須</td>
+<td>既存ログ基盤</td>
+</tr>
+<tr>
+<td>AIS-SYS-002</td>
+<td>エラーハンドリング</td>
+<td>エラー発生時の適切な表示と記録（AI連携・BOX取得の失敗を含む）</td>
+<td>🔴 必須</td>
+<td>既存例外ハンドラ</td>
+</tr>
+<tr>
+<td>AIS-SYS-003</td>
+<td>非同期処理</td>
+<td>RAG登録・要約生成は登録操作をブロックしない非同期処理とする</td>
+<td>🔴 必須</td>
+<td>スケジューラ／ジョブ</td>
+</tr>
+<tr>
+<td>AIS-SYS-004</td>
+<td>論理削除</td>
+<td>インデックス・要約レコードは物理削除せず論理削除／整合を保つ</td>
+<td>🔴 必須</td>
+<td>TimestampMixin</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>2. 非機能要件</h2>
+<h3>2.1 性能要件</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>検索レスポンス</td>
+<td>自然言語検索の結果表示は10秒以内を目標（AI応答生成を含む）</td>
+</tr>
+<tr>
+<td>RAG登録処理</td>
+<td>登録操作は即時完了し、RAG登録・要約生成は非同期でバックグラウンド実行</td>
+</tr>
+<tr>
+<td>対象データ規模</td>
+<td>蓄積済み報告書（3区分、数百件規模〜）を初期取り込み。以降は登録の都度増分登録</td>
+</tr>
+<tr>
+<td>要約精度</td>
+<td>重要点の欠落・誤りを抑制し、出典に基づく内容とする（POCで品質評価）</td>
+</tr>
+</tbody>
+</table></div>
+<h3>2.2 デバイス対応</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>デバイス</th>
+<th>対応機能</th>
+<th>対応状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>デスクトップPC</td>
+<td>全機能</td>
+<td>🔴 必須</td>
+</tr>
+</tbody>
+</table></div>
+<h3>2.3 セキュリティ・データ保護要件</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>要件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>認証</td>
+<td>Entra ID SSO（ap-auth経由）、Redisセッション</td>
+</tr>
+<tr>
+<td>認可</td>
+<td>検索・閲覧は全社員。傾向分析・レポートは分析者（安全事務局）中心。登録時の自動処理は組織管理者の登録操作に紐づく</td>
+</tr>
+<tr>
+<td>AI基盤</td>
+<td>Azure OpenAI を利用し、入力データが<strong>外部の学習に利用されない</strong>構成とする</td>
+</tr>
+<tr>
+<td>個人情報</td>
+<td>報告書上の被災者名等はマスキング運用を前提とする。RAG登録・応答生成での取り扱い方針は設計で定める</td>
+</tr>
+<tr>
+<td>通信暗号化</td>
+<td>HTTPS（STG/PRD）、BOX・Azure OpenAI との通信はTLS</td>
+</tr>
+<tr>
+<td>出典・根拠</td>
+<td>検索・回答は出典を明示し、根拠のない生成（ハルシネーション）を抑制する</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>3. データ・処理フロー</h2>
+<h3>3.1 RAG自動登録フロー</h3>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; 登録受付: 災害情報を登録（回覧）
+    登録受付 --&gt; 取得中: BOX共有リンクからファイル取得
+    取得中 --&gt; 抽出中: テキスト抽出（必要時OCR）
+    抽出中 --&gt; 埋め込み中: チャンク化・埋め込み生成
+    埋め込み中 --&gt; 登録済: ベクトルストア登録
+    登録済 --&gt; [*]
+    取得中 --&gt; 失敗: 取得エラー
+    抽出中 --&gt; 失敗: 抽出エラー
+    埋め込み中 --&gt; 失敗: API/登録エラー
+    失敗 --&gt; 取得中: 再実行
+    note right of 登録済: 併行して要約（気付き）を生成し記事確認画面に表示
+</div>
+<h3>3.2 自然言語検索フロー</h3>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; 入力: 自然言語で質問／検索
+    入力 --&gt; ベクトル化: クエリを埋め込み
+    ベクトル化 --&gt; 類似検索: ベクトルストアで類似チャンク取得
+    類似検索 --&gt; 応答生成: 取得チャンクを根拠に回答生成（RAG）
+    応答生成 --&gt; 出典付き回答: 出典（報告書・BOXリンク）を付与
+    出典付き回答 --&gt; [*]
+    類似検索 --&gt; 該当なし: 関連が乏しい
+    該当なし --&gt; [*]: 「該当なし」を明示
+</div>
+<h3>権限マトリクス</h3>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>全社員（検索・閲覧者）</th>
+<th>安全衛生管理者（組織管理者・登録者）</th>
+<th>安全事務局（分析者）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>要約（気付き）の閲覧</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>自然言語検索・チャット</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>災害情報の登録（RAG登録・要約の自動実行）</td>
+<td>-</td>
+<td>✅</td>
+<td>-（※登録権限に準拠）</td>
+</tr>
+<tr>
+<td>傾向分析・レポート</td>
+<td>△ 開放範囲は設計で確定</td>
+<td>✅</td>
+<td>✅ 主担当</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>注意</strong>:
+- 本機能のための新規権限（ロール）追加は不要。既存ロールで対応する。
+- RAG登録・要約生成は、災害情報の<strong>登録操作（組織管理者）に紐づく自動処理</strong>であり、利用者が個別に起動するものではない。
+- 傾向分析・レポートの利用範囲（全社員に開放するか、分析者に限定するか）は運用方針に応じて設計で確定する。</p>
+</blockquote>
+<hr />
+<h2>4. 制約事項・前提条件</h2>
+<h3>制約事項</h3>
+<ul>
+<li>Entra ID SSO・組織／部署／ユーザー情報・権限は既存基盤（ap-safedx／ap-auth）を利用（新規構築不要）</li>
+<li>新規権限の追加は行わない（既存ロールで対応）</li>
+<li>RAG登録の対象は3区分（ヒヤリ・ハット／救急箱／災害速報）の報告書。議事録等の横断はPhase 2</li>
+<li>報告書ファイルはBOXに保管され、災害情報のBOX共有リンク経由で取得する</li>
+<li>AI連携先は Azure OpenAI（埋め込み：text-embedding-3-large、生成：GPT-5.4／5.4-mini を検討）</li>
+<li>被災者名等はマスキング運用を前提とする</li>
+</ul>
+<h3>前提条件</h3>
+<ul>
+<li>既存の ap-safedx／ap-auth／インフラ（PostgreSQL・Redis・スケジューラ）が稼働している</li>
+<li>BOXの共有リンクから報告書ファイルを取得できる権限・APIが利用可能</li>
+<li>Azure OpenAI の利用環境（エンドポイント・モデルデプロイ・キー）が用意されている</li>
+<li>ベクトル検索基盤（PostgreSQL拡張または専用ストア）が利用可能</li>
+</ul>
+<hr />
+<h2>5. 用語</h2>
+<div class="tblwrap"><table>
+<thead>
+<tr>
+<th>用語</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RAG</strong></td>
+<td>Retrieval-Augmented Generation。検索で集めた根拠（報告書の該当箇所）を基に、AIが回答を生成する方式。出典を提示でき、根拠のない生成を抑えられる</td>
+</tr>
+<tr>
+<td><strong>埋め込み（Embedding）</strong></td>
+<td>文章を意味的な数値ベクトルに変換すること。意味の近さで検索（あいまい検索）できるようになる</td>
+</tr>
+<tr>
+<td><strong>チャンク化</strong></td>
+<td>報告書本文を検索に適した一定の単位に分割すること。各チャンクに区分・年度・拠点等のメタデータを付与する</td>
+</tr>
+<tr>
+<td><strong>ベクトルストア</strong></td>
+<td>埋め込みベクトルを保存し、類似度で高速に検索するための基盤（RAGインデックス）</td>
+</tr>
+<tr>
+<td><strong>OCR</strong></td>
+<td>画像化されたPDF等から文字を読み取り、テキスト化する技術</td>
+</tr>
+<tr>
+<td><strong>ハルシネーション</strong></td>
+<td>AIが根拠なく事実と異なる内容を生成すること。出典提示・「該当なし」明示で抑制する</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<p><strong>作成日</strong>: 2026-07-17
+<strong>作成者</strong>: DX推進グループ
+<strong>バージョン</strong>: 1.0</p></div>
+</section>
+    <div class="foot">労働安全衛生システム（ap-safedx） / AI検索・分析機能 ・ 作成：DX推進グループ ・ v1.0（2026-07-17）</div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg" aria-label="図解の拡大表示">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true, theme:"neutral", themeVariables:{
+  fontFamily:"'Noto Sans JP',sans-serif", fontSize:"13px",
+  primaryColor:"#ffffff", primaryBorderColor:"#9fccbd", primaryTextColor:"#333333",
+  lineColor:"#9aa0a6", secondaryColor:"#e9f7f2", tertiaryColor:"#fafafa"
+}});
+const links=[...document.querySelectorAll('nav a')];
+const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){
+  links.forEach(l=>l.classList.remove('active')); map.get(e.target.id)?.classList.add('active');}})},
+  {rootMargin:"-45% 0px -50% 0px"});
+document.querySelectorAll('section.doc').forEach(s=>io.observe(s));
+
+/* ---- 図解の拡大表示（ライトボックス） ---- */
+const dlg=document.getElementById('zoomDlg');
+const stage=document.getElementById('zoomStage');
+const titleEl=dlg.querySelector('.title');
+let cur=null, scale=1, base=1, tx=0, ty=0, vw=0, vh=0;
+const clamp=s=>Math.min(Math.max(s, base*0.5), base*8);
+const apply=()=>{ if(cur) cur.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`; };
+function fit(){
+  const box=cur.viewBox && cur.viewBox.baseVal;
+  vw=box && box.width ? box.width : cur.getBBox().width;
+  vh=box && box.height ? box.height : cur.getBBox().height;
+  cur.style.width=vw+'px'; cur.style.height=vh+'px';
+  const sw=stage.clientWidth, sh=stage.clientHeight;
+  base=Math.min(sw/vw, sh/vh)*0.96; scale=base;
+  tx=(sw-vw*scale)/2; ty=(sh-vh*scale)/2; apply();
+}
+function zoomAt(cx, cy, factor){
+  const ns=clamp(scale*factor);
+  tx=cx-(cx-tx)*(ns/scale); ty=cy-(cy-ty)*(ns/scale); scale=ns; apply();
+}
+function openZoom(fig){
+  const svg=fig.querySelector('svg'); if(!svg) return;
+  stage.innerHTML='';
+  cur=svg.cloneNode(true);
+  cur.removeAttribute('width'); cur.removeAttribute('height');
+  cur.style.maxWidth='none';
+  stage.appendChild(cur);
+  const cap=fig.querySelector('figcaption');
+  titleEl.textContent=cap ? cap.textContent.trim() : '図解';
+  dlg.showModal();
+  requestAnimationFrame(fit);
+}
+document.querySelectorAll('.diagram, .mermaid').forEach(fig=>{
+  fig.addEventListener('click', ()=>openZoom(fig));
+});
+dlg.querySelector('.zoom-bar').addEventListener('click', e=>{
+  const z=e.target.closest('button')?.dataset.z; if(!z) return;
+  const cx=stage.clientWidth/2, cy=stage.clientHeight/2;
+  if(z==='in') zoomAt(cx,cy,1.25);
+  else if(z==='out') zoomAt(cx,cy,0.8);
+  else if(z==='reset') fit();
+  else if(z==='close') dlg.close();
+});
+stage.addEventListener('wheel', e=>{
+  e.preventDefault();
+  const r=stage.getBoundingClientRect();
+  zoomAt(e.clientX-r.left, e.clientY-r.top, e.deltaY<0 ? 1.12 : 0.89);
+}, {passive:false});
+let drag=false, px=0, py=0;
+stage.addEventListener('pointerdown', e=>{ drag=true; px=e.clientX; py=e.clientY;
+  stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId); });
+stage.addEventListener('pointermove', e=>{ if(!drag) return;
+  tx+=e.clientX-px; ty+=e.clientY-py; px=e.clientX; py=e.clientY; apply(); });
+const endDrag=()=>{ drag=false; stage.classList.remove('dragging'); };
+stage.addEventListener('pointerup', endDrag);
+stage.addEventListener('pointercancel', endDrag);
+dlg.addEventListener('click', e=>{ if(e.target===dlg) dlg.close(); });
+window.addEventListener('resize', ()=>{ if(dlg.open && cur) fit(); });
+</script>
+</body>
+</html>

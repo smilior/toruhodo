@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>機能要件 ｜ 撮るほど 設計書</title>
+<meta name="description" content="撮るほど（toruhodo）が提供する機能・受け入れ基準・画面構成を定義する。F-00〜F-09、S-00〜S-07。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+</head>
+<body>
+<div class="wrap">
+  <aside id="sidePanel">
+    <div class="side-header">
+      <button type="button" class="side-toggle" id="sideToggle" aria-controls="sidePanel" aria-expanded="true" aria-label="メニューを閉じる" title="メニューを閉じる"><span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span></button>
+      <div class="side-header-text">
+        <div class="brand"><a href="../index.html">設計書</a><small>撮るほど / toruhodo</small></div>
+        <div class="side-title"><a href="../index.html">撮るほど</a></div>
+      </div>
+    </div>
+    <nav class="side-nav" aria-label="ドキュメント一覧">
+      <div class="phase is-current">
+        <span class="phase-label"><a href="../index.html#01_要件定義">01 要件定義</a></span>
+        <ol>
+          <li><a href="../01_要件定義/01_プロジェクト概要.html"><span class="n">01</span>プロジェクト概要</a></li>
+          <li><a href="../01_要件定義/02_ペルソナ・ユーザーストーリー.html"><span class="n">02</span>ペルソナ・ユーザーストーリー</a></li>
+          <li><a class="active" href="../01_要件定義/03_機能要件.html"><span class="n">03</span>機能要件</a></li>
+          <li><a href="../01_要件定義/04_非機能要件.html"><span class="n">04</span>非機能要件</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#02_基本設計">02 基本設計</a></span>
+        <ol>
+          <li><a href="../02_基本設計/01_システム構成.html"><span class="n">01</span>システム構成</a></li>
+          <li><a href="../02_基本設計/02_用語集.html"><span class="n">02</span>用語集</a></li>
+          <li><a href="../02_基本設計/03_機能設計.html"><span class="n">03</span>機能設計</a></li>
+          <li><a href="../02_基本設計/04_画面設計.html"><span class="n">04</span>画面設計</a></li>
+          <li><a href="../02_基本設計/05_DB設計.html"><span class="n">05</span>DB設計(論理)</a></li>
+          <li><a href="../02_基本設計/06_API設計.html"><span class="n">06</span>API設計</a></li>
+          <li><a href="../02_基本設計/07_認可設計.html"><span class="n">07</span>認可設計</a></li>
+          <li><a href="../02_基本設計/adr/0000_ADRテンプレート.html"><span class="n">A0</span>ADR テンプレート</a></li>
+          <li><a href="../02_基本設計/adr/0001_技術スタック(テンプレート既定).html"><span class="n">A1</span>ADR 技術スタック</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#03_詳細設計">03 詳細設計</a></span>
+        <ol>
+          <li><a href="../03_詳細設計/01_処理設計.html"><span class="n">01</span>処理設計</a></li>
+          <li><a href="../03_詳細設計/02_テーブル定義.html"><span class="n">02</span>テーブル定義</a></li>
+          <li><a href="../03_詳細設計/03_単体テスト観点.html"><span class="n">03</span>単体テスト観点</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#04_テスト">04 テスト</a></span>
+        <ol>
+          <li><a href="../04_テスト/01_テスト計画.html"><span class="n">01</span>テスト計画</a></li>
+          <li><a href="../04_テスト/02_結合テストケース.html"><span class="n">02</span>結合テストケース</a></li>
+          <li><a href="../04_テスト/03_総合テストケース.html"><span class="n">03</span>総合テストケース</a></li>
+          <li><a href="../04_テスト/04_受け入れテストシナリオ.html"><span class="n">04</span>受け入れテストシナリオ</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#05_リリース">05 リリース</a></span>
+        <ol>
+          <li><a href="../05_リリース/01_リリース計画.html"><span class="n">01</span>リリース計画</a></li>
+          <li><a href="../05_リリース/02_リリースノート.html"><span class="n">02</span>リリースノート</a></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <span class="phase-label"><a href="../index.html#06_運用">06 運用</a></span>
+        <ol>
+          <li><a href="../06_運用/01_監視・障害対応.html"><span class="n">01</span>監視・障害対応</a></li>
+          <li><a href="../06_運用/02_バックアップ・メンテナンス.html"><span class="n">02</span>バックアップ・メンテナンス</a></li>
+        </ol>
+      </div>
+    </nav>
+    <div class="side-meta">全 24 文書 + インデックス<br>正本: docs/_spec/PRODUCT_BRIEF.md</div>
+  </aside>
+  <main>
+    <div class="hero">
+      <div class="kicker">01 要件定義 · 03/04</div>
+      <h1>機能要件</h1>
+      <p class="lede">撮るほど（toruhodo）が提供する機能・受け入れ基準・画面構成を定義する。</p>
+    </div>
+    <div class="prose">
+      <div class="callout">
+        <p class="callout-title">確定メモ</p>
+        <p>本ドキュメントの内容は企画書（<code>docs/00. 企画書/README.md</code>）および共有プロダクトブリーフ（<code>docs/_spec/PRODUCT_BRIEF.md</code>）を正本とする。</p>
+        <p>機能 ID は <strong>F-00〜F-09</strong>、画面 ID は <strong>S-00〜S-07</strong>。デザイン参照 ID は企画書の 1b〜1l を用いる。</p>
+        <p>受け入れ基準は各 MVP 機能の Definition of Done。Given-When-Then をすべて満たせば完成とみなす。スキャン状態機械: <code>idle → capturing → ocr → generating → done | failed | partial</code>。データは Turso（records）と Vercel Blob（写真）にユーザー単位で保存する。</p>
+      </div>
+
+      <h2>機能一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">機能名</th>
+              <th scope="col">区分</th>
+              <th scope="col">概要</th>
+              <th scope="col">対応画面</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>F-00</td><td>ログイン / ログアウト</td><td>必須</td><td>Better Auth + Google OAuth でサインイン。セッション Cookie を発行。ログアウトでセッションを破棄しログイン画面へ</td><td>S-00</td></tr>
+            <tr><td>F-01</td><td>ホーム</td><td>必須</td><td>「かざして解説」CTA とさいきんの記録。1 タップで撮影へ。履歴への導線</td><td>S-01</td></tr>
+            <tr><td>F-02</td><td>撮影</td><td>必須</td><td>カメラビュー・ガイド枠・シャッター・ギャラリー・フラッシュ UI。撮影後は読み取りフローへ</td><td>S-02</td></tr>
+            <tr><td>F-03</td><td>OCR＋AI 解説生成</td><td>必須</td><td>Claude Vision 1 リクエストで OCR 原文・タイトル・やさしい／くわしい解説・ルビ付き版・AI 補足・partial/failed を JSON で取得</td><td>S-02, S-03, S-04</td></tr>
+            <tr><td>F-04</td><td>解説結果</td><td>必須</td><td>モード切替（やさしい／くわしい）・ふりがな・メモ・記録に残す・免責常時表示。写真拡大</td><td>S-03</td></tr>
+            <tr><td>F-05</td><td>読み取り失敗・部分読み取り</td><td>必須</td><td>失敗時は責めない UI と撮り方のコツ・再撮影。部分読み取り時は注意バナーと読めた文字チップ</td><td>S-03, S-04</td></tr>
+            <tr><td>F-06</td><td>旅の記録（履歴）</td><td>必須</td><td>履歴一覧・空状態・カードタップで結果画面へ。メモありバッジ</td><td>S-05</td></tr>
+            <tr><td>F-07</td><td>旅の記録地図</td><td>必須</td><td>MapLibre でピン表示・ポップアップ。位置情報オフ時の配慮メッセージ</td><td>S-06</td></tr>
+            <tr><td>F-08</td><td>設定</td><td>必須</td><td>ふりがな／モード初期値・位置情報 ON/OFF・データ削除・利用規約／免責</td><td>S-07</td></tr>
+            <tr><td>F-09</td><td>クラウド永続化</td><td>必須</td><td>records を Turso に、写真を Vercel Blob にユーザー単位で保存・復元</td><td>全画面（要ログイン）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>スキャン状態機械</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">状態</th>
+              <th scope="col">意味</th>
+              <th scope="col">UI 対応</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>idle</td><td>撮影待機</td><td>S-02 カメラ画面</td></tr>
+            <tr><td>capturing</td><td>シャッター直後・画像確定中</td><td>プレビュー確定</td></tr>
+            <tr><td>ocr</td><td>読み取り中</td><td>1d 段階1「読み取っています…」</td></tr>
+            <tr><td>generating</td><td>解説生成中</td><td>1d 段階2「解説を作っています…」</td></tr>
+            <tr><td>done</td><td>正常完了</td><td>S-03 結果（1e/1f/1g）</td></tr>
+            <tr><td>failed</td><td>テキスト検出不可</td><td>S-04 失敗（1h）</td></tr>
+            <tr><td>partial</td><td>一部のみ読めた</td><td>S-03 部分読み取り（1i）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>遷移: <code>idle → capturing → ocr → generating → done | failed | partial</code>。キャンセル時は idle またはホームへ戻る。</p>
+
+      <h2>受け入れ基準</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">機能ID</th>
+              <th scope="col">ID</th>
+              <th scope="col">Given(前提)</th>
+              <th scope="col">When(操作)</th>
+              <th scope="col">Then(期待結果)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>F-00</td><td>AC-00</td><td>未ログインでアプリにアクセスする</td><td>保護された画面（S-01 等）を開こうとする</td><td>S-00 ログイン画面へ誘導される</td></tr>
+            <tr><td>F-00</td><td>AC-00b</td><td>S-00 を表示している</td><td>「Google でログイン」を選び OAuth を完了する</td><td>セッションが確立し、ホーム（S-01）へ遷移する。初回は記録 0 件の空状態</td></tr>
+            <tr><td>F-00</td><td>AC-00c</td><td>ログイン済み</td><td>ログアウトを実行する</td><td>セッションが破棄され、S-00 へ戻る。他ユーザーのデータは見えない</td></tr>
+            <tr><td>F-01</td><td>AC-01</td><td>ログイン済み</td><td>ホームを表示する</td><td>「かざして解説」主役 CTA とタブバー（ホーム／履歴／地図／設定）が表示される</td></tr>
+            <tr><td>F-01</td><td>AC-01b</td><td>ログイン済みで記録が 1 件以上</td><td>ホームを表示する</td><td>さいきんの記録が 2〜3 件表示され、「すべて見る」で履歴へ遷移できる</td></tr>
+            <tr><td>F-01</td><td>AC-01c</td><td>ホームを表示している</td><td>「かざして解説」を 1 タップする</td><td>確認なしで S-02 撮影画面へ遷移する</td></tr>
+            <tr><td>F-02</td><td>AC-02</td><td>S-02 を表示している</td><td>カメラ権限を許可しシャッターを押す</td><td>撮影プレビューが即時反映され、scan 状態が capturing → ocr に進む</td></tr>
+            <tr><td>F-02</td><td>AC-02b</td><td>S-02 を表示している</td><td>ギャラリーから画像を選ぶ</td><td>選択画像で OCR＋解説フローが開始される</td></tr>
+            <tr><td>F-02</td><td>AC-02c</td><td>S-02 を表示している</td><td>閉じるボタンを押す</td><td>ホーム（S-01）へ戻る</td></tr>
+            <tr><td>F-03</td><td>AC-03</td><td>撮影画像が送信された</td><td>Claude Vision が成功応答する</td><td>ocr → generating → done（または partial）となり、タイトル・やさしい／くわしい・ルビ・AI 補足が揃う</td></tr>
+            <tr><td>F-03</td><td>AC-03b</td><td>撮影画像に文字が検出できない</td><td>AI が failed: true を返す</td><td>scan 状態が failed となり S-04 失敗画面へ</td></tr>
+            <tr><td>F-03</td><td>AC-03c</td><td>OCR 信頼度が低い</td><td>AI が partial: true と partialChars を返す</td><td>scan 状態が partial となり、結果画面に注意バナーと読めた文字チップが出る</td></tr>
+            <tr><td>F-04</td><td>AC-04</td><td>結果画面（done）を表示している</td><td>「やさしい ⇄ くわしい」を切り替える</td><td>本文が即時（〜200ms fade）に切り替わる。原文カードと AI 補足カードは色・アイコン・ラベルで区別できる</td></tr>
+            <tr><td>F-04</td><td>AC-04b</td><td>結果画面を表示している</td><td>ふりがなスイッチを ON/OFF する</td><td>ルビ（rt）の表示が即時に切り替わる</td></tr>
+            <tr><td>F-04</td><td>AC-04c</td><td>結果画面を表示している</td><td>メモを入力し「記録に残す」をタップする</td><td>record が保存され、履歴に出現する。免責注記が画面下部に常時表示されている</td></tr>
+            <tr><td>F-04</td><td>AC-04d</td><td>結果画面を表示している</td><td>写真をタップする</td><td>ライトボックス等で拡大表示される</td></tr>
+            <tr><td>F-05</td><td>AC-05</td><td>読み取り失敗画面を表示している</td><td>画面を確認する</td><td>責めない見出し・説明、「うまく撮るコツ」3 項目、「もう一度撮る」「ホームにもどる」がある</td></tr>
+            <tr><td>F-05</td><td>AC-05b</td><td>失敗画面を表示している</td><td>「もう一度撮る」をタップする</td><td>S-02 撮影画面（idle）へ戻る</td></tr>
+            <tr><td>F-05</td><td>AC-05c</td><td>部分読み取り結果を表示している</td><td>「このまま記録に残す」をタップする</td><td>partial フラグ付きで保存できる。「もう一度撮る」で再撮影できる</td></tr>
+            <tr><td>F-06</td><td>AC-06</td><td>ログイン済みで記録が 1 件以上</td><td>履歴（S-05）を開く</td><td>旅の記録一覧（サムネ・タイトル・日付・場所名・メモバッジ）が表示される</td></tr>
+            <tr><td>F-06</td><td>AC-06b</td><td>記録が 0 件</td><td>履歴を開く</td><td>空状態（まだ記録がありません）と撮影導線が表示される</td></tr>
+            <tr><td>F-06</td><td>AC-06c</td><td>履歴に記録がある</td><td>カードをタップする</td><td>該当の解説結果画面（保存版）へ遷移する</td></tr>
+            <tr><td>F-07</td><td>AC-07</td><td>位置情報付きの記録がある</td><td>地図（S-06）を開く</td><td>MapLibre 地図上にピンが表示され、タップでポップアップ→結果へ遷移できる</td></tr>
+            <tr><td>F-07</td><td>AC-07b</td><td>位置情報がオフ、または位置なし記録のみ</td><td>地図を開く</td><td>「位置情報がオフでも、記録は残せます」等の配慮 UI、または空状態＋設定導線が出る。地図タブ自体は残る</td></tr>
+            <tr><td>F-08</td><td>AC-08</td><td>設定（S-07）を開いている</td><td>ふりがな初期値・モード初期値を変更する</td><td>次回の結果画面に初期値が反映される</td></tr>
+            <tr><td>F-08</td><td>AC-08b</td><td>設定を開いている</td><td>位置情報の記録を OFF にする</td><td>以降の新規記録に lat/lng/placeName が付かない。既存記録の参照は維持</td></tr>
+            <tr><td>F-08</td><td>AC-08c</td><td>設定を開いている</td><td>データ削除を確認のうえ実行する</td><td>当該ユーザーの records（および関連 Blob）が削除される</td></tr>
+            <tr><td>F-09</td><td>AC-09</td><td>記録を保存した</td><td>別端末または再ログイン後に履歴を開く</td><td>同一ユーザーの Turso / Blob データが復元され、失われない。他ユーザーの記録は一切表示されない</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>画面一覧</h2>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">画面名</th>
+              <th scope="col">パス</th>
+              <th scope="col">デザインID</th>
+              <th scope="col">概要</th>
+              <th scope="col">対応機能</th>
+              <th scope="col">認証要否</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>S-00</td><td>ログイン</td><td><code>/login</code></td><td>（未作成・shadcn）</td><td>Google OAuth によるサインイン導線</td><td>F-00</td><td>不要</td></tr>
+            <tr><td>S-01</td><td>ホーム</td><td><code>/</code></td><td>1b</td><td>かざして解説 CTA・さいきんの記録・タブバー</td><td>F-01, F-09</td><td>要</td></tr>
+            <tr><td>S-02</td><td>撮影</td><td><code>/scan</code></td><td>1c, 1d</td><td>カメラ・ローディング（ocr / generating）</td><td>F-02, F-03</td><td>要</td></tr>
+            <tr><td>S-03</td><td>解説結果</td><td><code>/result/:id</code></td><td>1e, 1f, 1g, 1i</td><td>モード・ふりがな・メモ・保存・部分読み取り</td><td>F-03, F-04, F-05, F-09</td><td>要</td></tr>
+            <tr><td>S-04</td><td>読み取り失敗</td><td><code>/scan</code> 内 or <code>/result/failed</code></td><td>1h</td><td>失敗 UI・再撮影・ホーム導線</td><td>F-05</td><td>要</td></tr>
+            <tr><td>S-05</td><td>履歴</td><td><code>/history</code></td><td>1j, 1k</td><td>旅の記録一覧・空状態</td><td>F-06, F-09</td><td>要</td></tr>
+            <tr><td>S-06</td><td>地図</td><td><code>/map</code></td><td>1l</td><td>旅の記録地図・ピン・位置オフ配慮</td><td>F-07, F-09</td><td>要</td></tr>
+            <tr><td>S-07</td><td>設定</td><td><code>/settings</code></td><td>（未作成・shadcn）</td><td>初期値・位置情報・削除・規約</td><td>F-08, F-00, F-09</td><td>要</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>タブバー: ホーム / 履歴 / 地図 / 設定（4 タブ）。S-02・S-03・S-04 はフルスクリーン系（タブ非表示可）。</p>
+
+      <h2>画面遷移の概要</h2>
+      <figure class="diagram">
+        <figcaption>画面遷移図（MVP・Google ログイン必須）</figcaption>
+        <img src="../assets/diagrams/screen-flow.svg" alt="ログイン後ホームを起点に撮影・解説結果・履歴・地図・設定へ遷移する概要">
+        <p class="zoom-hint">クリックで拡大</p>
+      </figure>
+      <p>遷移の要点（実装・受け入れ時の正）:</p>
+      <ul>
+        <li>未ログインで保護画面へ → <strong>S-00 ログイン</strong>。Google OAuth 完了後 → <strong>S-01 ホーム</strong></li>
+        <li>S-01「かざして解説」→ S-02。シャッター → ローディング（ocr → generating）→ S-03（done / partial）または S-04（failed）</li>
+        <li>S-03「記録に残す」→ 履歴に出現。メモは保存後も編集可</li>
+        <li>S-04「もう一度撮る」→ S-02（idle）。「ホームにもどる」→ S-01</li>
+        <li>タブ: S-01 ⇄ S-05 ⇄ S-06 ⇄ S-07。S-05 カード / 地図ピン → S-03（保存版）</li>
+        <li>ログアウト → S-00</li>
+      </ul>
+    </div>
+    <nav class="page-nav">
+      <a class="page-nav-item" href="02_ペルソナ・ユーザーストーリー.html"><span class="page-nav-dir">← 前</span><span class="page-nav-title">ペルソナ・ユーザーストーリー</span><span class="page-nav-phase">01 要件定義</span></a>
+      <a class="page-nav-item page-nav-next" href="04_非機能要件.html"><span class="page-nav-dir">次 →</span><span class="page-nav-title">非機能要件</span><span class="page-nav-phase">01 要件定義</span></a>
+    </nav>
+    <div class="foot">撮るほど 設計書 · <a href="../index.html">インデックス</a></div>
+  </main>
+</div>
+<dialog class="zoom-dlg" id="zoomDlg">
+  <div class="zoom-bar">
+    <span class="title">図解</span>
+    <button type="button" data-z="out" title="縮小">−</button>
+    <button type="button" data-z="in" title="拡大">＋</button>
+    <button type="button" data-z="reset" title="全体表示">リセット</button>
+    <button type="button" data-z="close" title="閉じる">閉じる ✕</button>
+  </div>
+  <div class="zoom-stage" id="zoomStage"></div>
+</dialog>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/enhance.js" defer></script>
+</body>
+</html>
