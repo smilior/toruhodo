@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # 撮るほど — アプリアイコン生成スクリプト（source of truth）
-# sorosoro と同系のミニマル: セージ緑グラデ地 × 白の道標（石碑）マーカー単一モチーフ。文字は使わない。
+# sorosoro と同系のミニマル: セージ緑グラデ地 × 白の線画。読み取り枠（ファインダー四隅）＋
+# 中央のきらめきで「かざして読み取る／やさしく教えてくれる」を表現。文字・漢字は使わない。
 # 依存: rsvg-convert（brew install librsvg）
 # 使い方: bash scripts/gen-icons.sh  （リポジトリ直下で実行）
 set -euo pipefail
@@ -18,18 +19,22 @@ command -v rsvg-convert >/dev/null 2>&1 || {
 # ---- 共有アート（道標マーカー・単一モチーフ） ----
 GRAD='<defs><linearGradient id="seal" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CAF85"/><stop offset="1" stop-color="#6FA378"/></linearGradient></defs>'
 read -r -d '' ART <<'ART' || true
-  <!-- 道標マーカー（石碑シルエット・先細り・山形天端／ミニマル） -->
-  <g fill="#FFFFFF">
-    <rect x="156" y="352" width="200" height="30" rx="15"/>
-    <path d="M 214 356 L 224 176 Q 226 148 256 140 Q 286 148 288 176 L 298 356 Z"/>
+  <!-- 読み取り枠（ファインダー四隅・線画） -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="32" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 214 V182 Q150 150 182 150 H214"/>
+    <path d="M298 150 H330 Q362 150 362 182 V214"/>
+    <path d="M362 298 V330 Q362 362 330 362 H298"/>
+    <path d="M214 362 H182 Q150 362 150 330 V298"/>
   </g>
+  <!-- きらめき（読み取り・やさしい気づき） -->
+  <path d="M256 196 Q270 242 316 256 Q270 270 256 316 Q242 270 196 256 Q242 242 256 196 Z" fill="#FFFFFF"/>
 ART
 
 # seal: 角丸・外側透過（favicon / PWA any）
 cat > "$BUILD/seal.svg" <<SVG
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 $GRAD
-<rect x="0" y="0" width="512" height="512" rx="114" fill="url(#seal)"/>
+<rect x="0" y="0" width="512" height="512" rx="140" fill="url(#seal)"/>
 $ART
 </svg>
 SVG

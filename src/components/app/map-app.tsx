@@ -88,7 +88,7 @@ function spreadPositions(
 function buildInfoHtml(rec: GeoRecord): string {
   const thumb = rec.photoUrl
     ? `<img src="${escapeAttr(rec.photoUrl)}" alt="" width="56" height="56" style="width:56px;height:56px;flex:none;border-radius:12px;object-fit:cover;border:1px solid #EDE5D2" />`
-    : `<div style="width:56px;height:56px;flex:none;border-radius:12px;background:linear-gradient(145deg,#6FA378,#4F7A59);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:22px">撮</div>`;
+    : `<div style="width:56px;height:56px;flex:none;border-radius:12px;background:linear-gradient(145deg,#6FA378,#4F7A59);display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 512 512" fill="none"><g stroke="#FFFFFF" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"><path d="M150 214 V182 Q150 150 182 150 H214"/><path d="M298 150 H330 Q362 150 362 182 V214"/><path d="M362 298 V330 Q362 362 330 362 H298"/><path d="M214 362 H182 Q150 362 150 330 V298"/></g><path d="M256 196 Q270 242 316 256 Q270 270 256 316 Q242 270 196 256 Q242 242 256 196 Z" fill="#FFFFFF"/></svg></div>`;
 
   // Google 標準の閉じるボタンは角丸カードではみ出しやすいので、カード内に自前の閉じるを置く
   return `
@@ -114,7 +114,7 @@ function buildInfoHtml(rec: GeoRecord): string {
 }
 
 /**
- * HTML カスタムピン（朱の滴型 + 写真 or「撮」朱印）
+ * HTML カスタムピン（セージのしずく型 + 写真 or きらめきマーク）
  * Google Maps OverlayView ベース
  */
 function createHtmlPinOverlay(maps: typeof google.maps) {
@@ -175,7 +175,7 @@ function createHtmlPinOverlay(maps: typeof google.maps) {
         ">${
           hasPhoto
             ? `<img src="${escapeAttr(this.rec.photoUrl)}" alt="" style="width:100%;height:100%;object-fit:cover" />`
-            : "撮"
+            : `<svg width="14" height="14" viewBox="0 0 512 512" fill="none"><path d="M256 130 Q272 214 356 230 Q272 246 256 330 Q240 246 156 230 Q240 214 256 130 Z" fill="#FFFFFF"/></svg>`
         }</div>
       `;
 
@@ -602,7 +602,12 @@ export function MapApp({
                     className="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
                     style={{ background: PRIMARY, color: CARD }}
                   >
-                    撮
+                    <svg width="11" height="11" viewBox="0 0 512 512" fill="none" aria-hidden>
+                      <path
+                        d="M256 130 Q272 214 356 230 Q272 246 256 330 Q240 246 156 230 Q240 214 256 130 Z"
+                        fill="#fff"
+                      />
+                    </svg>
                   </span>
                   記録ピン
                 </div>
