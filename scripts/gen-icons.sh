@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 撮るほど — アプリアイコン生成スクリプト（source of truth）
-# 朱印シール地 × 道標（石碑）シルエット ＋ やさしいきらめき。文字は使わない。
+# sorosoro と同系のミニマル: セージ緑グラデ地 × 白の道標（石碑）マーカー単一モチーフ。文字は使わない。
 # 依存: rsvg-convert（brew install librsvg）
 # 使い方: bash scripts/gen-icons.sh  （リポジトリ直下で実行）
 set -euo pipefail
@@ -15,24 +15,13 @@ mkdir -p "$OUT_ICONS" "$ROOT/src/app"
 command -v rsvg-convert >/dev/null 2>&1 || {
   echo "rsvg-convert が必要です: brew install librsvg" >&2; exit 1; }
 
-# ---- 共有アート（道標 + きらめき） ----
-GRAD='<defs><radialGradient id="seal" cx="38%" cy="30%" r="85%"><stop offset="0%" stop-color="#C2582F"/><stop offset="60%" stop-color="#B9502F"/><stop offset="100%" stop-color="#A9472A"/></radialGradient></defs>'
+# ---- 共有アート（道標マーカー・単一モチーフ） ----
+GRAD='<defs><linearGradient id="seal" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CAF85"/><stop offset="1" stop-color="#6FA378"/></linearGradient></defs>'
 read -r -d '' ART <<'ART' || true
-  <!-- 道標（先細り・山形天端） -->
-  <g fill="#FDFBF4">
-    <rect x="128" y="388" width="240" height="30" rx="9"/>
-    <rect x="150" y="358" width="196" height="32" rx="7"/>
-    <path d="M 172 360 L 184 152 Q 186 132 204 124 L 240 108 Q 248 105 256 108 L 292 124 Q 310 132 312 152 L 324 360 Z"/>
-  </g>
-  <!-- 刻線（碑文の暗示・抽象／文字ではない） -->
-  <g fill="#A9472A">
-    <rect x="206" y="198" width="86" height="13" rx="6.5"/>
-    <rect x="216" y="234" width="66" height="13" rx="6.5"/>
-  </g>
-  <!-- きらめき（かざすと、やさしく教えてくれる） -->
-  <g fill="#FDFBF4">
-    <path d="M 398 116 Q 406 148 438 156 Q 406 164 398 196 Q 390 164 358 156 Q 390 148 398 116 Z"/>
-    <path d="M 442 190 Q 446 205 462 209 Q 446 213 442 228 Q 438 213 422 209 Q 438 205 442 190 Z" opacity="0.9"/>
+  <!-- 道標マーカー（石碑シルエット・先細り・山形天端／ミニマル） -->
+  <g fill="#FFFFFF">
+    <rect x="156" y="352" width="200" height="30" rx="15"/>
+    <path d="M 214 356 L 224 176 Q 226 148 256 140 Q 286 148 288 176 L 298 356 Z"/>
   </g>
 ART
 

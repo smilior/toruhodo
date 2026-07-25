@@ -458,7 +458,7 @@ export function ResultApp({ id }: { id: string }) {
             >
               <span
                 className="material-symbols-rounded shrink-0"
-                style={{ fontSize: 18, color: "#9C6B27" }}
+                style={{ fontSize: 18, color: "#95762A" }}
                 aria-hidden
               >
                 info
@@ -681,7 +681,7 @@ export function ResultApp({ id }: { id: string }) {
                           }
                         : {
                             background: "var(--ai-card)",
-                            color: "#3D4750",
+                            color: "#453F35",
                             border: "1px solid var(--ai-border)",
                             borderBottomLeftRadius: 6,
                           }
@@ -810,8 +810,8 @@ export function ResultApp({ id }: { id: string }) {
                   type="button"
                   className="flex w-full items-center justify-center gap-2 rounded-[16px] py-3.5 text-[14px] font-bold"
                   style={{
-                    color: "#9C4327",
-                    background: "rgba(185,80,47,0.08)",
+                    color: "#4F7A59",
+                    background: "rgba(111, 163, 120, 0.08)",
                   }}
                   disabled={deleting}
                   onClick={() => setDeleteStep("confirm")}
@@ -854,7 +854,7 @@ export function ResultApp({ id }: { id: string }) {
                       disabled={deleting}
                       onClick={() => void onDelete()}
                       className="flex-1 rounded-[14px] py-3 text-[14px] font-bold text-white disabled:opacity-60"
-                      style={{ background: "#B9502F" }}
+                      style={{ background: "#6FA378" }}
                     >
                       {deleting ? "削除中…" : "削除する"}
                     </button>

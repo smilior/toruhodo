@@ -614,9 +614,9 @@ export function ScanApp() {
             className="flex h-[46px] w-[46px] items-center justify-center rounded-full"
             style={{
               background: flashOn
-                ? "rgba(185,80,47,.4)"
+                ? "rgba(111,163,120,.4)"
                 : "rgba(246,241,229,.14)",
-              color: flashOn ? "#F6C8B0" : "var(--bg)",
+              color: flashOn ? "#E9D8B8" : "var(--bg)",
             }}
           >
             <span

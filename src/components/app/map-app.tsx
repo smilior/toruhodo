@@ -10,8 +10,8 @@ import { getGoogleMapsApiKey, loadGoogleMaps } from "@/lib/google-maps";
 type GeoRecord = RecordDTO & { lat: number; lng: number };
 
 const JAPAN_CENTER = { lat: 36.15, lng: 137.25 };
-const PRIMARY = "#B9502F";
-const CARD = "#FDFBF4";
+const PRIMARY = "#6FA378";
+const CARD = "#FFFFFF";
 
 function toCoord(v: unknown): number | null {
   if (typeof v === "number" && Number.isFinite(v)) return v;
@@ -88,7 +88,7 @@ function spreadPositions(
 function buildInfoHtml(rec: GeoRecord): string {
   const thumb = rec.photoUrl
     ? `<img src="${escapeAttr(rec.photoUrl)}" alt="" width="56" height="56" style="width:56px;height:56px;flex:none;border-radius:12px;object-fit:cover;border:1px solid #EDE5D2" />`
-    : `<div style="width:56px;height:56px;flex:none;border-radius:12px;background:linear-gradient(145deg,#B9502F,#9C4327);color:#FDFBF4;display:flex;align-items:center;justify-content:center;font-family:serif;font-weight:700;font-size:22px">撮</div>`;
+    : `<div style="width:56px;height:56px;flex:none;border-radius:12px;background:linear-gradient(145deg,#6FA378,#4F7A59);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:22px">撮</div>`;
 
   // Google 標準の閉じるボタンは角丸カードではみ出しやすいので、カード内に自前の閉じるを置く
   return `
@@ -107,7 +107,7 @@ function buildInfoHtml(rec: GeoRecord): string {
           <div style="margin-top:4px;font-size:11.5px;color:#8A8272;line-height:1.4">${escapeHtml(formatMapMeta(rec))}</div>
         </div>
       </a>
-      <a href="/result/${escapeAttr(rec.id)}" style="display:block;margin-top:10px;text-align:center;background:#B9502F;color:#FDFBF4;text-decoration:none;font-size:13px;font-weight:700;padding:10px 12px;border-radius:999px;box-shadow:0 6px 14px rgba(185,80,47,.28)">
+      <a href="/result/${escapeAttr(rec.id)}" style="display:block;margin-top:10px;text-align:center;background:#6FA378;color:#FFFFFF;text-decoration:none;font-size:13px;font-weight:700;padding:10px 12px;border-radius:999px;box-shadow:0 6px 14px rgba(111, 163, 120, .28)">
         解説をひらく
       </a>
     </div>`;
@@ -169,8 +169,8 @@ function createHtmlPinOverlay(maps: typeof google.maps) {
           position:absolute;left:50%;top:8.5px;transform:translateX(-50%);
           width:23px;height:23px;border-radius:50%;overflow:hidden;
           display:flex;align-items:center;justify-content:center;
-          background:linear-gradient(160deg,#C45A36,#9C4327);
-          color:${CARD};font-family:'Shippori Mincho',serif;font-weight:700;font-size:12px;
+          background:linear-gradient(160deg,#7CAF85,#4F7A59);
+          color:${CARD};font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:12px;
           line-height:1;pointer-events:none;
         ">${
           hasPhoto
@@ -218,7 +218,7 @@ function createHtmlPinOverlay(maps: typeof google.maps) {
       if (selected) {
         this.div.style.transform = "translate(-50%,-100%) scale(1.14)";
         this.div.style.filter =
-          "drop-shadow(0 8px 16px rgba(185,80,47,0.4))";
+          "drop-shadow(0 8px 16px rgba(111, 163, 120, 0.4))";
         this.div.style.zIndex = "1000";
       } else {
         this.div.style.transform = "translate(-50%,-100%) scale(1)";
@@ -333,19 +333,19 @@ export function MapApp({
               100% { opacity: 1; transform: translate(-50%,-100%) scale(1); }
             }
             .toruhodo-pin:focus-visible {
-              outline: 2px solid #B9502F;
+              outline: 2px solid #6FA378;
               outline-offset: 3px;
               border-radius: 8px;
             }
             .toruhodo-pin:hover {
               transform: translate(-50%,-100%) scale(1.08) !important;
-              filter: drop-shadow(0 6px 12px rgba(185,80,47,0.35)) !important;
+              filter: drop-shadow(0 6px 12px rgba(111, 163, 120, 0.35)) !important;
             }
             .gm-style .gm-style-iw-c {
               padding: 12px !important;
               border-radius: 16px !important;
               box-shadow: 0 12px 28px rgba(30,25,18,0.22) !important;
-              background: #FDFBF4 !important;
+              background: #FFFFFF !important;
               max-width: min(280px, calc(100vw - 48px)) !important;
               overflow: hidden !important;
             }
@@ -354,7 +354,7 @@ export function MapApp({
               max-height: none !important;
             }
             .gm-style .gm-style-iw-tc::after {
-              background: #FDFBF4 !important;
+              background: #FFFFFF !important;
             }
             /* 標準クローズははみ出しやすいので非表示（自前ボタンを使用） */
             .gm-style-iw-chr,
