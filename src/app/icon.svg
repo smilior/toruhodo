@@ -1,9 +1,13 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="seal" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CAF85"/><stop offset="1" stop-color="#6FA378"/></linearGradient></defs>
-<rect x="0" y="0" width="512" height="512" rx="114" fill="url(#seal)"/>
-<!-- 道標マーカー（石碑シルエット・先細り・山形天端／ミニマル） -->
-  <g fill="#FFFFFF">
-    <rect x="156" y="352" width="200" height="30" rx="15"/>
-    <path d="M 214 356 L 224 176 Q 226 148 256 140 Q 286 148 288 176 L 298 356 Z"/>
+<rect x="0" y="0" width="512" height="512" rx="140" fill="url(#seal)"/>
+<!-- 読み取り枠（ファインダー四隅・線画） -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="32" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 214 V182 Q150 150 182 150 H214"/>
+    <path d="M298 150 H330 Q362 150 362 182 V214"/>
+    <path d="M362 298 V330 Q362 362 330 362 H298"/>
+    <path d="M214 362 H182 Q150 362 150 330 V298"/>
   </g>
+  <!-- きらめき（読み取り・やさしい気づき） -->
+  <path d="M256 196 Q270 242 316 256 Q270 270 256 316 Q242 270 196 256 Q242 242 256 196 Z" fill="#FFFFFF"/>
 </svg>

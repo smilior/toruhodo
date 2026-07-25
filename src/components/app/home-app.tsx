@@ -49,7 +49,23 @@ export function HomeApp({
           style={{ padding: "16px 24px 4px" }}
         >
           <div className="logo-seal" aria-hidden>
-            撮
+            <svg width="20" height="20" viewBox="0 0 512 512" fill="none">
+              <g
+                stroke="#fff"
+                strokeWidth={42}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M150 214 V182 Q150 150 182 150 H214" />
+                <path d="M298 150 H330 Q362 150 362 182 V214" />
+                <path d="M362 298 V330 Q362 362 330 362 H298" />
+                <path d="M214 362 H182 Q150 362 150 330 V298" />
+              </g>
+              <path
+                d="M256 196 Q270 242 316 256 Q270 270 256 316 Q242 270 196 256 Q242 242 256 196 Z"
+                fill="#fff"
+              />
+            </svg>
           </div>
           <span
             className="font-mincho text-[20px] font-bold tracking-[0.12em]"
