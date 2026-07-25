@@ -1,37 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  /* 撮るほど — 和紙×和色 */
-  --primary: #b9502f;
-  --primary-deep: #9c4327;
-  --secondary: #33566e;
-  --ink: #3a352c;
-  --muted: #8a8272;
+  /* 撮るほど — sorosoro と同系（セージ緑 × クリーム、単一アクセント） */
+  --primary: #6fa378;
+  --primary-deep: #4f7a59;
+  --secondary: #4f7a59;
+  --ink: #453f35;
+  --muted: #8c8370;
   --muted-2: #a89f8a;
   --label: #6b6350;
-  --bg: #f6f1e5;
-  --card: #fdfbf4;
+  --bg: #f6f2ea;
+  --card: #ffffff;
   --washi-from: #fcf7e9;
   --washi-to: #f8f1dd;
-  --ai-card: #eaf0f4;
-  --border: #e6decb;
+  --ai-card: #e8f0ea;
+  --border: #eae3d4;
   --card-border: #ede5d2;
   --washi-border: #e7dbb8;
-  --ai-border: #cbd9e1;
+  --ai-border: #cfe0d3;
   --tab-inactive: #9a917d;
   --segment: #eae2cb;
   --toggle-off: #d9d0bb;
   --scan-bg: #221f1a;
-  --warn-bg: #f4e6cf;
+  --warn-bg: #f8efd3;
   --warn-border: #e4cd9e;
-  --warn-ink: #7a5a1f;
-  --desk: #ebe4d4;
-  --line: #e6decb;
-  --sub: #8a8272;
-  --accent: #b9502f;
-  --accent-ink: #9c4327;
-  --accent-soft: rgba(185, 80, 47, 0.12);
-  --shadow: 0 8px 18px rgba(185, 80, 47, 0.3);
+  --warn-ink: #95762a;
+  --late-ink: #b0654a;
+  --del: #bc6248;
+  --desk: #e9e3d5;
+  --line: #eae3d4;
+  --sub: #8c8370;
+  --accent: #6fa378;
+  --accent-ink: #4f7a59;
+  --accent-soft: rgba(111, 163, 120, 0.14);
+  --shadow: 0 8px 18px rgba(111, 163, 120, 0.28);
   --app-height: 100svh;
   color-scheme: light;
 }
@@ -71,8 +73,9 @@ body {
   overscroll-behavior: none;
 }
 
+/* 旧・明朝見出しは Zen Maru Gothic に統一（sorosoro と同系フォントへ） */
 .font-mincho {
-  font-family: "Shippori Mincho", "Hiragino Mincho ProN", serif;
+  font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
 }
 
 .material-symbols-rounded {
@@ -241,7 +244,7 @@ body {
   border-radius: 9px;
   background: var(--primary);
   color: var(--card);
-  font-family: "Shippori Mincho", serif;
+  font-family: "Zen Maru Gothic", sans-serif;
   font-weight: 700;
   font-size: 17px;
   flex-shrink: 0;

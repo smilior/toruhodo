@@ -198,7 +198,7 @@ function CalendarView({
             <div
               key={w}
               style={{
-                color: i === 0 ? "#B9502F" : i === 6 ? "#33566E" : "var(--muted)",
+                color: i === 0 ? "#B0654A" : i === 6 ? "#6E8894" : "var(--muted)",
                 padding: "4px 0",
               }}
             >
@@ -227,18 +227,18 @@ function CalendarView({
                   background: isSelected
                     ? "var(--primary)"
                     : count > 0
-                      ? "rgba(185,80,47,0.08)"
+                      ? "rgba(111,163,120,0.08)"
                       : isToday
-                        ? "rgba(185,80,47,0.06)"
+                        ? "rgba(111,163,120,0.06)"
                         : "transparent",
                   color: isSelected
                     ? "var(--card)"
                     : weekday === 0
-                      ? "#B9502F"
+                      ? "#B0654A"
                       : weekday === 6
-                        ? "#33566E"
+                        ? "#6E8894"
                         : "var(--ink)",
-                  outline: isToday && !isSelected ? "1.5px solid rgba(185,80,47,0.35)" : undefined,
+                  outline: isToday && !isSelected ? "1.5px solid rgba(111,163,120,0.35)" : undefined,
                   outlineOffset: -1,
                 }}
                 aria-label={`${month + 1}月${cell.day}日${count > 0 ? ` 記録${count}件` : ""}`}
