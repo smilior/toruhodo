@@ -5,11 +5,17 @@ import {
   type ScanAiResult,
   type SuggestedQuestion,
 } from "@/lib/domain/record";
-import { normalizeRubyHtml } from "@/lib/furigana";
+import {
+  containsKanji,
+  hasUncoveredKanji,
+  normalizeRubyHtml,
+} from "@/lib/furigana";
+import { addFurigana } from "@/lib/ai/furigana-repair";
 
 const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
-const SCAN_PROMPT = `あなたは日本の石碑・案内板をやさしく解説するアシスタントです。
+const SCAN_PROMPT = `あなたは日本の石碑・案内板を、小さな子どもにもやさしく解説するアシスタントです。
+このアプリは、ひらがなを覚えたばかりの年長（5〜6歳）から小学生、大人までが使います。
 画像から文字を読み取り、次の JSON だけを返してください（前後に説明文・マークダウンを付けない）:
 {
   "failed": boolean,
@@ -27,12 +33,15 @@ const SCAN_PROMPT = `あなたは日本の石碑・案内板をやさしく解�
 ルール:
 - failed: 文字がほぼ読めないとき true
 - partial: 一部だけ読めたとき true（そのとき partialChars に読めた文字）
-- easyText: 子どもにも分かる言いかえ（プレーン）
-- detailText: くわしい説明（プレーン）
-- easyRuby / detailRuby: 対応本文の <ruby>漢字<rt>かんじ</rt></ruby> 版（単語単位）
-- suggestedQuestions: この案内を読んだ人が次に聞きたくなる質問候補を 3〜5 個（短く、会話調、日本語）。例:「いつ建てられたの？」「誰のための石碑？」
-- suggestedQuestionsRuby: suggestedQuestions と同じ順・同じ文に <ruby>漢字<rt>かんじ</rt></ruby> でふりがなを付けた配列（要素数も同じ）
-- ルビで使ってよいタグは ruby / rt のみ
+- easyText: ひらがなを覚えたばかりの子ども（5〜6歳）に読み聞かせるつもりの言いかえ（プレーン）
+  - 1文を短く（20〜30文字くらい）。全体で2〜4文。やわらかい「です・ます」で書く
+  - むずかしい熟語・カタカナ語・抽象的な言い方をさける（例:「距離」→「どのくらい歩くか」）
+  - 数や大きさは子どもがイメージできるたとえを添える（例:「一里＝歩いて1時間くらい」）
+- detailText: 大人向けのくわしい説明（プレーン）。歴史的な背景も補う
+- easyRuby / detailRuby: 対応する本文とまったく同じ文（文字を足さない・減らさない）に、漢字を1つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包んだもの（単語単位、読みはひらがな。ひらがな・カタカナ・数字にはルビを付けない）
+- 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を単独で置かない
+- suggestedQuestions: 読んだ子どもが次に聞きたくなる質問を3〜5個（短く、話しことば）。例:「なんでここにあるの？」「これはいつできたの？」
+- suggestedQuestionsRuby: suggestedQuestions と同じ順・同じ文に同じ形式でふりがなを付けた配列（要素数も同じ）
 - 出力は JSON オブジェクト 1 つのみ`;
 
 /**
@@ -99,15 +108,48 @@ export async function analyzeMonumentImage(input: {
 
     const easyText = parsed.easyText || "";
     const detailText = parsed.detailText || easyText;
+    // 壊れたルビは本文が化けるので、検証に落ちたら捨てる
+    let easyRuby = normalizeRubyHtml(parsed.easyRuby, easyText);
+    let detailRuby = normalizeRubyHtml(parsed.detailRuby, detailText);
+
+    // ルビが無い／付け漏れがある項目だけ、1 回のコールでまとめて付け直す
+    const repairTargets: { kind: "easy" | "detail" | "question"; index: number }[] =
+      [];
+    const repairTexts: string[] = [];
+    if (needsFuriganaRepair(easyRuby, easyText)) {
+      repairTargets.push({ kind: "easy", index: 0 });
+      repairTexts.push(easyText);
+    }
+    if (needsFuriganaRepair(detailRuby, detailText)) {
+      repairTargets.push({ kind: "detail", index: 0 });
+      repairTexts.push(detailText);
+    }
+    questions.forEach((q, i) => {
+      if (needsFuriganaRepair(q.ruby, q.text)) {
+        repairTargets.push({ kind: "question", index: i });
+        repairTexts.push(q.text);
+      }
+    });
+
+    if (repairTargets.length > 0) {
+      const repaired = await addFurigana(ai, model, repairTexts);
+      repairTargets.forEach((t, i) => {
+        const ruby = repaired[i];
+        if (!ruby) return;
+        if (t.kind === "easy") easyRuby = ruby;
+        else if (t.kind === "detail") detailRuby = ruby;
+        else questions[t.index] = makeSuggestedQuestion(repairTexts[i], ruby);
+      });
+    }
 
     return {
       status: parsed.partial ? "partial" : "done",
       title,
       easyText,
       detailText,
-      // 壊れたルビは本文が化けるので、検証に落ちたらプレーンを使う
-      easyRuby: normalizeRubyHtml(parsed.easyRuby, easyText) || easyText,
-      detailRuby: normalizeRubyHtml(parsed.detailRuby, detailText) || detailText,
+      // リペアも失敗したときはプレーン表示に落とす
+      easyRuby: easyRuby || easyText,
+      detailRuby: detailRuby || detailText,
       aiNote: "",
       ocrRaw: parsed.ocrRaw || "",
       partialChars: parsed.partialChars ?? null,
@@ -117,6 +159,12 @@ export async function analyzeMonumentImage(input: {
     console.error("Gemini analyze error", e);
     return mockAnalyze(input.imageBase64);
   }
+}
+
+/** 本文に漢字があるのに、ルビが無い／付け漏れがある */
+function needsFuriganaRepair(ruby: string, text: string): boolean {
+  if (!containsKanji(text)) return false;
+  return !ruby || hasUncoveredKanji(ruby);
 }
 
 function normalizeMime(mime: string): string {
