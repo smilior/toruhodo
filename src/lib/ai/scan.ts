@@ -26,6 +26,11 @@ const SCAN_PROMPT = `あなたは日本の石碑・案内板を、小さな子�
   "suggestedQuestions": string[],
   "suggestedQuestionsRuby": string[]
 }
+
+フィールドの役割（必ず守る）:
+- *Text / suggestedQuestions は本文そのもの（プレーンテキストのみ。ルビや HTML は絶対に入れない）
+- *Ruby / suggestedQuestionsRuby は、対応する本文とまったく同じ文にふりがなだけを付けた版（ルビはこちらにだけ書く）
+
 ルール:
 - failed: 文字がほぼ読めないとき true
 - partial: 一部だけ読めたとき true（そのとき partialChars に読めた文字）
@@ -34,8 +39,11 @@ const SCAN_PROMPT = `あなたは日本の石碑・案内板を、小さな子�
   - むずかしい熟語・カタカナ語・抽象的な言い方をさける（例:「距離」→「どのくらい歩くか」）
   - 数や大きさは子どもがイメージできるたとえを添える（例:「一里＝歩いて1時間くらい」）
 - detailText: 大人向けのくわしい説明（プレーン）。歴史的な背景も補う
-- easyRuby / detailRuby: 対応する本文とまったく同じ文（文字を足さない・減らさない）に、漢字を1つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包んだもの（単語単位、読みはひらがな。ひらがな・カタカナ・数字にはルビを付けない）
-- 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を単独で置かない
+- easyRuby / detailRuby:
+  - 対応する本文と文字を 1 つも足さない・減らさない・変えない（タグだけを足す）
+  - 漢字を 1 つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包む（単語単位、読みはひらがな）
+  - ひらがな・カタカナ・数字にはルビを付けない
+  - 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を単独で置かない
 - suggestedQuestions: 読んだ子どもが次に聞きたくなる質問を3〜5個（短く、話しことば）。例:「なんでここにあるの？」「これはいつできたの？」
 - suggestedQuestionsRuby: suggestedQuestions と同じ順・同じ文に同じ形式でふりがなを付けた配列（要素数も同じ）
 - 出力前に確認: 各 *Ruby から <ruby>/<rt> を除いた本文が対応するプレーン文と一致し、かつプレーン文の漢字がすべて <ruby> で覆われていること
