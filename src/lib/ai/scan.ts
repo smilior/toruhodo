@@ -5,6 +5,7 @@ import {
   type ScanAiResult,
   type SuggestedQuestion,
 } from "@/lib/domain/record";
+import { normalizeRubyHtml } from "@/lib/furigana";
 
 const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
@@ -96,13 +97,17 @@ export async function analyzeMonumentImage(input: {
       title,
     );
 
+    const easyText = parsed.easyText || "";
+    const detailText = parsed.detailText || easyText;
+
     return {
       status: parsed.partial ? "partial" : "done",
       title,
-      easyText: parsed.easyText || "",
-      detailText: parsed.detailText || parsed.easyText || "",
-      easyRuby: parsed.easyRuby || parsed.easyText || "",
-      detailRuby: parsed.detailRuby || parsed.detailText || "",
+      easyText,
+      detailText,
+      // 壊れたルビは本文が化けるので、検証に落ちたらプレーンを使う
+      easyRuby: normalizeRubyHtml(parsed.easyRuby, easyText) || easyText,
+      detailRuby: normalizeRubyHtml(parsed.detailRuby, detailText) || detailText,
       aiNote: "",
       ocrRaw: parsed.ocrRaw || "",
       partialChars: parsed.partialChars ?? null,

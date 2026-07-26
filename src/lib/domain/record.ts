@@ -1,6 +1,10 @@
 import type { RecordRow } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/ai/chat";
-import { normalizeRubyHtml, stripRubyHtml } from "@/lib/furigana";
+import {
+  normalizeRubyHtml,
+  sanitizeRubyHtml,
+  stripRubyHtml,
+} from "@/lib/furigana";
 
 export type { ChatMessage };
 
@@ -169,14 +173,20 @@ export function toRecordDTO(
     ? sanitizePhotoUrlForList(row.photoUrl)
     : row.photoUrl;
 
+  // 既存データにも壊れたルビ（孤立 rt など）が入りうるので、表示前に構造を直す。
+  // ルビ欄にプレーン本文が入っている記録からふりがなを奪わないよう、
+  // ここでは本文一致の厳格判定はせずサニタイズだけを掛ける。
+  const easyRuby = sanitizeRubyHtml(row.easyRuby) || row.easyText;
+  const detailRuby = sanitizeRubyHtml(row.detailRuby) || row.detailText;
+
   return {
     id: row.id,
     photoUrl,
     title: row.title,
     easyText: row.easyText,
     detailText: row.detailText,
-    easyRuby: row.easyRuby ?? "",
-    detailRuby: row.detailRuby ?? "",
+    easyRuby,
+    detailRuby,
     aiNote: row.aiNote ?? "",
     ocrRaw: row.ocrRaw ?? "",
     partial: Boolean(row.partial),

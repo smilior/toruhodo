@@ -1,5 +1,10 @@
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
-import { normalizeRubyHtml, stripRubyHtml } from "@/lib/furigana";
+import {
+  containsKanji,
+  hasUncoveredKanji,
+  normalizeRubyHtml,
+  stripRubyHtml,
+} from "@/lib/furigana";
 
 export type ChatMessage = {
   role: "user" | "assistant";
@@ -42,8 +47,8 @@ export async function answerMonumentChat(input: {
 { "answer": string, "answerRuby": string }
 ルール:
 - answer: 回答本文（プレーンテキスト。ルビや HTML は入れない）
-- answerRuby: answer とまったく同じ文に、漢字すべてへ <ruby>漢字<rt>かんじ</rt></ruby> 形式でふりがなを付けたもの（単語単位。ひらがな・カタカナ・数字にはルビを付けない）
-- 使ってよいタグは ruby / rt のみ
+- answerRuby: answer とまったく同じ文（文字を足さない・減らさない）に、漢字を 1 つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包んだもの（単語単位。ひらがな・カタカナ・数字にはルビを付けない）
+- 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を単独で置かない
 - 断定しすぎない。分からないことは「この案内だけでははっきり分かりません」と伝える
 - 子どもや中高年にも読みやすい文（1〜4文程度）
 - マークダウンや見出しは使わない
@@ -86,10 +91,64 @@ ${input.question}
     }
 
     const answer = parseChatAnswer(text);
-    return answer ?? mockAnswer(input.question, input.title);
+    if (!answer) return mockAnswer(input.question, input.title);
+
+    // ルビが無い／付け漏れがあるときだけ、1 回だけ付け直す
+    if (
+      containsKanji(answer.text) &&
+      (!answer.ruby || hasUncoveredKanji(answer.ruby))
+    ) {
+      const repaired = await generateFurigana(ai, model, answer.text);
+      if (repaired) return { text: answer.text, ruby: repaired };
+    }
+    return answer;
   } catch (e) {
     console.error("chat error", e);
     return mockAnswer(input.question, input.title);
+  }
+}
+
+/**
+ * 本文はそのままに、漢字へふりがなを付け直す（ルビ壊れ・付け漏れのリペア）。
+ * 検証に通らなければ空文字を返し、呼び出し側はプレーン表示に落とす。
+ */
+async function generateFurigana(
+  ai: GoogleGenAI,
+  model: string,
+  text: string,
+): Promise<string> {
+  try {
+    const prompt = `次の文の漢字すべてに <ruby>漢字<rt>かんじ</rt></ruby> 形式でふりがなを付けて返してください。
+ルール:
+- 本文の文字は 1 文字も変えない・足さない・減らさない（ルビのタグだけを足す）
+- 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書く
+- ひらがな・カタカナ・数字・記号にはルビを付けない
+- 説明文・マークダウン・JSON は付けず、ふりがな付きの本文だけを返す
+
+本文:
+${text}`;
+
+    const response = await ai.models.generateContentStream({
+      model,
+      config: {
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+      },
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    });
+
+    let out = "";
+    for await (const chunk of response) {
+      if (chunk.text) out += chunk.text;
+    }
+
+    const cleaned = out
+      .replace(/^```(?:html)?\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+    return normalizeRubyHtml(cleaned, text);
+  } catch (e) {
+    console.error("furigana repair error", e);
+    return "";
   }
 }
 
