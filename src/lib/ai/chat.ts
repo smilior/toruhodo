@@ -1,5 +1,6 @@
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import {
+  containsKanji,
   needsFuriganaRepair,
   normalizeRubyHtml,
   stripRubyHtml,
@@ -24,7 +25,10 @@ export type ChatAnswer = {
 
 /**
  * 石碑・案内板の文脈で質問にやさしく答える。
- * 回答・（必要なら）質問のふりがなを、スキャンと同じ検証＋リペアで整える。
+ *
+ * 本文生成とふりがな付与は分離する:
+ * 1) ガイドはプレーンの answer だけを返す
+ * 2) 漢字がある文は addFurigana 専用コールでルビを付ける（1件目の <rt> 抜け・表記ゆれを避ける）
  */
 export async function answerMonumentChat(input: {
   title: string;
@@ -52,23 +56,17 @@ export async function answerMonumentChat(input: {
     const system = `あなたは「撮るほど」のガイドです。石碑・案内板について、やさしい日本語で短く答えます。
 相手は、ひらがなを覚えたばかりの年長（5〜6歳）や小学生のこともあります。
 次の JSON だけを返してください（前後に説明文・マークダウンを付けない）:
-{ "answer": string, "answerRuby": string }
+{ "answer": string }
 
-フィールドの役割（必ず守る）:
+フィールドの役割:
 - answer は、画面に出す回答の本文そのもの（プレーンテキストのみ。ルビや HTML は絶対に入れない）
-- answerRuby は、answer とまったく同じ文にふりがなだけを付けた版（ルビはこちらにだけ書く）
+- ふりがなは別処理で付けるので、answer には書かない
 
 ルール:
 - answer:
   - 1文を短く。全体で1〜3文。やわらかい「です・ます」で書く
   - むずかしい言葉・カタカナ語をさける。どうしても使うときは「〜のことです」とやさしい言いかえを添える
   - 数や大きさは子どもがイメージできるたとえで補う
-- answerRuby:
-  - answer と文字を 1 つも足さない・減らさない・変えない（タグだけを足す）
-  - 漢字を 1 つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包む（単語単位、読みはひらがな）
-  - ひらがな・カタカナ・数字にはルビを付けない
-  - 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を単独で置かない
-- 出力前に確認: answerRuby から <ruby>/<rt> を除いた本文が answer と一致し、かつ answer の漢字がすべて <ruby> で覆われていること
 - 断定しすぎない。分からないことは「この案内だけでは、はっきり分かりません」と伝える
 - マークダウンや見出しは使わない
 - 質問と関係ない雑談には乗らない
@@ -112,11 +110,10 @@ ${question}
     const answer = parseChatAnswer(text);
     if (!answer) return mockAnswer(question, input.title, questionRuby);
 
-    // 回答・自由入力の質問でルビ漏れがある項目だけ、1 回のコールでまとめて付け直す
-    // （スキャン側と同じ検証＋バッチリペア）
+    // 本文確定後に、ふりがな専用コールで付与（回答は常に／質問は漏れ時）
     const repairKinds: ("answer" | "question")[] = [];
     const repairTexts: string[] = [];
-    if (needsFuriganaRepair(answer.ruby, answer.text)) {
+    if (containsKanji(answer.text)) {
       repairKinds.push("answer");
       repairTexts.push(answer.text);
     }
@@ -125,7 +122,7 @@ ${question}
       repairTexts.push(question);
     }
 
-    let answerRuby = answer.ruby;
+    let answerRuby = "";
     if (repairTexts.length > 0) {
       const repaired = await addFurigana(ai, model, repairTexts);
       repairKinds.forEach((kind, i) => {
@@ -144,12 +141,10 @@ ${question}
 }
 
 /**
- * JSON（answer / answerRuby）を取り出す。
- * JSON で返ってこなかった場合は本文そのものをプレーン回答として扱う。
+ * JSON（answer）を取り出す。
+ * 旧形式（answerRuby 付き）や素テキストも許容する。
  */
-function parseChatAnswer(
-  raw: string,
-): { text: string; ruby: string } | null {
+function parseChatAnswer(raw: string): { text: string } | null {
   const cleaned = raw
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/i, "")
@@ -165,20 +160,20 @@ function parseChatAnswer(
       };
       const plainRaw =
         typeof parsed.answer === "string" ? parsed.answer.trim() : "";
+      // 旧プロンプト互換: answer が空で answerRuby だけある場合
       const rubyRaw =
         typeof parsed.answerRuby === "string" ? parsed.answerRuby.trim() : "";
-      const ruby = normalizeRubyHtml(rubyRaw, plainRaw);
-      const text = plainRaw || stripRubyHtml(ruby);
-      if (text) return { text, ruby };
+      const text = plainRaw || stripRubyHtml(normalizeRubyHtml(rubyRaw));
+      if (text) return { text };
     } catch {
       /* JSON ではなかった — 素の本文として扱う */
     }
   }
 
-  // モデルが素のテキストを返した場合のフォールバック
-  const ruby = normalizeRubyHtml(cleaned);
-  const text = ruby ? stripRubyHtml(ruby) : cleaned;
-  return text ? { text, ruby } : null;
+  // モデルが素のテキストを返した場合
+  const asRuby = normalizeRubyHtml(cleaned);
+  const text = asRuby ? stripRubyHtml(asRuby) : cleaned;
+  return text ? { text } : null;
 }
 
 function mockAnswer(
