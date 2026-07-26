@@ -5,11 +5,7 @@ import {
   type ScanAiResult,
   type SuggestedQuestion,
 } from "@/lib/domain/record";
-import {
-  containsKanji,
-  hasUncoveredKanji,
-  normalizeRubyHtml,
-} from "@/lib/furigana";
+import { needsFuriganaRepair, normalizeRubyHtml } from "@/lib/furigana";
 import { addFurigana } from "@/lib/ai/furigana-repair";
 
 const DEFAULT_MODEL = "gemini-3.1-flash-lite";
@@ -160,12 +156,6 @@ export async function analyzeMonumentImage(input: {
     console.error("Gemini analyze error", e);
     return mockAnalyze(input.imageBase64);
   }
-}
-
-/** 本文に漢字があるのに、ルビが無い／付け漏れがある */
-function needsFuriganaRepair(ruby: string, text: string): boolean {
-  if (!containsKanji(text)) return false;
-  return !ruby || hasUncoveredKanji(ruby);
 }
 
 function normalizeMime(mime: string): string {

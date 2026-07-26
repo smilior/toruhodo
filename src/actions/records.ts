@@ -370,9 +370,13 @@ export async function chatAboutRecordAction(input: {
       placeName,
       history,
       question,
+      questionRuby: input.questionRuby,
     });
 
-    const questionRuby = normalizeRubyHtml(input.questionRuby, question);
+    // チップ由来 or リペア後の質問ルビ（スキャンと同じ検証経路）
+    const questionRuby =
+      normalizeRubyHtml(answer.questionRuby, question) ||
+      normalizeRubyHtml(input.questionRuby, question);
     const userMsg: ChatMessage = {
       role: "user",
       content: question,

@@ -158,6 +158,15 @@ export function hasUncoveredKanji(ruby: string | null | undefined): boolean {
   return containsKanji(stripRubyHtml(rest));
 }
 
+/** 本文に漢字があるのに、ルビが無い／付け漏れがある（リペア対象） */
+export function needsFuriganaRepair(
+  ruby: string | null | undefined,
+  text: string | null | undefined,
+): boolean {
+  if (!containsKanji(text)) return false;
+  return !ruby || hasUncoveredKanji(ruby);
+}
+
 /**
  * AI 由来のルビ文字列を安全な形に整える。
  * ルビが無い／本文と対応しない場合は空文字を返す（呼び出し側はプレーンを使う）。
