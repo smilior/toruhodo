@@ -657,7 +657,7 @@ export function ResultApp({ id }: { id: string }) {
                       lineHeight: furigana && q.ruby ? 2.1 : 1.35,
                     }}
                   >
-                    {q.ruby ? (
+                    {furigana && q.ruby ? (
                       <span dangerouslySetInnerHTML={{ __html: q.ruby }} />
                     ) : (
                       q.text
@@ -700,7 +700,7 @@ export function ResultApp({ id }: { id: string }) {
                       lineHeight: furigana && m.contentRuby ? 2.2 : 1.7,
                     }}
                   >
-                    {m.contentRuby ? (
+                    {furigana && m.contentRuby ? (
                       <span dangerouslySetInnerHTML={{ __html: m.contentRuby }} />
                     ) : (
                       m.content

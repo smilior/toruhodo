@@ -1,7 +1,6 @@
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import {
-  containsKanji,
-  hasUncoveredKanji,
+  needsFuriganaRepair,
   normalizeRubyHtml,
   stripRubyHtml,
 } from "@/lib/furigana";
@@ -19,11 +18,13 @@ export type ChatAnswer = {
   text: string;
   /** ふりがな付き本文（生成できなかったときは空文字） */
   ruby: string;
+  /** ユーザー質問のふりがな（チップ由来 or リペア後。無いときは空文字） */
+  questionRuby: string;
 };
 
 /**
  * 石碑・案内板の文脈で質問にやさしく答える。
- * 回答はプレーンとふりがな付きの 2 種類を返す。
+ * 回答・（必要なら）質問のふりがなを、スキャンと同じ検証＋リペアで整える。
  */
 export async function answerMonumentChat(input: {
   title: string;
@@ -33,10 +34,15 @@ export async function answerMonumentChat(input: {
   placeName?: string | null;
   history: ChatMessage[];
   question: string;
+  /** 候補チップから送るときの、ふりがな付き質問文 */
+  questionRuby?: string;
 }): Promise<ChatAnswer> {
+  const question = input.question.trim();
+  let questionRuby = normalizeRubyHtml(input.questionRuby, question);
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return mockAnswer(input.question, input.title);
+    return mockAnswer(question, input.title, questionRuby);
   }
 
   try {
@@ -77,7 +83,7 @@ export async function answerMonumentChat(input: {
 ${historyText || "（なし）"}
 
 ユーザーの質問:
-${input.question}
+${question}
 
 ガイドの回答（JSON）:`;
 
@@ -96,20 +102,36 @@ ${input.question}
     }
 
     const answer = parseChatAnswer(text);
-    if (!answer) return mockAnswer(input.question, input.title);
+    if (!answer) return mockAnswer(question, input.title, questionRuby);
 
-    // ルビが無い／付け漏れがあるときだけ、1 回だけ付け直す
-    if (
-      containsKanji(answer.text) &&
-      (!answer.ruby || hasUncoveredKanji(answer.ruby))
-    ) {
-      const [repaired] = await addFurigana(ai, model, [answer.text]);
-      if (repaired) return { text: answer.text, ruby: repaired };
+    // 回答・自由入力の質問でルビ漏れがある項目だけ、1 回のコールでまとめて付け直す
+    // （スキャン側と同じ検証＋バッチリペア）
+    const repairKinds: ("answer" | "question")[] = [];
+    const repairTexts: string[] = [];
+    if (needsFuriganaRepair(answer.ruby, answer.text)) {
+      repairKinds.push("answer");
+      repairTexts.push(answer.text);
     }
-    return answer;
+    if (needsFuriganaRepair(questionRuby, question)) {
+      repairKinds.push("question");
+      repairTexts.push(question);
+    }
+
+    let answerRuby = answer.ruby;
+    if (repairTexts.length > 0) {
+      const repaired = await addFurigana(ai, model, repairTexts);
+      repairKinds.forEach((kind, i) => {
+        const ruby = repaired[i];
+        if (!ruby) return;
+        if (kind === "answer") answerRuby = ruby;
+        else questionRuby = ruby;
+      });
+    }
+
+    return { text: answer.text, ruby: answerRuby, questionRuby };
   } catch (e) {
     console.error("chat error", e);
-    return mockAnswer(input.question, input.title);
+    return mockAnswer(question, input.title, questionRuby);
   }
 }
 
@@ -117,7 +139,9 @@ ${input.question}
  * JSON（answer / answerRuby）を取り出す。
  * JSON で返ってこなかった場合は本文そのものをプレーン回答として扱う。
  */
-function parseChatAnswer(raw: string): ChatAnswer | null {
+function parseChatAnswer(
+  raw: string,
+): { text: string; ruby: string } | null {
   const cleaned = raw
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/i, "")
@@ -149,11 +173,15 @@ function parseChatAnswer(raw: string): ChatAnswer | null {
   return text ? { text, ruby } : null;
 }
 
-function mockAnswer(question: string, title: string): ChatAnswer {
-  return {
-    text: `「${title}」についてのご質問ですね。「${question}」について、この案内の範囲ではくわしいことは分かりませんが、現地の案内や近くの説明板もあわせて見るとヒントがあるかもしれません。`,
-    ruby: normalizeRubyHtml(
-      `「${title}」についてのご<ruby>質問<rt>しつもん</rt></ruby>ですね。「${question}」について、この<ruby>案内<rt>あんない</rt></ruby>の<ruby>範囲<rt>はんい</rt></ruby>ではくわしいことは<ruby>分<rt>わ</rt></ruby>かりませんが、<ruby>現地<rt>げんち</rt></ruby>の<ruby>案内<rt>あんない</rt></ruby>や<ruby>近<rt>ちか</rt></ruby>くの<ruby>説明板<rt>せつめいばん</rt></ruby>もあわせて<ruby>見<rt>み</rt></ruby>るとヒントがあるかもしれません。`,
-    ),
-  };
+function mockAnswer(
+  question: string,
+  title: string,
+  questionRuby: string,
+): ChatAnswer {
+  const text = `「${title}」についてのご質問ですね。「${question}」について、この案内の範囲ではくわしいことは分かりませんが、現地の案内や近くの説明板もあわせて見るとヒントがあるかもしれません。`;
+  const ruby = normalizeRubyHtml(
+    `「${title}」についてのご<ruby>質問<rt>しつもん</rt></ruby>ですね。「${question}」について、この<ruby>案内<rt>あんない</rt></ruby>の<ruby>範囲<rt>はんい</rt></ruby>ではくわしいことは<ruby>分<rt>わ</rt></ruby>かりませんが、<ruby>現地<rt>げんち</rt></ruby>の<ruby>案内<rt>あんない</rt></ruby>や<ruby>近<rt>ちか</rt></ruby>くの<ruby>説明板<rt>せつめいばん</rt></ruby>もあわせて<ruby>見<rt>み</rt></ruby>るとヒントがあるかもしれません。`,
+    text,
+  );
+  return { text, ruby, questionRuby };
 }
