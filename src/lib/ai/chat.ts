@@ -5,6 +5,7 @@ import {
   normalizeRubyHtml,
   stripRubyHtml,
 } from "@/lib/furigana";
+import { addFurigana } from "@/lib/ai/furigana-repair";
 
 export type ChatMessage = {
   role: "user" | "assistant";
@@ -43,17 +44,20 @@ export async function answerMonumentChat(input: {
     const model = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
     const system = `あなたは「撮るほど」のガイドです。石碑・案内板について、やさしい日本語で短く答えます。
+相手は、ひらがなを覚えたばかりの年長（5〜6歳）や小学生のこともあります。
 次の JSON だけを返してください（前後に説明文・マークダウンを付けない）:
 { "answer": string, "answerRuby": string }
 ルール:
 - answer: 回答本文（プレーンテキスト。ルビや HTML は入れない）
-- answerRuby: answer とまったく同じ文（文字を足さない・減らさない）に、漢字を 1 つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包んだもの（単語単位。ひらがな・カタカナ・数字にはルビを付けない）
+  - 1文を短く。全体で1〜3文。やわらかい「です・ます」で書く
+  - むずかしい言葉・カタカナ語をさける。どうしても使うときは「〜のことです」とやさしい言いかえを添える
+  - 数や大きさは子どもがイメージできるたとえで補う
+- answerRuby: answer とまったく同じ文（文字を足さない・減らさない）に、漢字を1つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包んだもの（単語単位、読みはひらがな。ひらがな・カタカナ・数字にはルビを付けない）
 - 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を単独で置かない
-- 断定しすぎない。分からないことは「この案内だけでははっきり分かりません」と伝える
-- 子どもや中高年にも読みやすい文（1〜4文程度）
+- 断定しすぎない。分からないことは「この案内だけでは、はっきり分かりません」と伝える
 - マークダウンや見出しは使わない
 - 質問と関係ない雑談には乗らない
-- 以下の資料だけを根拠にする（必要なら一般知識で補うが推測と分かる言い方にする）
+- 以下の資料だけを根拠にする（必要なら一般知識で補うが、推測だと分かる言い方にする）
 
 【題名】${input.title}
 【場所】${input.placeName || "不明"}
@@ -98,57 +102,13 @@ ${input.question}
       containsKanji(answer.text) &&
       (!answer.ruby || hasUncoveredKanji(answer.ruby))
     ) {
-      const repaired = await generateFurigana(ai, model, answer.text);
+      const [repaired] = await addFurigana(ai, model, [answer.text]);
       if (repaired) return { text: answer.text, ruby: repaired };
     }
     return answer;
   } catch (e) {
     console.error("chat error", e);
     return mockAnswer(input.question, input.title);
-  }
-}
-
-/**
- * 本文はそのままに、漢字へふりがなを付け直す（ルビ壊れ・付け漏れのリペア）。
- * 検証に通らなければ空文字を返し、呼び出し側はプレーン表示に落とす。
- */
-async function generateFurigana(
-  ai: GoogleGenAI,
-  model: string,
-  text: string,
-): Promise<string> {
-  try {
-    const prompt = `次の文の漢字すべてに <ruby>漢字<rt>かんじ</rt></ruby> 形式でふりがなを付けて返してください。
-ルール:
-- 本文の文字は 1 文字も変えない・足さない・減らさない（ルビのタグだけを足す）
-- 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書く
-- ひらがな・カタカナ・数字・記号にはルビを付けない
-- 説明文・マークダウン・JSON は付けず、ふりがな付きの本文だけを返す
-
-本文:
-${text}`;
-
-    const response = await ai.models.generateContentStream({
-      model,
-      config: {
-        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-      },
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-    });
-
-    let out = "";
-    for await (const chunk of response) {
-      if (chunk.text) out += chunk.text;
-    }
-
-    const cleaned = out
-      .replace(/^```(?:html)?\s*/i, "")
-      .replace(/\s*```$/i, "")
-      .trim();
-    return normalizeRubyHtml(cleaned, text);
-  } catch (e) {
-    console.error("furigana repair error", e);
-    return "";
   }
 }
 
