@@ -259,6 +259,12 @@ export async function saveRecordAction(input: {
         : defaultSuggestedQuestions(input.title);
     const chat = normalizeChatMessages(input.chatMessages).slice(-40);
 
+    // クライアント由来のルビは信頼しない。本文と対応しなければプレーンを保存する
+    const easyRuby =
+      normalizeRubyHtml(input.easyRuby, input.easyText) || input.easyText;
+    const detailRuby =
+      normalizeRubyHtml(input.detailRuby, input.detailText) || input.detailText;
+
     const [row] = await db
       .insert(records)
       .values({
@@ -267,8 +273,8 @@ export async function saveRecordAction(input: {
         title: input.title.slice(0, 120),
         easyText: input.easyText,
         detailText: input.detailText,
-        easyRuby: input.easyRuby,
-        detailRuby: input.detailRuby,
+        easyRuby,
+        detailRuby,
         aiNote: input.aiNote ?? "",
         ocrRaw: input.ocrRaw,
         partial: Boolean(input.partial),
