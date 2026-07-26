@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { createScanAction, getSettingsAction } from "@/actions/records";
-import type { SettingsDTO } from "@/lib/domain/record";
+import type { SettingsDTO, SuggestedQuestion } from "@/lib/domain/record";
 import { DEFAULT_SETTINGS } from "@/lib/domain/record";
 import { FailedView } from "@/components/app/failed-view";
 
@@ -29,7 +29,7 @@ export type PendingScanPayload = {
   lat: number | null;
   lng: number | null;
   placeName: string | null;
-  suggestedQuestions: string[];
+  suggestedQuestions: SuggestedQuestion[];
   createdAt: string;
 };
 

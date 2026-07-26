@@ -1,7 +1,15 @@
 import type { RecordRow } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/ai/chat";
+import { normalizeRubyHtml, stripRubyHtml } from "@/lib/furigana";
 
 export type { ChatMessage };
+
+/** 深掘りの質問候補（ふりがな付き） */
+export type SuggestedQuestion = {
+  text: string;
+  /** <ruby> 版。生成できていないときは空文字 */
+  ruby: string;
+};
 
 export type RecordDTO = {
   id: string;
@@ -21,7 +29,7 @@ export type RecordDTO = {
   placeName: string | null;
   /** @deprecated メモ機能は廃止 */
   memo: string | null;
-  suggestedQuestions: string[];
+  suggestedQuestions: SuggestedQuestion[];
   chatMessages: ChatMessage[];
   createdAt: string;
   saved: boolean;
@@ -45,7 +53,7 @@ export type ScanAiResult =
       aiNote: string;
       ocrRaw: string;
       partialChars?: string | null;
-      suggestedQuestions: string[];
+      suggestedQuestions: SuggestedQuestion[];
     };
 
 /** data URL 等の巨大 photo は一覧の RSC 転送でスタックオーバーフローするため縮退する */
@@ -69,26 +77,83 @@ function parseJsonArray(raw: string | null | undefined): unknown[] {
 
 export function parseSuggestedQuestions(
   raw: string | null | undefined,
-): string[] {
-  return parseJsonArray(raw)
-    .filter((x): x is string => typeof x === "string" && x.trim().length > 0)
-    .map((s) => s.trim())
+): SuggestedQuestion[] {
+  return normalizeSuggestedQuestions(parseJsonArray(raw));
+}
+
+/**
+ * 質問候補を { text, ruby } に正規化する。
+ * 旧データ（文字列の配列）や sessionStorage の古いペイロードも受け付ける。
+ */
+export function normalizeSuggestedQuestions(
+  raw: unknown,
+): SuggestedQuestion[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map(toSuggestedQuestion)
+    .filter((x): x is SuggestedQuestion => x != null)
     .slice(0, 6);
+}
+
+function toSuggestedQuestion(raw: unknown): SuggestedQuestion | null {
+  if (typeof raw === "string") {
+    const text = raw.trim();
+    return text ? { text, ruby: "" } : null;
+  }
+  if (!raw || typeof raw !== "object") return null;
+
+  const o = raw as { text?: unknown; ruby?: unknown };
+  const ruby = normalizeRubyHtml(
+    typeof o.ruby === "string" ? o.ruby : "",
+  );
+  const text =
+    typeof o.text === "string" && o.text.trim()
+      ? o.text.trim()
+      : stripRubyHtml(ruby);
+  return text ? { text, ruby } : null;
+}
+
+/**
+ * ふりがな付きの質問候補を作る。
+ * ルビ版があるときは表示と送信内容がずれないよう、本文もルビ版から起こす。
+ */
+export function makeSuggestedQuestion(
+  text: string,
+  ruby?: string,
+): SuggestedQuestion {
+  const safeRuby = normalizeRubyHtml(ruby, text);
+  const plain = safeRuby ? stripRubyHtml(safeRuby) : text.trim();
+  return { text: plain || text.trim(), ruby: safeRuby };
 }
 
 export function parseChatMessages(
   raw: string | null | undefined,
 ): ChatMessage[] {
-  return parseJsonArray(raw)
+  return normalizeChatMessages(parseJsonArray(raw));
+}
+
+/** クライアント／DB 由来のチャットを正規化する（ルビは ruby/rt のみ許可） */
+export function normalizeChatMessages(raw: unknown): ChatMessage[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
     .map((x) => {
       if (!x || typeof x !== "object") return null;
-      const o = x as { role?: string; content?: string };
+      const o = x as { role?: string; content?: string; contentRuby?: unknown };
       if (
         (o.role === "user" || o.role === "assistant") &&
         typeof o.content === "string" &&
         o.content.trim()
       ) {
-        return { role: o.role, content: o.content.trim() } as ChatMessage;
+        const content = o.content.trim();
+        const contentRuby = normalizeRubyHtml(
+          typeof o.contentRuby === "string" ? o.contentRuby : "",
+          content,
+        );
+        return {
+          role: o.role,
+          content,
+          ...(contentRuby ? { contentRuby } : {}),
+        } as ChatMessage;
       }
       return null;
     })
@@ -144,12 +209,24 @@ export const DEFAULT_SETTINGS: SettingsDTO = {
 };
 
 /** 候補が無いときのフォールバック */
-export function defaultSuggestedQuestions(title: string): string[] {
+export function defaultSuggestedQuestions(title: string): SuggestedQuestion[] {
   const t = title || "この石碑";
   return [
-    `${t}は、いつ頃のもの？`,
-    "ここに書かれている人は、どんな人？",
-    "なぜここに建てられたの？",
-    "子どもにどう説明する？",
+    makeSuggestedQuestion(
+      `${t}は、いつ頃のもの？`,
+      `${t}は、いつ<ruby>頃<rt>ころ</rt></ruby>のもの？`,
+    ),
+    makeSuggestedQuestion(
+      "ここに書かれている人は、どんな人？",
+      "ここに<ruby>書<rt>か</rt></ruby>かれている<ruby>人<rt>ひと</rt></ruby>は、どんな<ruby>人<rt>ひと</rt></ruby>？",
+    ),
+    makeSuggestedQuestion(
+      "なぜここに建てられたの？",
+      "なぜここに<ruby>建<rt>た</rt></ruby>てられたの？",
+    ),
+    makeSuggestedQuestion(
+      "子どもにどう説明する？",
+      "<ruby>子<rt>こ</rt></ruby>どもにどう<ruby>説明<rt>せつめい</rt></ruby>する？",
+    ),
   ];
 }

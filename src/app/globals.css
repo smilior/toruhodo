@@ -284,6 +284,11 @@ ruby rt {
   display: none;
 }
 
+/* 深掘り（チャット）のルビ — 濃い背景の吹き出しでは白寄りにする */
+.chat-bubble-user ruby rt {
+  color: rgba(255, 255, 255, 0.78);
+}
+
 .photo-ph {
   background: repeating-linear-gradient(
     45deg,

@@ -8,12 +8,17 @@ import { requireUserId } from "@/lib/auth-session";
 import {
   DEFAULT_SETTINGS,
   defaultSuggestedQuestions,
+  makeSuggestedQuestion,
+  normalizeChatMessages,
+  normalizeSuggestedQuestions,
   toRecordDTO,
   type ChatMessage,
   type RecordDTO,
   type ScanAiResult,
   type SettingsDTO,
+  type SuggestedQuestion,
 } from "@/lib/domain/record";
+import { normalizeRubyHtml } from "@/lib/furigana";
 import { analyzeMonumentImage } from "@/lib/ai/scan";
 import { answerMonumentChat } from "@/lib/ai/chat";
 import { storePhoto } from "@/lib/blob";
@@ -160,9 +165,18 @@ export async function createScanAction(input: {
           ocrRaw: "馬頭觀世音 文化八年",
           partialChars: "馬頭觀世音 ／ 文化八年",
           suggestedQuestions: [
-            "馬頭観世音って何？",
-            "文化八年は西暦だと何年？",
-            "なぜ馬の安全を願うの？",
+            makeSuggestedQuestion(
+              "馬頭観世音って何？",
+              "<ruby>馬頭観世音<rt>ばとうかんぜおん</rt></ruby>って<ruby>何<rt>なに</rt></ruby>？",
+            ),
+            makeSuggestedQuestion(
+              "文化八年は西暦だと何年？",
+              "<ruby>文化<rt>ぶんか</rt></ruby><ruby>八年<rt>はちねん</rt></ruby>は<ruby>西暦<rt>せいれき</rt></ruby>だと<ruby>何年<rt>なんねん</rt></ruby>？",
+            ),
+            makeSuggestedQuestion(
+              "なぜ馬の安全を願うの？",
+              "なぜ<ruby>馬<rt>うま</rt></ruby>の<ruby>安全<rt>あんぜん</rt></ruby>を<ruby>願<rt>ねが</rt></ruby>うの？",
+            ),
           ],
         };
       }
@@ -220,7 +234,7 @@ export async function saveRecordAction(input: {
   lat?: number | null;
   lng?: number | null;
   placeName?: string | null;
-  suggestedQuestions?: string[];
+  suggestedQuestions?: SuggestedQuestion[];
   chatMessages?: ChatMessage[];
 }): Promise<ActionResult<{ record: RecordDTO }>> {
   try {
@@ -236,11 +250,14 @@ export async function saveRecordAction(input: {
       placeName: input.placeName,
     });
 
+    const normalizedQuestions = normalizeSuggestedQuestions(
+      input.suggestedQuestions,
+    );
     const questions =
-      input.suggestedQuestions && input.suggestedQuestions.length > 0
-        ? input.suggestedQuestions.slice(0, 6)
+      normalizedQuestions.length > 0
+        ? normalizedQuestions
         : defaultSuggestedQuestions(input.title);
-    const chat = (input.chatMessages ?? []).slice(-40);
+    const chat = normalizeChatMessages(input.chatMessages).slice(-40);
 
     const [row] = await db
       .insert(records)
@@ -282,6 +299,8 @@ export async function chatAboutRecordAction(input: {
   /** pending のときは null で文脈を直渡し */
   recordId?: string | null;
   question: string;
+  /** 候補チップから送るときの、ふりがな付き質問文 */
+  questionRuby?: string;
   /** pending 用コンテキスト */
   context?: {
     title: string;
@@ -292,7 +311,12 @@ export async function chatAboutRecordAction(input: {
     history?: ChatMessage[];
   };
 }): Promise<
-  ActionResult<{ answer: string; messages: ChatMessage[]; recordId?: string }>
+  ActionResult<{
+    answer: string;
+    answerRuby: string;
+    messages: ChatMessage[];
+    recordId?: string;
+  }>
 > {
   try {
     const userId = await requireUserId();
@@ -310,7 +334,7 @@ export async function chatAboutRecordAction(input: {
     let easyText = input.context?.easyText ?? "";
     let detailText = input.context?.detailText ?? "";
     let placeName = input.context?.placeName ?? null;
-    let history: ChatMessage[] = input.context?.history ?? [];
+    let history: ChatMessage[] = normalizeChatMessages(input.context?.history);
     let persistId: string | null =
       input.recordId && input.recordId !== "pending" ? input.recordId : null;
 
@@ -342,8 +366,17 @@ export async function chatAboutRecordAction(input: {
       question,
     });
 
-    const userMsg: ChatMessage = { role: "user", content: question };
-    const assistantMsg: ChatMessage = { role: "assistant", content: answer };
+    const questionRuby = normalizeRubyHtml(input.questionRuby, question);
+    const userMsg: ChatMessage = {
+      role: "user",
+      content: question,
+      ...(questionRuby ? { contentRuby: questionRuby } : {}),
+    };
+    const assistantMsg: ChatMessage = {
+      role: "assistant",
+      content: answer.text,
+      ...(answer.ruby ? { contentRuby: answer.ruby } : {}),
+    };
     const nextMessages: ChatMessage[] = [
       ...history,
       userMsg,
@@ -361,7 +394,8 @@ export async function chatAboutRecordAction(input: {
     return {
       ok: true,
       data: {
-        answer,
+        answer: answer.text,
+        answerRuby: answer.ruby,
         messages: nextMessages,
         recordId: persistId ?? undefined,
       },

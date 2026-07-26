@@ -13,6 +13,7 @@ import {
   DEFAULT_SETTINGS,
   defaultSuggestedQuestions,
   formatRecordMeta,
+  normalizeSuggestedQuestions,
   type ChatMessage,
   type RecordDTO,
 } from "@/lib/domain/record";
@@ -24,10 +25,10 @@ import {
 type Mode = "easy" | "detail";
 
 function pendingToView(p: PendingScanPayload): RecordDTO {
+  // 旧バージョンの sessionStorage（文字列配列）も受け付ける
+  const stored = normalizeSuggestedQuestions(p.suggestedQuestions);
   const questions =
-    p.suggestedQuestions?.length > 0
-      ? p.suggestedQuestions
-      : defaultSuggestedQuestions(p.title);
+    stored.length > 0 ? stored : defaultSuggestedQuestions(p.title);
   return {
     id: "pending",
     photoUrl: p.photoUrl,
@@ -219,10 +220,10 @@ export function ResultApp({ id }: { id: string }) {
       record.suggestedQuestions?.length > 0
         ? record.suggestedQuestions
         : defaultSuggestedQuestions(record.title);
-    return base.filter((q) => !usedSuggestions.has(q));
+    return base.filter((q) => !usedSuggestions.has(q.text));
   }, [record, usedSuggestions]);
 
-  const sendQuestion = async (question: string) => {
+  const sendQuestion = async (question: string, questionRuby?: string) => {
     if (!record || chatBusy) return;
     const q = question.trim();
     if (!q) return;
@@ -231,13 +232,17 @@ export function ResultApp({ id }: { id: string }) {
     setError(null);
     setUsedSuggestions((prev) => new Set(prev).add(q));
     // 楽観的にユーザー吹き出しを出す
-    setMessages((prev) => [...prev, { role: "user", content: q }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: q, ...(questionRuby ? { contentRuby: questionRuby } : {}) },
+    ]);
     setChatInput("");
 
     try {
       const res = await chatAboutRecordAction({
         recordId: record.saved ? record.id : null,
         question: q,
+        questionRuby,
         context: record.saved
           ? undefined
           : {
@@ -640,18 +645,23 @@ export function ResultApp({ id }: { id: string }) {
               <div className="mb-3 flex flex-wrap gap-2">
                 {suggestions.map((q) => (
                   <button
-                    key={q}
+                    key={q.text}
                     type="button"
                     disabled={chatBusy}
-                    onClick={() => void sendQuestion(q)}
-                    className="rounded-full px-3.5 py-2 text-left text-[13px] font-bold leading-snug transition active:scale-[0.98] disabled:opacity-50"
+                    onClick={() => void sendQuestion(q.text, q.ruby || undefined)}
+                    className="rounded-full px-3.5 py-2 text-left text-[13px] font-bold transition active:scale-[0.98] disabled:opacity-50"
                     style={{
                       background: "var(--ai-card)",
                       color: "var(--secondary)",
                       border: "1px solid var(--ai-border)",
+                      lineHeight: furigana && q.ruby ? 2.1 : 1.35,
                     }}
                   >
-                    {q}
+                    {q.ruby ? (
+                      <span dangerouslySetInnerHTML={{ __html: q.ruby }} />
+                    ) : (
+                      q.text
+                    )}
                   </button>
                 ))}
               </div>
@@ -671,9 +681,11 @@ export function ResultApp({ id }: { id: string }) {
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className="max-w-[92%] rounded-[16px] px-3.5 py-2.5 text-[14.5px] leading-relaxed"
-                    style={
-                      m.role === "user"
+                    className={`max-w-[92%] rounded-[16px] px-3.5 py-2.5 text-[14.5px] leading-relaxed${
+                      m.role === "user" ? " chat-bubble-user" : ""
+                    }`}
+                    style={{
+                      ...(m.role === "user"
                         ? {
                             background: "var(--primary)",
                             color: "var(--card)",
@@ -684,10 +696,15 @@ export function ResultApp({ id }: { id: string }) {
                             color: "#453F35",
                             border: "1px solid var(--ai-border)",
                             borderBottomLeftRadius: 6,
-                          }
-                    }
+                          }),
+                      lineHeight: furigana && m.contentRuby ? 2.2 : 1.7,
+                    }}
                   >
-                    {m.content}
+                    {m.contentRuby ? (
+                      <span dangerouslySetInnerHTML={{ __html: m.contentRuby }} />
+                    ) : (
+                      m.content
+                    )}
                   </div>
                 </div>
               ))}
