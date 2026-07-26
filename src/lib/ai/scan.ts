@@ -5,13 +5,14 @@ import {
   type ScanAiResult,
   type SuggestedQuestion,
 } from "@/lib/domain/record";
-import { needsFuriganaRepair, normalizeRubyHtml } from "@/lib/furigana";
+import { containsKanji } from "@/lib/furigana";
 import { addFurigana } from "@/lib/ai/furigana-repair";
 
 const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
+/** スキャンはプレーン本文のみ。ルビは後段 addFurigana で付ける（二段生成） */
 const SCAN_PROMPT = `あなたは日本の石碑・案内板をやさしく解説するアシスタントです。
-このアプリは年長〜大人まで使います。読みはルビ（ふりがな）で助けるので、本文をすべてひらがなにする必要はありません。
+このアプリは年長〜大人まで使います。読みは後段でルビを付けるので、本文をすべてひらがなにする必要はありません。
 画像から文字を読み取り、次の JSON だけを返してください（前後に説明文・マークダウンを付けない）:
 {
   "failed": boolean,
@@ -21,34 +22,23 @@ const SCAN_PROMPT = `あなたは日本の石碑・案内板をやさしく解�
   "title": string,
   "easyText": string,
   "detailText": string,
-  "easyRuby": string,
-  "detailRuby": string,
-  "suggestedQuestions": string[],
-  "suggestedQuestionsRuby": string[]
+  "suggestedQuestions": string[]
 }
 
-フィールドの役割（必ず守る）:
-- *Text / suggestedQuestions は本文そのもの（プレーンテキストのみ。ルビや HTML は絶対に入れない）
-- *Ruby / suggestedQuestionsRuby は、対応する本文とまったく同じ文にふりがなだけを付けた版（ルビはこちらにだけ書く）
-- 本文は通常の漢字交じり文で書いてよい（無理にひらがなだけにしない）。読めない漢字は *Ruby でカバーする
+フィールドの役割:
+- すべてプレーンテキスト。ルビや HTML は絶対に入れない
+- 本文は通常の漢字交じり文で書いてよい（無理にひらがなだけにしない）
 
 ルール:
 - failed: 文字がほぼ読めないとき true
 - partial: 一部だけ読めたとき true（そのとき partialChars に読めた文字）
 - easyText: 子どもにも分かるやさしい言いかえ（プレーン・漢字交じり可）
   - 1文を短く（20〜40文字くらい）。全体で2〜4文。やわらかい「です・ます」で書く
-  - 意味が伝わる範囲でふつうの漢字を使ってよい（例:「昔」「場所」「建てた」。全部ひらがなにしない）
+  - 意味が伝わる範囲でふつうの漢字を使ってよい（例:「昔」「場所」「建てた」）
   - むずかしい専門用語・カタカナ語は、やさしい言いかえを添える（例:「距離＝どのくらい歩くか」）
   - 数や大きさは子どもがイメージできるたとえを添える（例:「一里＝歩いて1時間くらい」）
 - detailText: 大人向けのくわしい説明（プレーン・漢字交じり）。歴史的な背景も補う
-- easyRuby / detailRuby: （必須）対応する本文の漢字すべてにふりがな
-  - 本文と文字を 1 つも足さない・減らさない・変えない（タグだけを足す。ひらがな↔漢字の書き換え禁止）
-  - 漢字を 1 つ残らず <ruby>漢字<rt>かんじ</rt></ruby> 形式で包む（単語単位、読みはひらがな）
-  - ひらがな・カタカナ・数字にはルビを付けない
-  - 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書き、<rt> を省略しない
 - suggestedQuestions: 読んだ人が次に聞きたくなる質問を3〜5個（短く、話しことば）。例:「なんでここにあるの？」「これはいつできたの？」
-- suggestedQuestionsRuby: suggestedQuestions と同じ順・同じ文に同じ形式でふりがなを付けた配列（要素数も同じ）
-- 出力前に確認: 各 *Ruby から <ruby>/<rt> を除いた本文が対応するプレーン文と一致し、かつプレーン文の漢字がすべて <ruby> で覆われていること
 - 出力は JSON オブジェクト 1 つのみ`;
 
 /**
@@ -107,45 +97,41 @@ export async function analyzeMonumentImage(input: {
     if (parsed.failed) return { status: "failed" };
 
     const title = parsed.title || "石碑の記録";
-    const questions = normalizeQuestions(
-      parsed.suggestedQuestions,
-      parsed.suggestedQuestionsRuby,
-      title,
-    );
-
     const easyText = parsed.easyText || "";
     const detailText = parsed.detailText || easyText;
-    // 壊れたルビは本文が化けるので、検証に落ちたら捨てる
-    let easyRuby = normalizeRubyHtml(parsed.easyRuby, easyText);
-    let detailRuby = normalizeRubyHtml(parsed.detailRuby, detailText);
+    let questions = normalizeQuestions(parsed.suggestedQuestions, title);
 
-    // ルビが無い／付け漏れがある項目だけ、1 回のコールでまとめて付け直す
-    const repairTargets: { kind: "easy" | "detail" | "question"; index: number }[] =
-      [];
-    const repairTexts: string[] = [];
-    if (needsFuriganaRepair(easyRuby, easyText)) {
-      repairTargets.push({ kind: "easy", index: 0 });
-      repairTexts.push(easyText);
+    // 二段目: 漢字がある本文・質問へ読み配列方式でルビを付ける
+    const furiganaTargets: {
+      kind: "easy" | "detail" | "question";
+      index: number;
+    }[] = [];
+    const furiganaTexts: string[] = [];
+    if (containsKanji(easyText)) {
+      furiganaTargets.push({ kind: "easy", index: 0 });
+      furiganaTexts.push(easyText);
     }
-    if (needsFuriganaRepair(detailRuby, detailText)) {
-      repairTargets.push({ kind: "detail", index: 0 });
-      repairTexts.push(detailText);
+    if (containsKanji(detailText)) {
+      furiganaTargets.push({ kind: "detail", index: 0 });
+      furiganaTexts.push(detailText);
     }
     questions.forEach((q, i) => {
-      if (needsFuriganaRepair(q.ruby, q.text)) {
-        repairTargets.push({ kind: "question", index: i });
-        repairTexts.push(q.text);
+      if (containsKanji(q.text)) {
+        furiganaTargets.push({ kind: "question", index: i });
+        furiganaTexts.push(q.text);
       }
     });
 
-    if (repairTargets.length > 0) {
-      const repaired = await addFurigana(ai, model, repairTexts);
-      repairTargets.forEach((t, i) => {
-        const ruby = repaired[i];
+    let easyRuby = "";
+    let detailRuby = "";
+    if (furiganaTexts.length > 0) {
+      const rubies = await addFurigana(ai, model, furiganaTexts);
+      furiganaTargets.forEach((t, i) => {
+        const ruby = rubies[i];
         if (!ruby) return;
         if (t.kind === "easy") easyRuby = ruby;
         else if (t.kind === "detail") detailRuby = ruby;
-        else questions[t.index] = makeSuggestedQuestion(repairTexts[i], ruby);
+        else questions[t.index] = makeSuggestedQuestion(furiganaTexts[i], ruby);
       });
     }
 
@@ -154,7 +140,6 @@ export async function analyzeMonumentImage(input: {
       title,
       easyText,
       detailText,
-      // リペアも失敗したときはプレーン表示に落とす
       easyRuby: easyRuby || easyText,
       detailRuby: detailRuby || detailText,
       aiNote: "",
@@ -174,23 +159,12 @@ function normalizeMime(mime: string): string {
   return "image/jpeg";
 }
 
-function normalizeQuestions(
-  raw: unknown,
-  rawRuby: unknown,
-  title: string,
-): SuggestedQuestion[] {
-  const rubyList = Array.isArray(rawRuby) ? rawRuby : [];
+function normalizeQuestions(raw: unknown, title: string): SuggestedQuestion[] {
   const list = Array.isArray(raw)
     ? raw
         .filter((x): x is string => typeof x === "string" && x.trim().length > 0)
         .slice(0, 5)
-        .map((s, i) => {
-          const ruby = rubyList[i];
-          return makeSuggestedQuestion(
-            s,
-            typeof ruby === "string" ? ruby : undefined,
-          );
-        })
+        .map((s) => makeSuggestedQuestion(s.trim()))
     : [];
   if (list.length >= 2) return list;
   return defaultSuggestedQuestions(title);
@@ -204,10 +178,7 @@ function parseScanJson(text: string): {
   title?: string;
   easyText?: string;
   detailText?: string;
-  easyRuby?: string;
-  detailRuby?: string;
   suggestedQuestions?: unknown;
-  suggestedQuestionsRuby?: unknown;
 } | null {
   const cleaned = text
     .replace(/^```(?:json)?\s*/i, "")
@@ -224,10 +195,7 @@ function parseScanJson(text: string): {
       title?: string;
       easyText?: string;
       detailText?: string;
-      easyRuby?: string;
-      detailRuby?: string;
       suggestedQuestions?: unknown;
-      suggestedQuestionsRuby?: unknown;
     };
   } catch {
     return null;

@@ -1,11 +1,21 @@
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
-import { needsFuriganaRepair, normalizeRubyHtml } from "@/lib/furigana";
+import {
+  applyKanjiReadings,
+  extractKanjiRuns,
+  isValidReading,
+} from "@/lib/furigana";
+
+type ReadingJob = {
+  index: number;
+  text: string;
+  runs: string[];
+};
 
 /**
- * 本文はそのままに、漢字へふりがなを付け直す（ルビ壊れ・付け漏れのリペア）。
- * 複数の文を 1 回のコールでまとめて処理する。
- * 検証に通らなかった要素は、最大 1 回だけリトライする。
- * それでもダメな要素は空文字（呼び出し側はプレーンに落とす）。
+ * 本文はそのままに、漢字ランへふりがなを付ける。
+ *
+ * モデルには HTML を書かせず「読み（ひらがな）配列」だけ返させ、
+ * <ruby> の組み立てはコード側で行う（本文破壊・表記ゆれを構造的に防ぐ）。
  */
 export async function addFurigana(
   ai: GoogleGenAI,
@@ -14,63 +24,81 @@ export async function addFurigana(
 ): Promise<string[]> {
   if (texts.length === 0) return [];
 
-  let results = await generateFuriganaOnce(ai, model, texts);
+  const jobs: ReadingJob[] = texts.map((text, index) => ({
+    index,
+    text,
+    runs: extractKanjiRuns(text),
+  }));
 
-  // 漢字漏れ・棄却で空になった要素だけ、もう 1 回だけ付け直す
-  const retryIndexes: number[] = [];
-  results.forEach((ruby, i) => {
-    if (needsFuriganaRepair(ruby, texts[i])) retryIndexes.push(i);
+  const need = jobs.filter((j) => j.runs.length > 0);
+  if (need.length === 0) return texts.map(() => "");
+
+  let readingsMap = await fetchReadingsOnce(ai, model, need);
+
+  // 長さ不一致・無効読みがある job だけ 1 回リトライ
+  const retryJobs = need.filter((j) => {
+    const r = readingsMap.get(j.index);
+    return !isCompleteReadings(j.runs, r);
   });
-  if (retryIndexes.length === 0) return results;
+  if (retryJobs.length > 0) {
+    const retried = await fetchReadingsOnce(ai, model, retryJobs);
+    for (const j of retryJobs) {
+      const r = retried.get(j.index);
+      if (r) readingsMap.set(j.index, r);
+    }
+  }
 
-  const retryTexts = retryIndexes.map((i) => texts[i]);
-  const retried = await generateFuriganaOnce(ai, model, retryTexts);
-  retryIndexes.forEach((orig, j) => {
-    const ruby = retried[j];
-    if (!ruby) return;
-    // リトライ結果がまだ漏れでも、空よりはマシなら採用（部分ルビ）
-    results[orig] = ruby;
+  return jobs.map((j) => {
+    if (j.runs.length === 0) return "";
+    const readings = readingsMap.get(j.index) ?? [];
+    return applyKanjiReadings(j.text, readings);
   });
-
-  return results;
 }
 
-async function generateFuriganaOnce(
+function isCompleteReadings(
+  runs: string[],
+  readings: string[] | undefined,
+): boolean {
+  if (!readings || readings.length !== runs.length) return false;
+  return readings.every((r) => isValidReading(r));
+}
+
+async function fetchReadingsOnce(
   ai: GoogleGenAI,
   model: string,
-  texts: string[],
-): Promise<string[]> {
-  if (texts.length === 0) return [];
+  jobs: ReadingJob[],
+): Promise<Map<number, string[]>> {
+  const map = new Map<number, string[]>();
+  if (jobs.length === 0) return map;
 
   try {
-    const prompt = `次の各文の「漢字だけ」に <ruby>漢字<rt>かんじ</rt></ruby> 形式でふりがなを付けてください。
+    const payload = jobs.map((j) => ({
+      id: j.index,
+      text: j.text,
+      runs: j.runs,
+    }));
 
-最重要:
-- 本文の文字は 1 文字も変えない・足さない・減らさない（<ruby>/<rt> タグだけを足す）
-- ひらがなを漢字に直さない（禁止例: 「はじめて」→「初めて」、「できる」→「出来る」）
-- 漢字をひらがなに直さない
-- 表記ゆれ・言い換え・句読点の変更も禁止
+    const prompt = `あなたはふりがな係です。各項目の runs（漢字の連続）に、出現順どおりの読みだけを付けてください。
 
-ルール:
-- 読みはひらがな。ひらがな・カタカナ・数字・記号にはルビを付けない
-- 使ってよいタグは ruby / rt のみ。<ruby> と </ruby> は必ず対で書く
-- 必ず <ruby>漢字<rt>よみ</rt></ruby> の形（<rt> を省略しない・単独で置かない）
-- タグを外すと入力と完全一致していること
-- 入力と同じ順・同じ要素数の JSON 文字列配列だけを返す（説明文・マークダウンを付けない）
+入力は JSON 配列です。各要素:
+- id: 番号
+- text: 全文（同形異音の文脈用。書き換えない）
+- runs: 漢字ランの配列（この文字列を変えない）
 
-良い例:
-入力: "はじめての人"
-出力: "はじめての<ruby>人<rt>ひと</rt></ruby>"
+出力は入力と同じ順・同じ要素数の JSON 配列。各要素は:
+{ "id": number, "readings": string[] }
+- readings は runs と同じ長さ
+- 各読みはひらがなのみ（漢字・カタカナ・記号・空白を含めない）
+- 説明文・マークダウンは付けない
 
-悪い例（禁止）:
-入力: "はじめての人"
-出力: "<ruby>初<rt>はじ</rt></ruby>めての<ruby>人<rt>ひと</rt></ruby>"  ← ひらがなを漢字にしている
-出力: "<ruby>人</ruby>"  ← <rt> が無い
+例:
+入力: [{"id":0,"text":"はじめての人","runs":["人"]}]
+出力: [{"id":0,"readings":["ひと"]}]
 
-入力（JSON 配列）:
-${JSON.stringify(texts)}
+入力:
+${JSON.stringify(payload)}
 
-出力（JSON 配列）:`;
+出力:`;
 
     const response = await ai.models.generateContentStream({
       model,
@@ -85,37 +113,61 @@ ${JSON.stringify(texts)}
       if (chunk.text) out += chunk.text;
     }
 
-    return parseFuriganaBatch(out, texts);
+    return parseReadingsResponse(out, jobs);
   } catch (e) {
-    console.error("furigana repair error", e);
-    return texts.map(() => "");
+    console.error("furigana readings error", e);
+    return map;
   }
 }
 
 /**
- * 応答（JSON 配列）を検証し、texts と同じ長さのルビ配列にする。
- * パースできない・本文と一致しない要素は空文字。
+ * モデル応答から id → readings を取り出す。
+ * 配列要素が string[] の簡易形式も許容する。
  */
-export function parseFuriganaBatch(raw: string, texts: string[]): string[] {
-  const empty = texts.map(() => "");
+export function parseReadingsResponse(
+  raw: string,
+  jobs: ReadingJob[],
+): Map<number, string[]> {
+  const map = new Map<number, string[]>();
   const cleaned = raw
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/i, "")
     .trim();
   const match = cleaned.match(/\[[\s\S]*\]/);
-  if (!match) return empty;
+  if (!match) return map;
 
   let parsed: unknown;
   try {
     parsed = JSON.parse(match[0]);
   } catch {
-    return empty;
+    return map;
   }
-  if (!Array.isArray(parsed)) return empty;
+  if (!Array.isArray(parsed)) return map;
 
-  // 要素数が足りない・順序がずれた要素は本文比較で落ちて空文字になる
-  return texts.map((text, i) => {
-    const v = parsed[i];
-    return typeof v === "string" ? normalizeRubyHtml(v, text) : "";
+  // 形式 A: [{ id, readings }]
+  const asObjects = parsed.every(
+    (x) => x && typeof x === "object" && !Array.isArray(x),
+  );
+  if (asObjects) {
+    for (const item of parsed) {
+      const o = item as { id?: unknown; readings?: unknown };
+      const id = typeof o.id === "number" ? o.id : Number(o.id);
+      if (!Number.isFinite(id)) continue;
+      const readings = normalizeReadingList(o.readings);
+      if (readings) map.set(id, readings);
+    }
+    return map;
+  }
+
+  // 形式 B: 入力 jobs と同じ順の readings 配列の配列
+  jobs.forEach((j, i) => {
+    const readings = normalizeReadingList(parsed[i]);
+    if (readings) map.set(j.index, readings);
   });
+  return map;
+}
+
+function normalizeReadingList(raw: unknown): string[] | null {
+  if (!Array.isArray(raw)) return null;
+  return raw.map((x) => (typeof x === "string" ? x.trim() : ""));
 }
