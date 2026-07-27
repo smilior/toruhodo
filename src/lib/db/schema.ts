@@ -4,6 +4,7 @@ import {
   integer,
   real,
   index,
+  primaryKey,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import { nanoid } from "nanoid";
@@ -121,11 +122,32 @@ export const userSettings = sqliteTable("user_settings", {
     .$defaultFn(() => new Date()),
 });
 
+// --- Billing: usage（BILLING_MODE が meter / enforce のときのみコードから参照） ---
+
+export const usageCounters = sqliteTable(
+  "usage_counters",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    metric: text("metric").notNull(), // "scan" | "chat"
+    period: text("period").notNull(), // "YYYY-MM"（JST暦月）
+    count: integer("count").notNull().default(0),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.metric, t.period] }),
+  ],
+);
+
 export const usersRelations = relations(users, ({ many, one }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
   records: many(records),
   settings: one(userSettings),
+  usageCounters: many(usageCounters),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -142,6 +164,13 @@ export const recordsRelations = relations(records, ({ one }) => ({
 
 export const userSettingsRelations = relations(userSettings, ({ one }) => ({
   user: one(users, { fields: [userSettings.userId], references: [users.id] }),
+}));
+
+export const usageCountersRelations = relations(usageCounters, ({ one }) => ({
+  user: one(users, {
+    fields: [usageCounters.userId],
+    references: [users.id],
+  }),
 }));
 
 export type RecordRow = typeof records.$inferSelect;
