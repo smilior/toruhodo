@@ -51,7 +51,7 @@ export async function answerMonumentChat(input: {
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const model = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
+    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
     const system = `あなたは「撮るほど」のガイドです。石碑・案内板について、やさしい日本語で短く答えます。
 相手に年長〜小学生もいますが、読みはふりがなで助けるので、本文をすべてひらがなにする必要はありません。
@@ -95,11 +95,12 @@ ${question}
 
 ガイドの回答（JSON）:`;
 
+    // Google Search grounding はスキャン（analyzeMonumentImage）のみ。
+    // チャットは OCR・既存解説・履歴を根拠にし、原価の支配項（grounding）を避ける（課金設計 D-24）。
     const response = await ai.models.generateContentStream({
       model,
       config: {
         thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-        tools: [{ googleSearch: {} }],
       },
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
