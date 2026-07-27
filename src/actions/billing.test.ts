@@ -58,8 +58,8 @@ const {
   createPortalSessionAction,
   getSubscriptionStatusAction,
   syncCheckoutSessionAction,
-  nextJstMonthResetIso,
 } = await import("@/actions/billing");
+const { nextJstMonthResetIso } = await import("@/lib/billing/ui-copy");
 
 beforeAll(async () => {
   await applyMigrations();

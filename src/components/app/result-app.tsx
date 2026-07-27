@@ -9,6 +9,7 @@ import {
   getSettingsAction,
   saveRecordAction,
 } from "@/actions/records";
+import { getSubscriptionStatusAction } from "@/actions/billing";
 import {
   DEFAULT_SETTINGS,
   defaultSuggestedQuestions,
@@ -21,6 +22,8 @@ import {
   PENDING_SCAN_KEY,
   type PendingScanPayload,
 } from "@/components/app/scan-app";
+import { PaywallSheet } from "@/components/billing/paywall-sheet";
+import Link from "next/link";
 
 type Mode = "easy" | "detail";
 
@@ -84,6 +87,10 @@ export function ResultApp({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(false);
+  const [isPlus, setIsPlus] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallKind, setPaywallKind] = useState<"scan" | "chat">("chat");
+  const [resetsAt, setResetsAt] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     variant?: "default" | "error";
@@ -128,6 +135,12 @@ export function ResultApp({ id }: { id: string }) {
         setMode(settingsRes.data.settings.modeDefault);
         setFurigana(settingsRes.data.settings.furiganaDefault);
         settingsApplied.current = true;
+      }
+
+      const billingRes = await getSubscriptionStatusAction();
+      if (alive && billingRes.ok) {
+        setIsPlus(billingRes.data.entitlement === "plus");
+        setResetsAt(billingRes.data.resetsAt);
       }
 
       if (id === "pending") {
@@ -256,6 +269,23 @@ export function ResultApp({ id }: { id: string }) {
       });
 
       if (!res.ok) {
+        if (
+          res.code === "CHAT_LIMIT_REACHED" ||
+          res.code === "CHAT_RECORD_LIMIT_REACHED"
+        ) {
+          // 楽観的に出したユーザー吹き出しを戻す
+          setMessages((prev) => prev.slice(0, -1));
+          if (res.code === "CHAT_LIMIT_REACHED") {
+            const st = await getSubscriptionStatusAction();
+            if (st.ok) setResetsAt(st.data.resetsAt);
+            setPaywallKind("chat");
+            setShowPaywall(true);
+          } else {
+            setError(res.error);
+            showToast(res.error, "error");
+          }
+          return;
+        }
         setError(res.error);
         showToast(res.error || "回答に失敗しました", "error");
         // 失敗したユーザー発話を残すか削除するか — 残してエラー表示
@@ -640,8 +670,36 @@ export function ResultApp({ id }: { id: string }) {
                 ガイドに聞いてみる
               </span>
             </div>
+            {!isPlus ? (
+              <p
+                className="mb-2 m-0 text-[13px]"
+                style={{ color: "var(--muted)" }}
+              >
+                {(() => {
+                  const used = messages.filter((m) => m.role === "user").length;
+                  const left = Math.max(0, 3 - used);
+                  if (left === 0) {
+                    return (
+                      <>
+                        この記録の質問回数の上限に達しました。{" "}
+                        <Link
+                          href="/settings/plus"
+                          className="font-bold underline"
+                          style={{ color: "var(--secondary)" }}
+                        >
+                          プラスについて見る
+                        </Link>
+                      </>
+                    );
+                  }
+                  return `この記録であと${left}回質問できます`;
+                })()}
+              </p>
+            ) : null}
 
-            {suggestions.length > 0 && (
+            {suggestions.length > 0 &&
+              (isPlus ||
+                messages.filter((m) => m.role === "user").length < 3) && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {suggestions.map((q) => (
                   <button
@@ -726,40 +784,47 @@ export function ResultApp({ id }: { id: string }) {
               <div ref={chatEndRef} />
             </div>
 
-            <form
-              className="mt-2.5 flex items-end gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void sendQuestion(chatInput);
-              }}
-            >
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="聞きたいことを書く…"
-                disabled={chatBusy}
-                size={1}
-                className="min-h-[48px] w-full min-w-0 flex-1 rounded-[16px] border px-3.5 py-3 text-[15px] outline-none disabled:opacity-60"
-                style={{
-                  background: "var(--card)",
-                  borderColor: "var(--border)",
-                  color: "var(--ink)",
+            {isPlus ||
+            messages.filter((m) => m.role === "user").length < 3 ? (
+              <form
+                className="mt-2.5 flex items-end gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void sendQuestion(chatInput);
                 }}
-                maxLength={500}
-              />
-              <button
-                type="submit"
-                disabled={chatBusy || !chatInput.trim()}
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white disabled:opacity-40"
-                style={{ background: "var(--primary)" }}
-                aria-label="送信"
               >
-                <span className="material-symbols-rounded" style={{ fontSize: 22 }} aria-hidden>
-                  send
-                </span>
-              </button>
-            </form>
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  placeholder="聞きたいことを書く…"
+                  disabled={chatBusy}
+                  size={1}
+                  className="min-h-[48px] w-full min-w-0 flex-1 rounded-[16px] border px-3.5 py-3 text-[15px] outline-none disabled:opacity-60"
+                  style={{
+                    background: "var(--card)",
+                    borderColor: "var(--border)",
+                    color: "var(--ink)",
+                  }}
+                  maxLength={500}
+                />
+                <button
+                  type="submit"
+                  disabled={chatBusy || !chatInput.trim()}
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white disabled:opacity-40"
+                  style={{ background: "var(--primary)" }}
+                  aria-label="送信"
+                >
+                  <span
+                    className="material-symbols-rounded"
+                    style={{ fontSize: 22 }}
+                    aria-hidden
+                  >
+                    send
+                  </span>
+                </button>
+              </form>
+            ) : null}
           </section>
 
           {/* 保存 */}
@@ -918,6 +983,13 @@ export function ResultApp({ id }: { id: string }) {
           />
         </div>
       )}
+
+      <PaywallSheet
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        resetsAt={resetsAt}
+        kind={paywallKind}
+      />
 
       {toast && (
         <div

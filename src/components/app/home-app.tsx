@@ -3,8 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { listRecordsAction } from "@/actions/records";
+import { getSubscriptionStatusAction } from "@/actions/billing";
 import type { RecordDTO } from "@/lib/domain/record";
 import { AppShell } from "@/components/app/app-shell";
+import { PaywallSheet } from "@/components/billing/paywall-sheet";
+import { formatResetMonthDay } from "@/lib/billing/ui-copy";
 
 function formatCardMeta(dto: RecordDTO): string {
   const d = new Date(dto.createdAt);
@@ -21,6 +24,9 @@ export function HomeApp({
   const [records, setRecords] = useState<RecordDTO[]>(initialRecords);
   const [loading, setLoading] = useState(initialRecords.length === 0);
   const [error, setError] = useState<string | null>(null);
+  const [scanRemaining, setScanRemaining] = useState<number | null>(null);
+  const [resetsAt, setResetsAt] = useState<string | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const load = useCallback(async () => {
     const res = await listRecordsAction();
@@ -38,6 +44,20 @@ export function HomeApp({
     // サーバー初期値が空でもクライアントで再取得（保存直後の復帰など）
     void load();
   }, [load]);
+
+  useEffect(() => {
+    void (async () => {
+      const res = await getSubscriptionStatusAction();
+      if (!res.ok) return;
+      if (res.data.entitlement === "free") {
+        setScanRemaining(res.data.scanRemaining);
+        setResetsAt(res.data.resetsAt);
+      } else {
+        setScanRemaining(null);
+        setResetsAt(null);
+      }
+    })();
+  }, []);
 
   const recent = records.slice(0, 10);
 
@@ -75,6 +95,62 @@ export function HomeApp({
           </span>
         </header>
 
+        {scanRemaining === 0 ? (
+          <button
+            type="button"
+            onClick={() => setShowPaywall(true)}
+            className="block w-full border-0 no-underline transition active:scale-[0.98] active:opacity-95"
+            style={{
+              margin: "14px 20px 0",
+              width: "calc(100% - 40px)",
+              background: "var(--primary)",
+              borderRadius: 26,
+              padding: "34px 24px 30px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12,
+              boxShadow: "var(--shadow)",
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+          >
+            <div
+              className="flex items-center justify-center"
+              style={{
+                width: 84,
+                height: 84,
+                borderRadius: 999,
+                background: "rgba(253, 251, 244, 0.16)",
+              }}
+            >
+              <span
+                className="material-symbols-rounded"
+                style={{
+                  fontSize: 42,
+                  color: "var(--card)",
+                  fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48",
+                }}
+                aria-hidden
+              >
+                photo_camera
+              </span>
+            </div>
+            <div
+              className="text-[23px] font-bold tracking-[0.06em]"
+              style={{ color: "var(--card)" }}
+            >
+              かざして解説
+            </div>
+            <div
+              className="text-[14px]"
+              style={{ color: "rgba(253, 251, 244, 0.86)" }}
+            >
+              今月の無料分を使い切りました（
+              {formatResetMonthDay(resetsAt)}に回復）
+            </div>
+          </button>
+        ) : (
         <Link
           href="/scan"
           className="block no-underline transition active:scale-[0.98] active:opacity-95"
@@ -125,6 +201,19 @@ export function HomeApp({
             石碑や案内板にカメラを向けるだけ
           </div>
         </Link>
+        )}
+
+        {scanRemaining != null && scanRemaining > 0 ? (
+          <p
+            className="m-0 text-center text-[14px]"
+            style={{
+              color: "var(--muted)",
+              padding: "10px 24px 0",
+            }}
+          >
+            今月あと {scanRemaining}回 スキャンできます
+          </p>
+        ) : null}
 
         <div
           className="flex items-baseline justify-between"
@@ -217,6 +306,12 @@ export function HomeApp({
           )}
         </div>
       </div>
+      <PaywallSheet
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        resetsAt={resetsAt}
+        kind="scan"
+      />
     </AppShell>
   );
 }

@@ -13,6 +13,7 @@ import { stripe } from "@/lib/stripe/client";
 import { getOrCreateCustomer } from "@/lib/stripe/customer";
 import { syncStripeSubscription } from "@/lib/stripe/sync";
 import { billingMode, jstPeriod, LIMITS } from "@/lib/usage";
+import { nextJstMonthResetIso } from "@/lib/billing/ui-copy";
 
 export type ActionResult<T = void> =
   | { ok: true; data: T }
@@ -62,16 +63,6 @@ function fail(
   code: BillingErrorCode,
 ): { ok: false; error: string; code: BillingErrorCode } {
   return { ok: false, error, code };
-}
-
-/** 翌月 1 日 0:00 JST の ISO 8601 */
-export function nextJstMonthResetIso(now = Date.now()): string {
-  const jst = new Date(now + 9 * 3600_000);
-  const y = jst.getUTCFullYear();
-  const m = jst.getUTCMonth(); // 0-11 in JST wall
-  // 翌月 1 日 00:00 JST = UTC で前月最終日 15:00
-  const nextMonthUtc = Date.UTC(y, m + 1, 1, 0, 0, 0) - 9 * 3600_000;
-  return new Date(nextMonthUtc).toISOString();
 }
 
 async function requireUser(): Promise<

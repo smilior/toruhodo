@@ -7,17 +7,20 @@ import {
   useTransition,
   type ReactNode,
 } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   deleteAllUserDataAction,
   getSettingsAction,
   updateSettingsAction,
 } from "@/actions/records";
+import { syncCheckoutSessionAction } from "@/actions/billing";
 import {
   DEFAULT_SETTINGS,
   type SettingsDTO,
 } from "@/lib/domain/record";
 import { signOut } from "@/lib/auth-client";
 import { AppShell } from "@/components/app/app-shell";
+import { PlanSection } from "@/components/billing/plan-section";
 
 type DeleteStep = "idle" | "confirm" | "deleting";
 
@@ -26,6 +29,8 @@ export function SettingsApp({
 }: {
   initialSettings?: SettingsDTO;
 }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [settings, setSettings] = useState<SettingsDTO>(initialSettings);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +46,46 @@ export function SettingsApp({
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  // Checkout success / cancel ハンドリング（§9.3）
+  useEffect(() => {
+    const checkout = searchParams.get("checkout");
+    if (!checkout) return;
+
+    const clearQuery = () => {
+      router.replace("/settings");
+    };
+
+    if (checkout === "cancel") {
+      setMessage(
+        "お手続きを途中でやめました。料金はかかっていません。無料プランのまま、これまでどおり使えます。",
+      );
+      clearQuery();
+      return;
+    }
+
+    if (checkout === "success") {
+      const sessionId = searchParams.get("session_id");
+      setMessage(
+        "お手続きを確認しています。そのままお待ちください（10秒ほどかかることがあります）",
+      );
+      void (async () => {
+        if (sessionId) {
+          const res = await syncCheckoutSessionAction({ sessionId });
+          if (!res.ok) {
+            setError(res.error);
+            setMessage(null);
+            clearQuery();
+            return;
+          }
+        }
+        setMessage(
+          "撮るほどプラスのお手続きが完了しました。今日から回数を気にせずスキャンできます。領収書はメールでお送りしています。",
+        );
+        clearQuery();
+      })();
+    }
+  }, [searchParams, router]);
 
   const patch = (partial: Partial<SettingsDTO>) => {
     const prev = settings;
@@ -203,6 +248,8 @@ export function SettingsApp({
               </div>
             </Row>
           </div>
+
+          <PlanSection />
 
           <GroupTitle>プライバシー</GroupTitle>
           <div className="card overflow-hidden">
