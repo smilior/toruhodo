@@ -1,5 +1,8 @@
 import { and, eq, sql } from "drizzle-orm";
-import { FREE_SCAN_LIMIT } from "@/lib/billing/ui-copy";
+import {
+  FREE_CHAT_MONTHLY,
+  FREE_SCAN_LIMIT,
+} from "@/lib/billing/ui-copy";
 import { getEntitlement } from "@/lib/billing/entitlement";
 import { db } from "@/lib/db";
 import { usageCounters } from "@/lib/db/schema";
@@ -7,7 +10,7 @@ import { usageCounters } from "@/lib/db/schema";
 export type UsageMetric = "scan" | "chat";
 
 export const LIMITS = {
-  free: { scan: FREE_SCAN_LIMIT, chat: 45 },
+  free: { scan: FREE_SCAN_LIMIT, chat: FREE_CHAT_MONTHLY },
   plus: { scan: 300, chat: 900 },
 } as const;
 
