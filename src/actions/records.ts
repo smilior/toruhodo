@@ -1,9 +1,14 @@
 "use server";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray, not } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { records, userSettings } from "@/lib/db/schema";
+import {
+  records,
+  stripeCustomers,
+  subscriptions,
+  userSettings,
+} from "@/lib/db/schema";
 import { requireUserId } from "@/lib/auth-session";
 import {
   DEFAULT_SETTINGS,
@@ -28,10 +33,21 @@ import {
   isCoordinateLikePlaceName,
   resolvePlaceName,
 } from "@/lib/geocode";
+import { getEntitlement } from "@/lib/billing/entitlement";
+import { consumeUsage, refundUsage } from "@/lib/usage";
+import { stripe } from "@/lib/stripe/client";
 
 export type ActionResult<T = void> =
   | { ok: true; data: T }
-  | { ok: false; error: string };
+  | { ok: false; error: string; code?: string };
+
+/** 本番ではデモ用 forceStatus を無視する（§7.4） */
+function resolveForceStatus(
+  forceStatus: "failed" | "partial" | "done" | undefined,
+): "failed" | "partial" | "done" | undefined {
+  if (process.env.VERCEL_ENV === "production") return undefined;
+  return forceStatus;
+}
 
 function revalidateApp() {
   revalidatePath("/");
@@ -126,14 +142,30 @@ export async function createScanAction(input: {
     placeName: string | null;
   }>
 > {
+  let consumed = false;
+  let userIdForRefund: string | null = null;
   try {
     const userId = await requireUserId();
+    userIdForRefund = userId;
     const rl = limitCreate(userId, "createScan");
     if (!rl.ok) return { ok: false, error: rl.error };
 
     if (!input.imageBase64 || input.imageBase64.length < 32) {
       return { ok: false, error: "画像が取得できませんでした" };
     }
+
+    // §7.4: Blob / Gemini の手前で使用量を消費
+    const usage = await consumeUsage(userId, "scan");
+    if (!usage.ok) {
+      return {
+        ok: false,
+        error: usage.error,
+        code: usage.code,
+      };
+    }
+    consumed = true;
+
+    const forceStatus = resolveForceStatus(input.forceStatus);
 
     const photoUrl = await storePhoto({
       imageBase64: input.imageBase64,
@@ -142,9 +174,9 @@ export async function createScanAction(input: {
     });
 
     let scan: ScanAiResult;
-    if (input.forceStatus === "failed") {
+    if (forceStatus === "failed") {
       scan = { status: "failed" };
-    } else if (input.forceStatus === "partial") {
+    } else if (forceStatus === "partial") {
       scan = await analyzeMonumentImage({
         imageBase64: "x".repeat(17), // mock partial path uses len % 17
         mimeType: input.mimeType,
@@ -185,12 +217,18 @@ export async function createScanAction(input: {
         imageBase64: input.imageBase64,
         mimeType: input.mimeType,
       });
-      if (input.forceStatus === "done" && scan.status === "failed") {
+      if (forceStatus === "done" && scan.status === "failed") {
         scan = await analyzeMonumentImage({
           imageBase64: "x".repeat(1000),
           mimeType: input.mimeType,
         });
       }
+    }
+
+    // failed は価値未渡 → 返金。partial はコスト発生済みなので消費のまま（§7.2）
+    if (scan.status === "failed") {
+      await refundUsage(userId, "scan");
+      consumed = false;
     }
 
     const lat = input.lat ?? null;
@@ -212,6 +250,13 @@ export async function createScanAction(input: {
       },
     };
   } catch (e) {
+    if (consumed && userIdForRefund) {
+      try {
+        await refundUsage(userIdForRefund, "scan");
+      } catch {
+        /* refund best-effort */
+      }
+    }
     if (e instanceof Error && e.message === "UNAUTHORIZED") {
       return { ok: false, error: "ログインが必要です" };
     }
@@ -324,8 +369,11 @@ export async function chatAboutRecordAction(input: {
     recordId?: string;
   }>
 > {
+  let consumed = false;
+  let userIdForRefund: string | null = null;
   try {
     const userId = await requireUserId();
+    userIdForRefund = userId;
     const rl = limitMutation(userId, "chat");
     if (!rl.ok) return { ok: false, error: rl.error };
 
@@ -343,6 +391,7 @@ export async function chatAboutRecordAction(input: {
     let history: ChatMessage[] = normalizeChatMessages(input.context?.history);
     let persistId: string | null =
       input.recordId && input.recordId !== "pending" ? input.recordId : null;
+    let dbHistory: ChatMessage[] | null = null;
 
     if (persistId) {
       const row = await db.query.records.findFirst({
@@ -356,10 +405,36 @@ export async function chatAboutRecordAction(input: {
       placeName = row.placeName;
       const { parseChatMessages } = await import("@/lib/domain/record");
       history = parseChatMessages(row.chatMessages);
+      dbHistory = history;
     }
 
     if (!title && !easyText) {
       return { ok: false, error: "解説データがありません" };
+    }
+
+    // §7.3: 1) 月次プール（全経路）
+    const pool = await consumeUsage(userId, "chat");
+    if (!pool.ok) {
+      return {
+        ok: false,
+        error: pool.error,
+        code: "CHAT_LIMIT_REACHED",
+      };
+    }
+    consumed = true;
+
+    // §7.3: 2) 記録単位（persistId 経路・Free のみ・DB 履歴のみ）
+    if (persistId && dbHistory && (await getEntitlement(userId)) === "free") {
+      const userTurns = dbHistory.filter((m) => m.role === "user").length;
+      if (userTurns >= 3) {
+        await refundUsage(userId, "chat");
+        consumed = false;
+        return {
+          ok: false,
+          error: "この記録の質問回数の上限に達しました",
+          code: "CHAT_RECORD_LIMIT_REACHED",
+        };
+      }
     }
 
     const answer = await answerMonumentChat({
@@ -411,6 +486,13 @@ export async function chatAboutRecordAction(input: {
       },
     };
   } catch (e) {
+    if (consumed && userIdForRefund) {
+      try {
+        await refundUsage(userIdForRefund, "chat");
+      } catch {
+        /* refund best-effort */
+      }
+    }
     if (e instanceof Error && e.message === "UNAUTHORIZED") {
       return { ok: false, error: "ログインが必要です" };
     }
@@ -542,6 +624,28 @@ export async function deleteAllUserDataAction(): Promise<ActionResult> {
     const userId = await requireUserId();
     const rl = limitMutation(userId, "deleteAll");
     if (!rl.ok) return { ok: false, error: rl.error };
+
+    // §6.6 / D-18: Stripe 即時 cancel 成功をローカル削除の先行条件にする。
+    // BILLING_MODE に依存しない。終端以外の subscription を cancel。
+    const activeSubs = await db
+      .select()
+      .from(subscriptions)
+      .where(
+        and(
+          eq(subscriptions.userId, userId),
+          not(inArray(subscriptions.status, ["canceled", "incomplete_expired"])),
+        ),
+      );
+    for (const s of activeSubs) {
+      await stripe.subscriptions.cancel(s.stripeSubscriptionId);
+    }
+    await db
+      .delete(subscriptions)
+      .where(eq(subscriptions.userId, userId));
+    await db
+      .delete(stripeCustomers)
+      .where(eq(stripeCustomers.userId, userId));
+    // usage_counters は残置（無料枠リセット悪用防止）
 
     await db.delete(records).where(eq(records.userId, userId));
     await db.delete(userSettings).where(eq(userSettings.userId, userId));

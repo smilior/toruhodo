@@ -10,9 +10,11 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { createScanAction, getSettingsAction } from "@/actions/records";
+import { getSubscriptionStatusAction } from "@/actions/billing";
 import type { SettingsDTO, SuggestedQuestion } from "@/lib/domain/record";
 import { DEFAULT_SETTINGS } from "@/lib/domain/record";
 import { FailedView } from "@/components/app/failed-view";
+import { PaywallSheet } from "@/components/billing/paywall-sheet";
 
 export const PENDING_SCAN_KEY = "toruhodo.pendingScan";
 
@@ -139,6 +141,8 @@ export function ScanApp() {
   const [flashOn, setFlashOn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsDTO>(DEFAULT_SETTINGS);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [resetsAt, setResetsAt] = useState<string | null>(null);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -286,6 +290,13 @@ export function ScanApp() {
         if (cancelledRef.current || runIdRef.current !== runId) return;
 
         if (!res.ok) {
+          if (res.code === "LIMIT_REACHED") {
+            const st = await getSubscriptionStatusAction();
+            if (st.ok) setResetsAt(st.data.resetsAt);
+            setShowPaywall(true);
+            setPhase("idle");
+            return;
+          }
           setError(res.error);
           setPhase("failed");
           return;
@@ -737,6 +748,13 @@ export function ScanApp() {
         accept="image/*"
         className="hidden"
         onChange={onGalleryChange}
+      />
+
+      <PaywallSheet
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        resetsAt={resetsAt}
+        kind="scan"
       />
     </div>
   );

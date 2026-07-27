@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getSettingsAction } from "@/actions/records";
 import { SettingsApp } from "@/components/app/settings-app";
 import { DEFAULT_SETTINGS, type SettingsDTO } from "@/lib/domain/record";
@@ -8,5 +9,9 @@ export default async function SettingsPage() {
     ? res.data.settings
     : { ...DEFAULT_SETTINGS };
 
-  return <SettingsApp initialSettings={initialSettings} />;
+  return (
+    <Suspense fallback={null}>
+      <SettingsApp initialSettings={initialSettings} />
+    </Suspense>
+  );
 }

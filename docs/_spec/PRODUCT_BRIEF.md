@@ -139,7 +139,7 @@ idle → capturing → ocr → generating → done | failed | partial
 | DB | Turso (libSQL) + Drizzle ORM |
 | 認証 | Better Auth + Google OAuth（GCP） |
 | ストレージ | Vercel Blob（写真） |
-| AI | Gemini（@google/genai, `gemini-3.1-flash-lite` + Google Search）1 リクエストで OCR＋解説 JSON |
+| AI | Gemini（@google/genai, `gemini-3.5-flash-lite`。スキャン時 Google Search / チャットは grounding なし）1 リクエストで OCR＋解説 JSON |
 | 地図 | MapLibre GL JS |
 | UI | Tailwind CSS v4 + shadcn/ui + デザイントークン |
 | ミューテーション | Server Actions / Route Handlers |

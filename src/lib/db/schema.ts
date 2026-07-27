@@ -4,6 +4,8 @@ import {
   integer,
   real,
   index,
+  primaryKey,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import { nanoid } from "nanoid";
@@ -121,11 +123,88 @@ export const userSettings = sqliteTable("user_settings", {
     .$defaultFn(() => new Date()),
 });
 
+// --- Billing: usage / Stripe（BILLING_MODE が meter / enforce のときのみ一部参照） ---
+
+export const usageCounters = sqliteTable(
+  "usage_counters",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    metric: text("metric").notNull(), // "scan" | "chat"
+    period: text("period").notNull(), // "YYYY-MM"（JST暦月）
+    count: integer("count").notNull().default(0),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.metric, t.period] }),
+  ],
+);
+
+export const stripeCustomers = sqliteTable(
+  "stripe_customers",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => users.id, { onDelete: "cascade" }),
+    stripeCustomerId: text("stripe_customer_id").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [
+    uniqueIndex("stripe_customers_customer_id_uq").on(t.stripeCustomerId),
+  ],
+);
+
+export const subscriptions = sqliteTable(
+  "subscriptions",
+  {
+    /** sub_xxx。1サブスク=1行、常に最新状態へ上書き */
+    stripeSubscriptionId: text("stripe_subscription_id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Stripe準拠: incomplete | incomplete_expired | trialing | active |
+     *  past_due | canceled | unpaid | paused */
+    status: text("status").notNull(),
+    priceId: text("price_id").notNull(),
+    currentPeriodEnd: integer("current_period_end", { mode: "timestamp" }).notNull(),
+    /** past_due 猶予の起点（§6.4）。決済失敗は新周期内で起きるため End ではなく Start を使う */
+    currentPeriodStart: integer("current_period_start", { mode: "timestamp" }).notNull(),
+    cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" })
+      .notNull()
+      .default(false),
+    /** この行に反映した Stripe イベントの created (unix秒)。順不同破棄の判定材料 */
+    eventCreated: integer("event_created").notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (t) => [
+    index("subscriptions_user_id_idx").on(t.userId),
+    index("subscriptions_user_status_idx").on(t.userId, t.status),
+  ],
+);
+
+export const stripeWebhookEvents = sqliteTable("stripe_webhook_events", {
+  eventId: text("event_id").primaryKey(), // evt_xxx — PK が冪等キー
+  type: text("type").notNull(),
+  eventCreated: integer("event_created").notNull(),
+  /** null = クレーム済みだが処理未完（クラッシュ検出用） */
+  processedAt: integer("processed_at", { mode: "timestamp" }),
+});
+
 export const usersRelations = relations(users, ({ many, one }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
   records: many(records),
   settings: one(userSettings),
+  usageCounters: many(usageCounters),
+  stripeCustomer: one(stripeCustomers),
+  subscriptions: many(subscriptions),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -144,6 +223,31 @@ export const userSettingsRelations = relations(userSettings, ({ one }) => ({
   user: one(users, { fields: [userSettings.userId], references: [users.id] }),
 }));
 
+export const usageCountersRelations = relations(usageCounters, ({ one }) => ({
+  user: one(users, {
+    fields: [usageCounters.userId],
+    references: [users.id],
+  }),
+}));
+
+export const stripeCustomersRelations = relations(
+  stripeCustomers,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeCustomers.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+}));
+
 export type RecordRow = typeof records.$inferSelect;
 export type UserSettingsRow = typeof userSettings.$inferSelect;
 export type User = typeof users.$inferSelect;
+export type SubscriptionRow = typeof subscriptions.$inferSelect;

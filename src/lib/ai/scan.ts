@@ -8,7 +8,7 @@ import {
 import { containsKanji } from "@/lib/furigana";
 import { addFurigana } from "@/lib/ai/furigana-repair";
 
-const DEFAULT_MODEL = "gemini-3.1-flash-lite";
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
 
 /** スキャンはプレーン本文のみ。ルビは後段 addFurigana で付ける（二段生成） */
 const SCAN_PROMPT = `あなたは日本の石碑・案内板をやさしく解説するアシスタントです。

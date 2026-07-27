@@ -24,7 +24,7 @@
 | DB | Turso (libSQL) + Drizzle ORM |
 | 認証 | Better Auth + Google OAuth（GCP） |
 | ストレージ | Vercel Blob（写真・任意） |
-| AI | Gemini（`gemini-3.1-flash-lite` + Google Search）— 未設定時はモック |
+| AI | Gemini（`gemini-3.5-flash-lite`。スキャン時のみ Google Search）— 未設定時はモック |
 | 地図 | Google Maps JavaScript API |
 | UI | Tailwind CSS v4 |
 | ミューテーション | Server Actions / Route Handlers |
@@ -112,7 +112,7 @@ npm run setup:local
 | 変数 | 説明 |
 |------|------|
 | `GEMINI_API_KEY` | Gemini（@google/genai）。**未設定時はモック解説を返す** |
-| `GEMINI_MODEL` | 既定 `gemini-3.1-flash-lite` |
+| `GEMINI_MODEL` | 既定 `gemini-3.5-flash-lite` |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob。**未設定時は data URL を DB に保存（開発用）** |
 
 #### Google OAuth（GCP）設定
