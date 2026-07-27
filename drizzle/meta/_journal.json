@@ -15,6 +15,13 @@
       "when": 1785188583326,
       "tag": "0001_lying_pet_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785188646402,
+      "tag": "0002_brave_centennial",
+      "breakpoints": true
     }
   ]
 }
