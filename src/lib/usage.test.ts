@@ -2,44 +2,14 @@ process.env.TURSO_DATABASE_URL = ":memory:";
 process.env.TURSO_AUTH_TOKEN = "";
 process.env.BILLING_MODE = "off";
 
-import { readdir, readFile } from "node:fs/promises";
-import path from "node:path";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { and, eq } from "drizzle-orm";
-import { db, dbClient } from "@/lib/db";
-import { usageCounters, users } from "@/lib/db/schema";
+import { db } from "@/lib/db";
+import { usageCounters } from "@/lib/db/schema";
+import { applyMigrations, seedUser } from "@/test/helpers";
 import { consumeUsage, jstPeriod, refundUsage } from "@/lib/usage";
 
 const USER_ID = "user_test_1";
-
-async function applyMigrations() {
-  const drizzleDir = path.join(process.cwd(), "drizzle");
-  const files = (await readdir(drizzleDir))
-    .filter((f) => f.endsWith(".sql"))
-    .sort();
-
-  for (const file of files) {
-    const sql = await readFile(path.join(drizzleDir, file), "utf8");
-    const statements = sql
-      .split("--> statement-breakpoint")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    for (const statement of statements) {
-      await dbClient.execute(statement);
-    }
-  }
-}
-
-async function seedUser() {
-  await db.insert(users).values({
-    id: USER_ID,
-    name: "Test",
-    email: "test@example.com",
-    emailVerified: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-}
 
 async function getCount(metric: "scan" | "chat") {
   const rows = await db
@@ -57,7 +27,7 @@ async function getCount(metric: "scan" | "chat") {
 
 beforeAll(async () => {
   await applyMigrations();
-  await seedUser();
+  await seedUser(USER_ID);
 });
 
 beforeEach(async () => {
@@ -67,9 +37,7 @@ beforeEach(async () => {
 
 describe("jstPeriod", () => {
   it("JST 月境界を正しく跨ぐ", () => {
-    // 2026-06-30 15:00:00 UTC = 2026-07-01 00:00:00 JST
     expect(jstPeriod(Date.parse("2026-06-30T15:00:00.000Z"))).toBe("2026-07");
-    // 2026-06-30 14:59:59 UTC = 2026-06-30 23:59:59 JST
     expect(jstPeriod(Date.parse("2026-06-30T14:59:59.000Z"))).toBe("2026-06");
   });
 });

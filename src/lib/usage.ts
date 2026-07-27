@@ -17,7 +17,12 @@ export function jstPeriod(now = Date.now()): string {
 
 function billingMode(): "off" | "meter" | "enforce" {
   const mode = process.env.BILLING_MODE ?? "off";
-  if (mode === "meter" || mode === "enforce") return mode;
+  if (mode === "meter" || mode === "enforce" || mode === "off") return mode;
+  if (mode) {
+    console.warn(
+      `[billing] unknown BILLING_MODE="${mode}", treating as "off"`,
+    );
+  }
   return "off";
 }
 

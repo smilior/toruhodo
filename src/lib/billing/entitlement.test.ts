@@ -2,15 +2,9 @@ process.env.TURSO_DATABASE_URL = ":memory:";
 process.env.TURSO_AUTH_TOKEN = "";
 process.env.BILLING_MODE = "off";
 
-import { readdir, readFile } from "node:fs/promises";
-import path from "node:path";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { db, dbClient } from "@/lib/db";
-import {
-  subscriptions,
-  users,
-  type SubscriptionRow,
-} from "@/lib/db/schema";
+import { db } from "@/lib/db";
+import { subscriptions, type SubscriptionRow } from "@/lib/db/schema";
 import {
   CLOCK_SKEW_MS,
   getEntitlement,
@@ -18,6 +12,7 @@ import {
   PAST_DUE_GRACE_MS,
   RENEWAL_GRACE_MS,
 } from "@/lib/billing/entitlement";
+import { applyMigrations, seedUser } from "@/test/helpers";
 
 const USER_ID = "user_entitlement_1";
 const NOW = Date.parse("2026-07-15T12:00:00.000Z");
@@ -40,38 +35,9 @@ function makeSub(
   };
 }
 
-async function applyMigrations() {
-  const drizzleDir = path.join(process.cwd(), "drizzle");
-  const files = (await readdir(drizzleDir))
-    .filter((f) => f.endsWith(".sql"))
-    .sort();
-
-  for (const file of files) {
-    const sql = await readFile(path.join(drizzleDir, file), "utf8");
-    const statements = sql
-      .split("--> statement-breakpoint")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    for (const statement of statements) {
-      await dbClient.execute(statement);
-    }
-  }
-}
-
-async function seedUser() {
-  await db.insert(users).values({
-    id: USER_ID,
-    name: "Test",
-    email: "entitlement@example.com",
-    emailVerified: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-}
-
 beforeAll(async () => {
   await applyMigrations();
-  await seedUser();
+  await seedUser(USER_ID, "entitlement@example.com");
 });
 
 beforeEach(async () => {
@@ -99,7 +65,6 @@ describe("isEntitled", () => {
 
   it("past_due: currentPeriodStart + 7日 を使う（End ではない）", () => {
     const start = new Date(NOW - 3 * 24 * 3600_000);
-    // End は遠い未来だが、Start+7日 で判定する
     const farEnd = new Date(NOW + 30 * 24 * 3600_000);
     const sub = makeSub({
       status: "past_due",
@@ -111,7 +76,6 @@ describe("isEntitled", () => {
       true,
     );
     expect(isEntitled(sub, start.getTime() + PAST_DUE_GRACE_MS)).toBe(false);
-    // End 基準だとまだ有効な時刻でも、Start 基準では既に失効
     expect(isEntitled(sub, NOW + 10 * 24 * 3600_000)).toBe(false);
   });
 
