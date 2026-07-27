@@ -1,5 +1,8 @@
 /** 課金 UI 共通の文言・日付整形 */
 
+/** Free プランの月間スキャン上限（LIMITS.free.scan と揃える） */
+export const FREE_SCAN_LIMIT = 3;
+
 /** 翌月 1 日 0:00 JST の ISO 8601 */
 export function nextJstMonthResetIso(now = Date.now()): string {
   const jst = new Date(now + 9 * 3600_000);

@@ -52,16 +52,16 @@ describe("consumeUsage", () => {
 
   it("mode=meter では上限超過でも ok、count は加算される", async () => {
     process.env.BILLING_MODE = "meter";
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 4; i++) {
       const result = await consumeUsage(USER_ID, "scan");
       expect(result).toEqual({ ok: true });
     }
-    expect(await getCount("scan")).toBe(16);
+    expect(await getCount("scan")).toBe(4);
   });
 
-  it("mode=enforce では free 15 回 ok → 16 回目 LIMIT_REACHED", async () => {
+  it("mode=enforce では free 3 回 ok → 4 回目 LIMIT_REACHED", async () => {
     process.env.BILLING_MODE = "enforce";
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 3; i++) {
       const result = await consumeUsage(USER_ID, "scan");
       expect(result).toEqual({ ok: true });
     }
@@ -71,19 +71,19 @@ describe("consumeUsage", () => {
       error: "今月の利用回数の上限に達しました",
       code: "LIMIT_REACHED",
     });
-    expect(await getCount("scan")).toBe(16);
+    expect(await getCount("scan")).toBe(4);
   });
 
-  it("並行 20 回 consume で拒否はちょうど 5 回・最終 count 20", async () => {
+  it("並行 10 回 consume で拒否はちょうど 7 回・最終 count 10", async () => {
     process.env.BILLING_MODE = "enforce";
     const results = await Promise.all(
-      Array.from({ length: 20 }, () => consumeUsage(USER_ID, "scan")),
+      Array.from({ length: 10 }, () => consumeUsage(USER_ID, "scan")),
     );
     const denied = results.filter((r) => !r.ok);
     const ok = results.filter((r) => r.ok);
-    expect(ok).toHaveLength(15);
-    expect(denied).toHaveLength(5);
-    expect(await getCount("scan")).toBe(20);
+    expect(ok).toHaveLength(3);
+    expect(denied).toHaveLength(7);
+    expect(await getCount("scan")).toBe(10);
   });
 });
 

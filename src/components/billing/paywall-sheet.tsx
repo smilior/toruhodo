@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { formatResetMonthDay, PLUS_PRICE_LABEL } from "@/lib/billing/ui-copy";
+import {
+  formatResetMonthDay,
+  FREE_SCAN_LIMIT,
+  PLUS_PRICE_LABEL,
+} from "@/lib/billing/ui-copy";
 
 type Props = {
   open: boolean;
@@ -27,11 +31,11 @@ export function PaywallSheet({
   const title =
     kind === "chat"
       ? "今月の質問の無料分を使い切りました"
-      : "今月の無料分（15回）を使い切りました";
+      : `今月の無料分（${FREE_SCAN_LIMIT}回）を使い切りました`;
   const recover =
     kind === "chat"
       ? `${resetLabel}になると、また質問できます。`
-      : `${resetLabel}になると、また15回スキャンできます。`;
+      : `${resetLabel}になると、また${FREE_SCAN_LIMIT}回スキャンできます。`;
 
   return (
     <div
