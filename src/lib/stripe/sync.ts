@@ -190,3 +190,40 @@ export async function releaseWebhookClaim(eventId: string): Promise<void> {
       ),
     );
 }
+
+/**
+ * 同一 userId に有効 subscription が 2 件以上あるとき、
+ * Stripe の created が新しい方を即時 cancel して再 sync（§5.5 / D-22）。
+ * 最古を残し、新しい重複を cancel。返金は行わない。
+ */
+export async function resolveDuplicateSubscriptions(
+  userId: string,
+): Promise<string[]> {
+  const all = await db
+    .select()
+    .from(subscriptions)
+    .where(eq(subscriptions.userId, userId));
+  const entitled = all.filter((s) => isEntitled(s));
+  if (entitled.length < 2) return [];
+
+  const withCreated = await Promise.all(
+    entitled.map(async (row) => {
+      const remote = await stripe.subscriptions.retrieve(
+        row.stripeSubscriptionId,
+      );
+      return { row, created: remote.created };
+    }),
+  );
+  // 最古を残し、新しいものを cancel
+  withCreated.sort((a, b) => a.created - b.created);
+  const toCancel = withCreated.slice(1);
+  const canceled: string[] = [];
+  for (const item of toCancel) {
+    const id = item.row.stripeSubscriptionId;
+    console.warn("[stripe] canceling duplicate subscription", { userId, id });
+    await stripe.subscriptions.cancel(id);
+    await syncStripeSubscription(id);
+    canceled.push(id);
+  }
+  return canceled;
+}

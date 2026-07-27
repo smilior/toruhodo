@@ -15,7 +15,7 @@ export function jstPeriod(now = Date.now()): string {
   return new Date(now + 9 * 3600_000).toISOString().slice(0, 7);
 }
 
-function billingMode(): "off" | "meter" | "enforce" {
+export function billingMode(): "off" | "meter" | "enforce" {
   const mode = process.env.BILLING_MODE ?? "off";
   if (mode === "meter" || mode === "enforce" || mode === "off") return mode;
   if (mode) {
