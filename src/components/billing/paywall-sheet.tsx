@@ -6,6 +6,10 @@ import {
   FREE_SCAN_LIMIT,
   PLUS_PRICE_LABEL,
 } from "@/lib/billing/ui-copy";
+import {
+  MobileSheet,
+  SheetSecondaryButton,
+} from "@/components/billing/mobile-sheet";
 
 type Props = {
   open: boolean;
@@ -25,8 +29,6 @@ export function PaywallSheet({
   resetsAt,
   kind = "scan",
 }: Props) {
-  if (!open) return null;
-
   const resetLabel = formatResetMonthDay(resetsAt);
   const title =
     kind === "chat"
@@ -38,84 +40,46 @@ export function PaywallSheet({
       : `${resetLabel}になると、また${FREE_SCAN_LIMIT}回スキャンできます。`;
 
   return (
-    <div
-      className="fixed inset-0 z-[80] flex items-end justify-center"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="paywall-title"
+    <MobileSheet
+      open={open}
+      onClose={onClose}
+      titleId="paywall-title"
+      title={title}
     >
-      <button
-        type="button"
-        className="absolute inset-0 border-0"
-        style={{ background: "rgba(40, 34, 24, 0.45)" }}
-        aria-label="閉じる"
-        onClick={onClose}
-      />
-      <div
-        className="relative w-full max-w-[480px] rounded-t-[28px] px-6 pb-8 pt-5"
-        style={{
-          background: "var(--card)",
-          boxShadow: "0 -8px 32px rgba(58, 53, 44, 0.18)",
-        }}
+      <p
+        className="mt-3 m-0 text-[16px] leading-[1.75]"
+        style={{ color: "var(--ink)" }}
       >
-        <div
-          className="mx-auto mb-4 h-1 w-10 rounded-full"
-          style={{ background: "var(--border)" }}
-          aria-hidden
-        />
-        <h2
-          id="paywall-title"
-          className="m-0 text-[20px] font-bold leading-snug tracking-[0.02em]"
-          style={{ color: "var(--ink)" }}
-        >
-          {title}
-        </h2>
-        <p
-          className="mt-3 m-0 text-[16px] leading-[1.75]"
-          style={{ color: "var(--ink)" }}
-        >
-          たくさん使っていただき、ありがとうございます。
-          <br />
-          <strong>{recover}</strong>
-          <br />
-          これまでの記録は、履歴と地図からいつでも見られます。
-        </p>
-        <p
-          className="mt-3 m-0 text-[15px] leading-[1.7]"
-          style={{ color: "var(--muted)" }}
-        >
-          すぐに続けたい方には、回数を気にせず使える
-          撮るほどプラス（{PLUS_PRICE_LABEL}）があります。
-        </p>
+        たくさん使っていただき、ありがとうございます。
+        <br />
+        <strong>{recover}</strong>
+        <br />
+        これまでの記録は、履歴と地図からいつでも見られます。
+      </p>
+      <p
+        className="mt-3 m-0 text-[15px] leading-[1.7]"
+        style={{ color: "var(--muted)" }}
+      >
+        すぐに続けたい方には、回数を気にせず使える
+        撮るほどプラス（{PLUS_PRICE_LABEL}）があります。
+      </p>
 
-        <div className="mt-6 flex flex-col gap-3">
-          <Link
-            href="/settings/plus"
-            className="flex items-center justify-center rounded-full no-underline text-[16px] font-bold"
-            style={{
-              minHeight: 52,
-              background: "var(--primary)",
-              color: "var(--card)",
-            }}
-          >
-            プラスについて見る
-          </Link>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border-0 text-[16px] font-bold"
-            style={{
-              minHeight: 52,
-              background: "transparent",
-              color: "var(--label)",
-              border: "1.5px solid var(--border)",
-              cursor: "pointer",
-            }}
-          >
-            {kind === "chat" ? "閉じる" : "来月まで待つ"}
-          </button>
-        </div>
+      <div className="mt-6 flex flex-col gap-3">
+        <Link
+          href="/settings/plus"
+          className="flex w-full items-center justify-center rounded-full px-4 no-underline text-[16px] font-bold leading-snug"
+          style={{
+            minHeight: 52,
+            background: "var(--primary)",
+            color: "var(--card)",
+          }}
+        >
+          プラスについて見る
+        </Link>
+        <SheetSecondaryButton onClick={onClose}>
+          {kind === "chat" ? "閉じる" : "来月まで待つ"}
+        </SheetSecondaryButton>
       </div>
-    </div>
+    </MobileSheet>
   );
 }
