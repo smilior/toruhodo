@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   open: boolean;
@@ -8,13 +9,16 @@ type Props = {
   titleId: string;
   title: string;
   children: ReactNode;
+  /** 本文下の固定フッター（ボタン列）。常に見える。 */
+  footer?: ReactNode;
   /** 背景タップで閉じるのを止める（処理中など） */
   closeDisabled?: boolean;
 };
 
 /**
  * アプリ枠（最大 430px）に合わせたモバイル向けボトムシート。
- * fixed でも phone frame 中央に寄せ、フル幅デスクトップ感を出さない。
+ * - body へ portal（app-shell の overflow:hidden で切れない）
+ * - 本文スクロール + フッター固定で CTA が必ず見える
  */
 export function MobileSheet({
   open,
@@ -22,13 +26,29 @@ export function MobileSheet({
   titleId,
   title,
   children,
+  footer,
   closeDisabled = false,
 }: Props) {
-  if (!open) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  if (!open || !mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-[80] flex justify-center"
+      className="fixed inset-0 z-[200] flex justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -41,37 +61,48 @@ export function MobileSheet({
         onClick={onClose}
         disabled={closeDisabled}
       />
-      {/* app-frame と同じ幅に揃える */}
-      <div
-        className="pointer-events-none relative flex h-full w-full max-w-[430px] flex-col justify-end"
-      >
+      <div className="pointer-events-none relative flex h-full w-full max-w-[430px] flex-col justify-end">
         <div
-          className="pointer-events-auto relative w-full rounded-t-[28px] px-5 pt-4"
+          className="pointer-events-auto relative flex w-full flex-col overflow-hidden rounded-t-[28px]"
           style={{
             background: "var(--card)",
             boxShadow: "0 -8px 32px rgba(58, 53, 44, 0.18)",
-            paddingBottom: "calc(20px + env(safe-area-inset-bottom, 0px))",
-            maxHeight: "min(92dvh, 100%)",
-            overflowY: "auto",
-            WebkitOverflowScrolling: "touch",
+            // 内容に合わせて縮み、画面の約 85% を超えたら本文だけスクロール
+            maxHeight: "min(85svh, 85dvh)",
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
           }}
         >
           <div
-            className="mx-auto mb-3 h-1 w-10 shrink-0 rounded-full"
+            className="mx-auto mt-3 mb-1 h-1 w-10 shrink-0 rounded-full"
             style={{ background: "var(--border)" }}
             aria-hidden
           />
           <h2
             id={titleId}
-            className="m-0 text-[19px] font-bold leading-snug tracking-[0.02em]"
+            className="m-0 shrink-0 px-5 pt-2 text-[19px] font-bold leading-snug tracking-[0.02em]"
             style={{ color: "var(--ink)" }}
           >
             {title}
           </h2>
-          {children}
+          <div
+            className="min-h-0 overflow-x-hidden overflow-y-auto px-5 pt-3"
+            style={{
+              flex: "1 1 auto",
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+            }}
+          >
+            {children}
+          </div>
+          {footer ? (
+            <div className="shrink-0 px-5 pb-5 pt-4">{footer}</div>
+          ) : (
+            <div className="shrink-0 pb-5" />
+          )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

@@ -38,29 +38,30 @@ export function PortalNoticeSheet({
       titleId="portal-notice-title"
       title="お支払い・解約について"
       closeDisabled={pending}
+      footer={
+        <div className="flex flex-col gap-3">
+          <SheetPrimaryButton onClick={onProceed} disabled={pending}>
+            {pending ? "準備中…" : "お支払い・解約の画面を開く"}
+          </SheetPrimaryButton>
+          <SheetSecondaryButton onClick={onClose} disabled={pending}>
+            もどる
+          </SheetSecondaryButton>
+        </div>
+      }
     >
       <p
-        className="mt-3 m-0 text-[16px] leading-[1.75]"
+        className="m-0 text-[16px] leading-[1.75]"
         style={{ color: "var(--ink)" }}
       >
         解約は<strong>いつでも</strong>できます。{periodSentence}
         日割りの返金はありません。
       </p>
       <p
-        className="mt-2 m-0 text-[14px] leading-relaxed"
+        className="mt-3 m-0 pb-1 text-[14px] leading-relaxed"
         style={{ color: "var(--muted)" }}
       >
         この先は Stripe 社の管理画面が開きます。解約しても、これまでの記録は消えません。
       </p>
-
-      <div className="mt-6 flex flex-col gap-3">
-        <SheetPrimaryButton onClick={onProceed} disabled={pending}>
-          {pending ? "準備中…" : "お支払い・解約の画面を開く"}
-        </SheetPrimaryButton>
-        <SheetSecondaryButton onClick={onClose} disabled={pending}>
-          もどる
-        </SheetSecondaryButton>
-      </div>
     </MobileSheet>
   );
 }

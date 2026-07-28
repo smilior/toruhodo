@@ -45,9 +45,27 @@ export function PaywallSheet({
       onClose={onClose}
       titleId="paywall-title"
       title={title}
+      footer={
+        <div className="flex flex-col gap-3">
+          <Link
+            href="/settings/plus"
+            className="flex w-full items-center justify-center rounded-full px-4 no-underline text-[16px] font-bold leading-snug"
+            style={{
+              minHeight: 52,
+              background: "var(--primary)",
+              color: "var(--card)",
+            }}
+          >
+            プラスについて見る
+          </Link>
+          <SheetSecondaryButton onClick={onClose}>
+            {kind === "chat" ? "閉じる" : "来月まで待つ"}
+          </SheetSecondaryButton>
+        </div>
+      }
     >
       <p
-        className="mt-3 m-0 text-[16px] leading-[1.75]"
+        className="m-0 text-[16px] leading-[1.75]"
         style={{ color: "var(--ink)" }}
       >
         たくさん使っていただき、ありがとうございます。
@@ -57,29 +75,12 @@ export function PaywallSheet({
         これまでの記録は、履歴と地図からいつでも見られます。
       </p>
       <p
-        className="mt-3 m-0 text-[15px] leading-[1.7]"
+        className="mt-3 m-0 pb-1 text-[15px] leading-[1.7]"
         style={{ color: "var(--muted)" }}
       >
         すぐに続けたい方には、回数を気にせず使える
         撮るほどプラス（{PLUS_PRICE_LABEL}）があります。
       </p>
-
-      <div className="mt-6 flex flex-col gap-3">
-        <Link
-          href="/settings/plus"
-          className="flex w-full items-center justify-center rounded-full px-4 no-underline text-[16px] font-bold leading-snug"
-          style={{
-            minHeight: 52,
-            background: "var(--primary)",
-            color: "var(--card)",
-          }}
-        >
-          プラスについて見る
-        </Link>
-        <SheetSecondaryButton onClick={onClose}>
-          {kind === "chat" ? "閉じる" : "来月まで待つ"}
-        </SheetSecondaryButton>
-      </div>
     </MobileSheet>
   );
 }
