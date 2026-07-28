@@ -23,6 +23,11 @@ import {
   type PendingScanPayload,
 } from "@/components/app/scan-app";
 import { PaywallSheet } from "@/components/billing/paywall-sheet";
+import {
+  FREE_CHAT_PER_RECORD,
+  FREE_SCAN_LIMIT,
+  formatResetMonthDay,
+} from "@/lib/billing/ui-copy";
 import Link from "next/link";
 
 type Mode = "easy" | "detail";
@@ -88,6 +93,7 @@ export function ResultApp({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(false);
   const [isPlus, setIsPlus] = useState(false);
+  const [scanRemaining, setScanRemaining] = useState<number | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallKind, setPaywallKind] = useState<"scan" | "chat">("chat");
   const [resetsAt, setResetsAt] = useState<string | null>(null);
@@ -141,6 +147,11 @@ export function ResultApp({ id }: { id: string }) {
       if (alive && billingRes.ok) {
         setIsPlus(billingRes.data.entitlement === "plus");
         setResetsAt(billingRes.data.resetsAt);
+        setScanRemaining(
+          billingRes.data.entitlement === "free"
+            ? billingRes.data.scanRemaining
+            : null,
+        );
       }
 
       if (id === "pending") {
@@ -677,7 +688,7 @@ export function ResultApp({ id }: { id: string }) {
               >
                 {(() => {
                   const used = messages.filter((m) => m.role === "user").length;
-                  const left = Math.max(0, 3 - used);
+                  const left = Math.max(0, FREE_CHAT_PER_RECORD - used);
                   if (left === 0) {
                     return (
                       <>
@@ -699,7 +710,8 @@ export function ResultApp({ id }: { id: string }) {
 
             {suggestions.length > 0 &&
               (isPlus ||
-                messages.filter((m) => m.role === "user").length < 3) && (
+                messages.filter((m) => m.role === "user").length <
+                  FREE_CHAT_PER_RECORD) && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {suggestions.map((q) => (
                   <button
@@ -785,7 +797,8 @@ export function ResultApp({ id }: { id: string }) {
             </div>
 
             {isPlus ||
-            messages.filter((m) => m.role === "user").length < 3 ? (
+            messages.filter((m) => m.role === "user").length <
+              FREE_CHAT_PER_RECORD ? (
               <form
                 className="mt-2.5 flex items-end gap-2"
                 onSubmit={(e) => {
@@ -949,6 +962,29 @@ export function ResultApp({ id }: { id: string }) {
           {error && (
             <p className="text-center text-[13px] text-[var(--primary)]">{error}</p>
           )}
+
+          {/* §9.5 Free のみ: 結果末尾の残量（plus / off 時は null で非表示） */}
+          {scanRemaining != null ? (
+            <p
+              className="m-0 text-center text-[14px] leading-relaxed"
+              style={{ color: "var(--muted)" }}
+            >
+              {scanRemaining === 0 ? (
+                <>
+                  今月の無料分を使い切りました（
+                  {formatResetMonthDay(resetsAt)}に回復します）
+                </>
+              ) : scanRemaining <= 2 ? (
+                <>
+                  あと{scanRemaining}回です。
+                  {formatResetMonthDay(resetsAt)}にまた{FREE_SCAN_LIMIT}
+                  回になります。
+                </>
+              ) : (
+                <>（今月あと{scanRemaining}回）</>
+              )}
+            </p>
+          ) : null}
 
           <p className="text-center text-[11px] leading-relaxed text-[var(--muted-2)]">
             AIによる解説です。正確な情報は現地の案内をご確認ください。

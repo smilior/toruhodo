@@ -1,9 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { listRecordsAction } from "@/actions/records";
-import { getSubscriptionStatusAction } from "@/actions/billing";
+import {
+  createPortalSessionAction,
+  getSubscriptionStatusAction,
+} from "@/actions/billing";
 import type { RecordDTO } from "@/lib/domain/record";
 import { AppShell } from "@/components/app/app-shell";
 import { PaywallSheet } from "@/components/billing/paywall-sheet";
@@ -26,7 +29,10 @@ export function HomeApp({
   const [error, setError] = useState<string | null>(null);
   const [scanRemaining, setScanRemaining] = useState<number | null>(null);
   const [resetsAt, setResetsAt] = useState<string | null>(null);
+  const [stripeStatus, setStripeStatus] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [portalPending, startPortal] = useTransition();
+  const [portalError, setPortalError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const res = await listRecordsAction();
@@ -49,6 +55,7 @@ export function HomeApp({
     void (async () => {
       const res = await getSubscriptionStatusAction();
       if (!res.ok) return;
+      setStripeStatus(res.data.stripeStatus);
       if (res.data.entitlement === "free") {
         setScanRemaining(res.data.scanRemaining);
         setResetsAt(res.data.resetsAt);
@@ -59,7 +66,20 @@ export function HomeApp({
     })();
   }, []);
 
+  const openPortal = () => {
+    setPortalError(null);
+    startPortal(async () => {
+      const res = await createPortalSessionAction();
+      if (!res.ok) {
+        setPortalError(res.error);
+        return;
+      }
+      window.location.href = res.data.url;
+    });
+  };
+
   const recent = records.slice(0, 10);
+  const isPastDue = stripeStatus === "past_due";
 
   return (
     <AppShell>
@@ -94,6 +114,39 @@ export function HomeApp({
             撮るほど
           </span>
         </header>
+
+        {isPastDue ? (
+          <div
+            className="mx-5 mt-3 rounded-2xl px-4 py-3 text-[14px] leading-relaxed"
+            style={{
+              background: "var(--warn-bg)",
+              color: "var(--warn-ink)",
+              border: "1px solid var(--warn-border)",
+            }}
+            role="status"
+          >
+            お支払いが確認できていません。カードの有効期限などをご確認ください。数日間はこれまでどおりお使いいただけます。
+            {portalError ? (
+              <p className="mt-2 m-0 text-[13px]" role="alert">
+                {portalError}
+              </p>
+            ) : null}
+            <button
+              type="button"
+              onClick={openPortal}
+              disabled={portalPending}
+              className="mt-2 block w-full rounded-full border-0 text-[15px] font-bold"
+              style={{
+                minHeight: 48,
+                background: "var(--primary)",
+                color: "var(--card)",
+                cursor: portalPending ? "not-allowed" : "pointer",
+              }}
+            >
+              {portalPending ? "準備中…" : "お支払い方法を確認する"}
+            </button>
+          </div>
+        ) : null}
 
         {scanRemaining === 0 ? (
           <button

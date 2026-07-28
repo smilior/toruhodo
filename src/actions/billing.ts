@@ -130,7 +130,7 @@ export async function createCheckoutSessionAction(input: {
       custom_text: {
         submit: {
           message:
-            "1か月ごとの自動更新です。解約はいつでもアプリの設定→プランから行えます。",
+            "月額480円（税込）・毎月自動更新。解約はいつでもアプリの設定→プランからできます。",
         },
       },
       consent_collection: { terms_of_service: "required" },

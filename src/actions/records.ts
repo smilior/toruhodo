@@ -34,6 +34,7 @@ import {
   resolvePlaceName,
 } from "@/lib/geocode";
 import { getEntitlement } from "@/lib/billing/entitlement";
+import { FREE_CHAT_PER_RECORD } from "@/lib/billing/ui-copy";
 import { consumeUsage, refundUsage } from "@/lib/usage";
 import { stripe } from "@/lib/stripe/client";
 
@@ -426,7 +427,7 @@ export async function chatAboutRecordAction(input: {
     // §7.3: 2) 記録単位（persistId 経路・Free のみ・DB 履歴のみ）
     if (persistId && dbHistory && (await getEntitlement(userId)) === "free") {
       const userTurns = dbHistory.filter((m) => m.role === "user").length;
-      if (userTurns >= 3) {
+      if (userTurns >= FREE_CHAT_PER_RECORD) {
         await refundUsage(userId, "chat");
         consumed = false;
         return {

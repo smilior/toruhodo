@@ -13,12 +13,14 @@ import {
   PLUS_PLAN_NAME,
   PLUS_PRICE_LABEL,
 } from "@/lib/billing/ui-copy";
+import { PortalNoticeSheet } from "@/components/billing/portal-notice-sheet";
 
 export function PlanSection() {
   const [status, setStatus] = useState<SubscriptionStatusView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [loading, setLoading] = useState(true);
+  const [portalNoticeOpen, setPortalNoticeOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     const res = await getSubscriptionStatusAction();
@@ -207,7 +209,7 @@ export function PlanSection() {
               </p>
               <button
                 type="button"
-                onClick={openPortal}
+                onClick={() => setPortalNoticeOpen(true)}
                 disabled={pending}
                 className="mt-3 border-0 bg-transparent p-0 text-[15px] font-bold underline"
                 style={{
@@ -237,7 +239,25 @@ export function PlanSection() {
         >
           利用規約
         </Link>
+        <Link
+          href="/legal/privacy"
+          className="text-[12px] no-underline"
+          style={{ color: "var(--muted-2)" }}
+        >
+          プライバシーポリシー
+        </Link>
       </div>
+
+      <PortalNoticeSheet
+        open={portalNoticeOpen}
+        onClose={() => setPortalNoticeOpen(false)}
+        onProceed={() => {
+          setPortalNoticeOpen(false);
+          openPortal();
+        }}
+        periodEnd={status.currentPeriodEnd}
+        pending={pending}
+      />
     </>
   );
 }

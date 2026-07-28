@@ -137,6 +137,8 @@ describe("createCheckoutSessionAction", () => {
     expect(args.expires_at).toBeGreaterThanOrEqual(before + 30 * 60 - 2);
     expect(args.expires_at).toBeLessThanOrEqual(after + 30 * 60 + 2);
     expect(args.success_url).toContain("{CHECKOUT_SESSION_ID}");
+    expect(args.custom_text?.submit?.message).toContain("月額480円（税込）");
+    expect(args.consent_collection?.terms_of_service).toBe("required");
   });
 });
 

@@ -1,7 +1,16 @@
 /** 課金 UI 共通の文言・日付整形 */
 
-/** Free プランの月間スキャン上限（LIMITS.free.scan と揃える） */
-export const FREE_SCAN_LIMIT = 3;
+/** Free プランの月間スキャン上限（LIMITS.free.scan と揃える。D-26 正本値） */
+export const FREE_SCAN_LIMIT = 15;
+
+/** Free プランの記録単位チャット上限（§7.3） */
+export const FREE_CHAT_PER_RECORD = 3;
+
+/**
+ * Free の月間チャットプール上限（§7.3）。
+ * 15 スキャン × 3 往復/記録 相当。独立に変えない。
+ */
+export const FREE_CHAT_MONTHLY = FREE_SCAN_LIMIT * FREE_CHAT_PER_RECORD;
 
 /** 翌月 1 日 0:00 JST の ISO 8601 */
 export function nextJstMonthResetIso(now = Date.now()): string {
